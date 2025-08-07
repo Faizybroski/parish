@@ -102,7 +102,7 @@ const EventsCarousel = () => {
           .from("rsvps")
           .select("*", { count: "exact", head: true })
           .eq("event_id", event.id)
-          .eq("response_status", "yes");
+          .eq("status", "confirmed");
         counts[event.id] = count || 0;
       }
 
