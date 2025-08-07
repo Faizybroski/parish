@@ -98,7 +98,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
               window.location.href = '/user/dashboard';
               break;
           }
-        }, 100); // Small delay to ensure auth state is updated
+        }, 100); 
       }
     }
     

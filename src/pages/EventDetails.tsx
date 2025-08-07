@@ -32,6 +32,7 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
+import { useSubscriptionStatus } from '@/hooks/useSubscriptionStatus';
 
 interface Event {
   id: string;
@@ -88,6 +89,8 @@ const EventDetails = () => {
   const [eventReviews, setEventReviews] = useState<any[]>([]);
   const [showRSVPConfirm, setShowRSVPConfirm] = useState(false);
   const { profile } = useProfile();
+  const subscriptionStatus = useSubscriptionStatus(profile?.id);
+
   useEffect(() => {
     const fetchPayments = async () => {
       const getPaymentsByEventId = async (eventId) => {
@@ -488,6 +491,45 @@ const EventDetails = () => {
           description: "You're no longer attending this event.",
         });
       } else {
+
+        if (subscriptionStatus === 'free' && (!event.event_fee || event.event_fee == 0)) {
+          const startOfMonth = new Date();
+          startOfMonth.setDate(1);
+          startOfMonth.setHours(0, 0, 0, 0);
+
+          const { count, error } = await supabase
+            .from("rsvps")
+            .select("*", { count: "exact", head: true })
+            .eq("user_id", userProfileId)
+            .eq("status", "confirmed") // Optional: if you track cancellations
+            .gte("created_at", startOfMonth.toISOString());
+
+          if (error) {
+            console.error("Failed to fetch RSVP count", error.message);
+            toast({
+              title: "Error",
+              description: "Couldn't check your RSVP limit. Try again.",
+              variant: "destructive",
+            });
+            return;
+          }
+
+          if (count >= 2) {
+            toast({
+              title: "RSVP Limit Reached",
+              description: "Free users can RSVP to only 2 free events per month.",
+              variant: "destructive",
+            });
+
+            // 🔁 Delay navigation for 1.5 seconds to let the toast show
+            setTimeout(() => {
+              navigate('/subscription');
+            }, 1500);
+
+            return;
+          }
+        }
+      
         const { error: rsvpError } = await supabase.from("rsvps").insert({
           event_id: eventId,
           user_id: userProfileId,
@@ -611,6 +653,7 @@ const EventDetails = () => {
         navigate("/rsvp-success");
         fetchEvent();
       }
+    
     } catch (error) {
       console.error("Error handling RSVP:", error);
       toast({
@@ -1097,7 +1140,20 @@ const EventDetails = () => {
                       </Button>
                     ) : (
                       <Button
-                        onClick={handlePaidRSVP}
+                        onClick={() => {
+                          if (subscriptionStatus === 'free') {
+                            toast({
+                              title: "Premium Required",
+                              description: "You need a premium subscription to RSVP for paid events.",
+                              variant: "destructive",
+                            });
+                            setTimeout(() => {
+                              navigate('/subscription');
+                            }, 1200);
+                            return;
+                          } 
+                          handlePaidRSVP(); 
+                        }}
                         disabled={isPaying}
                         className="w-full bg-indigo-600 hover:bg-indigo-700 text-white flex items-center justify-center"
                       >

@@ -69,10 +69,10 @@ const Navigation = () => {
           {/* Logo */}
           <div
             onClick={() => navigate("/")}
-            className="cursor-pointer flex items-center"
+            className="cursor-pointer flex items-center space-x-1 shrink-0"
           >
-            <img className="w-8 h-8 mr-2" src="/Parishus logo.png" alt="Logo" />
-            <h1 className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+            <img className="w-8 h-8 object-contain" src="/Parishus logo.png" alt="Logo" />
+            <h1 className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent whitespace-nowrap">
               Parish
             </h1>
           </div>
