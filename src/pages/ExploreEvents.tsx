@@ -120,7 +120,7 @@ const ExploreEvents = () => {
         `
         )
         .eq("status", "active")
-        .order("date_time", { ascending: true });
+        .order("created_at", { ascending: false });
 
       if (error) throw error;
 
