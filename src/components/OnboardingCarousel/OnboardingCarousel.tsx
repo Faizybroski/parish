@@ -48,6 +48,8 @@ export const OnboardingCarousel = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [firstName, setFirstName] = useState("");
+  const [instagram, setInstagram] = useState("");
+  const [linkedin, setLinkedin] = useState("");
   const [lastName, setLastName] = useState("");
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
@@ -84,6 +86,8 @@ export const OnboardingCarousel = () => {
         const { error } = await signUp(email, password, {
           first_name: firstName,
           last_name: lastName,
+          instagram_username: instagram,
+          linkedin_username: linkedin,
           role: "user",
         });
         error
@@ -100,6 +104,8 @@ export const OnboardingCarousel = () => {
         setPassword("");
         setFirstName("");
         setLastName("");
+        setLinkedin("");
+        setInstagram("");
       }
     } catch {
       toast({
@@ -211,6 +217,28 @@ export const OnboardingCarousel = () => {
                   <Eye className="w-4 h-4" />
                 )}
               </button>
+            </div>
+             <div className="space-y-1">
+              <Label htmlFor="linkedin">Linked in</Label>
+              <Input
+                id="linkedin"
+                type="text"
+                placeholder="Enter your Linked in username*"
+                value={linkedin}
+                onChange={(e) => setLinkedin(e.target.value)}
+                required
+              />
+            </div>
+            <div className="space-y-1">
+              <Label htmlFor="instagram">Instagram</Label>
+              <Input
+                id="instagram"
+                type="text"
+                placeholder="Enter your instagram username*"
+                value={instagram}
+                onChange={(e) => setInstagram(e.target.value)}
+                required
+              />
             </div>
             {!isLogin && (
               <div className="flex items-center space-x-2">
