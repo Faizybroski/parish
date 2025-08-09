@@ -50,7 +50,8 @@ import UserCheckout from "./pages/UserCheckout";
 import PaymentCheckoutPage from "./pages/PaymentCheckoutPage";
 import RsvpSuccessPage from "./pages/RsvpSuccessPage";
 import AdminEventDetails from "./pages/AdminEventDetails";
-import RSVPDetails from "./pages/RSVPdetails";
+import RSVPDetails from "./pages/RSVPDetails";
+import PendingApproval from "./pages/waitingApprovalPage";
 
 const queryClient = new QueryClient();
 
@@ -491,6 +492,10 @@ const App = () => (
                     </AdminLayout>
                   </ProtectedAdminRoute>
                 }
+              />
+              <Route 
+                path="/waiting-approval"
+                element={<PendingApproval/>}
               />
               <Route
                 path="/admin/manage-subscriptions"

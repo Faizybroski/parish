@@ -13,7 +13,7 @@ interface EmailInviteModalProps {
   open: boolean;
   onClose: () => void;
   onInviteResolved: (guestIds: string[]) => void;
-  subscriptionStatus: 'free' | 'premium'; // passed from parent
+  subscriptionStatus: 'loading' | 'free' | 'premium'; // passed from parent
 }
 
 export const EmailInviteModal = ({ open, onClose, onInviteResolved, subscriptionStatus }: EmailInviteModalProps) => {

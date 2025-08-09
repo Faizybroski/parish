@@ -12,6 +12,7 @@ import { JobTitleStep } from './steps/JobTitleStep';
 import { LocationStep } from './steps/LocationStep';
 import { PhotoUploadStep } from './steps/PhotoUploadStep';
 import { useNavigate } from 'react-router-dom';
+import { useProfile } from "@/hooks/useProfile";
 
 interface OnboardingData {
   dining_style: 'adventurous' | 'foodie_enthusiast' | 'local_lover' | 'comfort_food' | 'health_conscious' | 'social_butterfly';
@@ -45,6 +46,8 @@ const OnboardingFlow = () => {
   });
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { profile, loading: profileLoading } = useProfile();
+
 
   const updateOnboardingData = (field: string, value: any) => {
     setOnboardingData(prev => ({
@@ -72,7 +75,7 @@ const OnboardingFlow = () => {
 
     setLoading(true);
     try {
-      const { error } = await supabase
+      const { error: updateError  } = await supabase
         .from('profiles')
         .update({
           ...onboardingData,
@@ -81,12 +84,27 @@ const OnboardingFlow = () => {
         })
         .eq('user_id', user.id);
 
-      if (error) throw error;
+
+    if (updateError) throw updateError;
+
+    type ProfileApproval = { approval_status: string };
+
+    const { data: updatedProfile, error: fetchError } = await supabase
+      .from('profiles')
+      .select<'approval_status', ProfileApproval>('approval_status')
+      .eq('user_id', user.id)
+      .single();
+
+    if (fetchError) throw fetchError;
 
       toast({
         title: "Welcome to Parish!",
         description: "Your profile has been created successfully.",
       }); 
+      if (updatedProfile?.approval_status !== "approved") {
+        window.location.href = "/waiting-approval";
+        return
+      }
       window.location.href = '/user/dashboard';
     } catch (error: any) {
       toast({
