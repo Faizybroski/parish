@@ -63,7 +63,7 @@ const CreateEvent = () => {
     is_mystery_dinner: false,
     guest_invitation_type: "",
     is_paid: false,
-    event_fee: 0,
+    event_fee: "",
   });
   const [newTag, setNewTag] = useState("");
   const { user, loading: authLoading } = useAuth();
@@ -728,7 +728,7 @@ const CreateEvent = () => {
                         min="0"
                         step="0.01"
                         placeholder="0.00"
-                        value={formData.event_fee}
+                        value={formData.event_fee ?? ""}
                         onChange={(e) =>
                           handleInputChange(
                             "event_fee",

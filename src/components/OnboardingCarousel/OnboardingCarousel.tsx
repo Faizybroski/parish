@@ -216,6 +216,28 @@ export const OnboardingCarousel = () => {
                 )}
               </button>
             </div>
+             <div className="space-y-1">
+              <Label htmlFor="linkedin">Linked in</Label>
+              <Input
+                id="linkedin"
+                type="text"
+                placeholder="Enter your Linked in username*"
+                value={linkedin}
+                onChange={(e) => setLinkedin(e.target.value)}
+                required
+              />
+            </div>
+            <div className="space-y-1">
+              <Label htmlFor="instagram">Instagram</Label>
+              <Input
+                id="instagram"
+                type="text"
+                placeholder="Enter your instagram username*"
+                value={instagram}
+                onChange={(e) => setInstagram(e.target.value)}
+                required
+              />
+            </div>
             {!isLogin && (
               <>
                 <div className="space-y-1">
