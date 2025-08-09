@@ -338,14 +338,14 @@ const CreateEvent = () => {
             open={emailInviteModelOpen}
             onClose={() => setEmailInviteModelOpen(false)}
             onInviteResolved={(guestIds) => setInvitedGuestIds(guestIds)}
-            subscriptionStatus={"free"}
+            subscriptionStatus={subscriptionStatus}
           />
 
           <CrossedPathInviteModal
             open={crossedPathInviteModelOpen}
             onClose={() => setCrossedPathInviteModelOpen(false)}
             onInviteResolved={(guestIds) => setInvitedGuestIds(guestIds)}
-            subscriptionStatus={"free"}
+            subscriptionStatus={subscriptionStatus}
           />
 
           <form onSubmit={handleSubmit} className="space-y-8">

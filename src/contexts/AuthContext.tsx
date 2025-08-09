@@ -60,7 +60,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         data: {
           first_name: metadata?.first_name,
           last_name: metadata?.last_name,
-          role: 'user' // Always assign 'user' role during signup
+          instagram_username: metadata?.instagram_username,
+          linkedin_username: metadata?.linkedin_username,
+          role: 'user', // Always assign 'user' role during signup
+          approval_status: 'pending'
         }
       }
     });
@@ -98,7 +101,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
               window.location.href = '/user/dashboard';
               break;
           }
-        }, 100); 
+        }, 100); // Small delay to ensure auth state is updated
       }
     }
     

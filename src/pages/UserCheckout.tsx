@@ -42,21 +42,21 @@ function CheckoutForm({
   const navigate = useNavigate();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
-  const [postalCode, setPostalCode] = useState("");
+      const [postalCode, setPostalCode] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!stripe || !elements || loading) return;
 
-    const cardNumberElement = elements.getElement(CardNumberElement);
-    const cardExpiryElement = elements.getElement(CardExpiryElement);
-    const cardCvcElement = elements.getElement(CardCvcElement);
-
-    if (!cardNumberElement || !cardExpiryElement || !cardCvcElement) {
-      toast({ title: "Please fill in all card details" });
-      setLoading(false);
-      return;
-    }
+      const cardNumberElement = elements.getElement(CardNumberElement);
+  const cardExpiryElement = elements.getElement(CardExpiryElement);
+  const cardCvcElement = elements.getElement(CardCvcElement);
+  
+  if (!cardNumberElement || !cardExpiryElement || !cardCvcElement) {
+    toast({ title: "Please fill in all card details" });
+    setLoading(false);
+    return;
+  }
 
     setLoading(true);
 
@@ -66,7 +66,7 @@ function CheckoutForm({
         billing_details: {
           name: userName,
           email: userEmail,
-          address: { postal_code: postalCode },
+    address: { postal_code: postalCode },
         },
       },
     });
@@ -113,48 +113,49 @@ function CheckoutForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div>
-        <label className="block text-sm mb-2">Card Number</label>
-        <div className="p-3 bg-white rounded-md text-black">
-          <CardNumberElement />
-        </div>
-      </div>
+    
+<form onSubmit={handleSubmit} className="space-y-6">
+  <div>
+    <label className="block text-sm mb-2">Card Number</label>
+    <div className="p-3 bg-white rounded-md text-black">
+      <CardNumberElement />
+    </div>
+  </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm mb-2">Expiry Date</label>
-          <div className="p-3 bg-white rounded-md text-black">
-            <CardExpiryElement />
-          </div>
-        </div>
-        <div>
-          <label className="block text-sm mb-2">CVC</label>
-          <div className="p-3 bg-white rounded-md text-black">
-            <CardCvcElement />
-          </div>
-        </div>
+  <div className="grid grid-cols-2 gap-4">
+    <div>
+      <label className="block text-sm mb-2">Expiry Date</label>
+      <div className="p-3 bg-white rounded-md text-black">
+        <CardExpiryElement />
       </div>
-
-      <div>
-        <label className="block text-sm mb-2">Postal Code</label>
-        <input
-          type="text"
-          value={postalCode}
-          onChange={(e) => setPostalCode(e.target.value)}
-          className="w-full p-3 rounded-md bg-white text-black"
-          required
-        />
+    </div>
+    <div>
+      <label className="block text-sm mb-2">CVC</label>
+      <div className="p-3 bg-white rounded-md text-black">
+        <CardCvcElement />
       </div>
+    </div>
+  </div>
 
-      <Button
-        type="submit"
-        disabled={!stripe || loading}
-        className="w-full bg-indigo-600 hover:bg-indigo-700 text-white"
-      >
-        {loading ? "Processing..." : "Pay Now"}
-      </Button>
-    </form>
+  <div>
+    <label className="block text-sm mb-2">Postal Code</label>
+    <input
+      type="text"
+      value={postalCode}
+      onChange={(e) => setPostalCode(e.target.value)}
+      className="w-full p-3 rounded-md bg-white text-black"
+      required
+    />
+  </div>
+
+  <Button
+    type="submit"
+    disabled={!stripe || loading}
+    className="w-full bg-indigo-600 hover:bg-indigo-700 text-white"
+  >
+    {loading ? "Processing..." : "Pay Now"}
+  </Button>
+</form>
   );
 }
 
@@ -165,8 +166,7 @@ export default function UserCheckout() {
   const { publishableKey, clientSecret, plan, planId, userName, userEmail } =
     location.state || {};
 
-  const [stripePromise, setStripePromise] =
-    useState<Promise<Stripe | null> | null>(null);
+  const [stripePromise, setStripePromise] = useState<Promise<Stripe | null> | null>(null);
 
   useEffect(() => {
     if (!publishableKey || !clientSecret || !plan || !planId || !userEmail) {
@@ -181,10 +181,11 @@ export default function UserCheckout() {
   }
 
   return (
-    <div className="min-h-screen bg-[#121212] text-white px-4 py-10 flex flex-col items-center">
-      <div className="w-full max-w-2xl space-y-6">
-        <Card className="bg-[#1e1e1e] text-white border-none shadow-lg">
-          <CardHeader>
+ <div className="min-h-screen bg-[#121212] text-white px-4 py-10 flex flex-col items-center">
+  <div className="w-full max-w-2xl space-y-6">
+
+    <Card className="bg-[#1e1e1e] text-white border-none shadow-lg">          
+      <CardHeader>
             <CardTitle>User Info</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -198,9 +199,7 @@ export default function UserCheckout() {
               />
             </div>
             <div>
-              <label className="text-sm text-muted-foreground">
-                Email Address
-              </label>
+              <label className="text-sm text-muted-foreground">Email Address</label>
               <input
                 type="email"
                 readOnly
@@ -229,18 +228,19 @@ export default function UserCheckout() {
             </ul>
           </CardContent>
         </Card>
-        <div className="bg-[#1e1e1e] p-6 rounded-2xl shadow-lg border border-neutral-800">
-          <Elements stripe={stripePromise} options={{ clientSecret }}>
-            <CheckoutForm
-              plan={plan}
-              planId={planId}
-              userName={userName}
-              userEmail={userEmail}
-              clientSecret={clientSecret}
-            />
-          </Elements>
-        </div>
+ <div className="bg-[#1e1e1e] p-6 rounded-2xl shadow-lg border border-neutral-800">
+            <Elements stripe={stripePromise} options={{ clientSecret }}>
+      <CheckoutForm
+        plan={plan}
+        planId={planId}
+        userName={userName}
+        userEmail={userEmail}
+        clientSecret={clientSecret}
+      />
+    </Elements>
+    </div>
       </div>
     </div>
+
   );
 }

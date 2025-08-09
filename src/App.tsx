@@ -53,6 +53,7 @@ import AdminEventDetails from "./pages/AdminEventDetails";
 import RSVPDetails from "./pages/RSVPdetails";
 import WalletWithdraw from "./pages/WalletWithdraw";
 import AdminWalletRequests from "./pages/admin/AdminWalletRequests";
+import PendingApproval from "./pages/waitingApprovalPage";
 
 const queryClient = new QueryClient();
 
@@ -344,6 +345,16 @@ const App = () => (
                 }
               />
               <Route
+                path="/admin/users"
+                element={
+                  <ProtectedAdminRoute>
+                    <AdminLayout>
+                      <AdminUsers />
+                    </AdminLayout>
+                  </ProtectedAdminRoute>
+                }
+              />
+              <Route
                 path="/admin/event/:eventId/details"
                 element={
                   <ProtectedAdminRoute>
@@ -359,16 +370,6 @@ const App = () => (
                   <ProtectedAdminRoute requireSuperAdmin={false}>
                     <AdminLayout>
                       <AdminWalletRequests />
-                    </AdminLayout>
-                  </ProtectedAdminRoute>
-                }
-              />
-              <Route
-                path="/admin/users"
-                element={
-                  <ProtectedAdminRoute>
-                    <AdminLayout>
-                      <AdminUsers />
                     </AdminLayout>
                   </ProtectedAdminRoute>
                 }
@@ -512,6 +513,10 @@ const App = () => (
                     </AdminLayout>
                   </ProtectedAdminRoute>
                 }
+              />
+              <Route 
+                path="/waiting-approval"
+                element={<PendingApproval/>}
               />
               <Route
                 path="/admin/manage-subscriptions"

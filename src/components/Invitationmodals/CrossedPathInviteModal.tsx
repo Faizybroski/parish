@@ -1,7 +1,7 @@
 import {
     Dialog,
     DialogContent,
-    DialogHeader,
+    DialogHeader, 
     DialogTitle,
 } from "@/components/ui/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useProfile } from "@/hooks/useProfile";
-import { toast } from "@/components/ui/use-toast"; // ✅ Toast import
+import { toast } from "@/components/ui/use-toast"; 
 import { useNavigate } from "react-router-dom"; 
 
 interface Profile {
