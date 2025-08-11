@@ -67,10 +67,16 @@ const CrossedPaths = () => {
           user1:profiles!crossed_paths_user1_id_fkey(
             id, user_id, first_name, last_name, profile_photo_url, job_title, 
             location_city, dining_style, dietary_preferences, gender_identity
+                payments:payments!payments_user_id_fkey (
+                        status
+                )
           ),
           user2:profiles!crossed_paths_user2_id_fkey(
             id, user_id, first_name, last_name, profile_photo_url, job_title, 
             location_city, dining_style, dietary_preferences, gender_identity
+              payments:payments!payments_user_id_fkey (
+                    status
+              )
           )
         `)
         .or(`user1_id.eq.${profile.user_id},user2_id.eq.${profile.user_id}`)
@@ -119,6 +125,9 @@ const CrossedPaths = () => {
           return {
             ...path,
             matched_user: path.user1_id === profile.user_id ? path.user2 : path.user1,
+            payment_status: path.user1_id === profile.user_id 
+            ? path.user2.payments?.[0]?.status || 'free'
+            : path.user1.payments?.[0]?.status || 'free',
             total_crosses: totalCrosses,
             locations: [...new Set(locations)], // Remove duplicates
             location_details: locationDetails
@@ -204,7 +213,12 @@ return (
                       <div className="flex-1 min-w-0">
                         <h3 className="text-base sm:text-lg font-semibold text-foreground">
                           {path.matched_user.first_name} {path.matched_user.last_name}
-                        </h3>
+                           {path.payment_status === 'completed' ? (
+                              <span className="px-3 py-1 text-xs font-semibold text-black bg-yellow-400 rounded-full ml-4">🌟 Paid</span>
+                            ) : (
+                              <span className="px-3 py-1 text-xs font-semibold text-white bg-[rgb(0,30,83)] rounded-full ml-4">🆓 Free</span>
+                            )}
+                                                  </h3>
                         {path.matched_user.job_title && (
                           <p className="text-sm sm:text-base text-muted-foreground truncate">
                             {path.matched_user.job_title}
