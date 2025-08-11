@@ -234,13 +234,13 @@ const handleRejectUser = async () => {
       } else {
         console.log("✅ User deleted successfully!");
         // Log audit action
-        await supabase.from("audit_logs").insert({
-          admin_id: currentUser?.id,
-          action: "delete_user",
-          target_type: "user",
-          target_id: user.user_id,
-          notes: "User deleted via admin panel",
-        });
+        // await supabase.from("audit_logs").insert({
+        //   admin_id: currentUser?.id,
+        //   action: "delete_user",
+        //   target_type: "user",
+        //   target_id: user.user_id,
+        //   notes: "User deleted via admin panel",
+        // });
 
         toast({ title: "User deleted successfully" });
         onUserUpdate();
