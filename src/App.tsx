@@ -51,7 +51,11 @@ import PaymentCheckoutPage from "./pages/PaymentCheckoutPage";
 import RsvpSuccessPage from "./pages/RsvpSuccessPage";
 import AdminEventDetails from "./pages/AdminEventDetails";
 import RSVPDetails from "./pages/RSVPDetails";
+import WalletWithdraw from "./pages/WalletWithdraw";
+import AdminWalletRequests from "./pages/admin/AdminWalletRequests";
 import PendingApproval from "./pages/waitingApprovalPage";
+import RejectedRegistration from "./pages/RejectRegistration"
+import SuspendedAccount from "./pages/SuspendedAccount";
 
 const queryClient = new QueryClient();
 
@@ -495,7 +499,11 @@ const App = () => (
               />
               <Route 
                 path="/waiting-approval"
-                element={<PendingApproval/>}
+                element={
+                  <ProtectedRoute>
+                    <PendingApproval/>
+                  </ProtectedRoute>
+              }
               />
               <Route
                 path="/admin/manage-subscriptions"
@@ -504,6 +512,22 @@ const App = () => (
                     <AdminLayout>
                       <ManageSubscriptions />
                     </AdminLayout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route 
+                path="rejected-profile"
+                element={
+                  <ProtectedRoute>
+                    <RejectedRegistration />
+                  </ProtectedRoute>
+                }
+              />
+              <Route 
+                path="suspended-user"
+                element={
+                  <ProtectedRoute>
+                    <SuspendedAccount />
                   </ProtectedRoute>
                 }
               />

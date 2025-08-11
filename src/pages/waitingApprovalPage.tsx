@@ -2,9 +2,6 @@ import { useEffect } from "react";
 import { Clock, Mail, Shield } from "lucide-react"; // Icons for waiting/verification
 
 const PendingApproval = () => {
-  useEffect(() => {
-    console.info("User is pending approval – display waiting page.");
-  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#121212] via-[#1E1E1E] to-[#121212] flex flex-col items-center justify-center px-6 relative overflow-hidden">
