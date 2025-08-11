@@ -21,20 +21,56 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     // Only run redirection logic when we have both user and profile data
     if (user && profile && !authLoading && !profileLoading) {
       const currentPath = location.pathname;
-      
+
       console.log('🔍 ProtectedRoute: Checking user role and redirection', {
         userEmail: user.email,
         profileRole: profile.role,
         currentPath,
         onboardingCompleted: profile.onboarding_completed
       });
-      
+
+      if (profile.approval_status === 'pending' 
+          && profile.onboarding_completed 
+          && currentPath !== '/waiting-approval') {
+        console.log('⏳ ProtectedRoute: User approval pending, redirecting...');
+        navigate('/waiting-approval', { replace: true });
+        return;
+      }
+
+      if (profile.approval_status === 'rejected' && currentPath !== '/rejected-profile') {
+        navigate('/rejected-profile', { replace: true });
+        return;
+      }
+
+      if ( profile.is_suspended && currentPath !== "/suspended-user") {
+        navigate("/suspended-user", { replace: true });
+        return;
+    }
+
+      if (currentPath === '/waiting-approval' && profile.approval_status !== 'pending') {
+        console.log('✅ ProtectedRoute: Approval granted, redirecting to home');
+        navigate('/', { replace: true });
+        return;
+      }
+
+      if (currentPath === '/rejected-profile' && profile.approval_status !== 'rejected') {
+        console.log('✅ ProtectedRoute: User is not rejected, redirecting to home');
+        navigate('/', { replace: true });
+        return;
+      }
+
+      if (currentPath === '/suspended-user' && !profile.is_suspended ) {
+        console.log('✅ ProtectedRoute: User is not suspended, redirecting to home');
+        navigate('/', { replace: true });
+        return;
+      }
+  
       // Skip redirection if we're already on auth pages
       if (currentPath.startsWith('/auth')) {
         console.log('🔄 ProtectedRoute: Skipping redirect - on auth page');
         return;
       }
-      
+
       // Role-based redirection logic - Admins should ALWAYS be redirected to admin area
       if (profile.role === 'superadmin') {
         console.log('👑 ProtectedRoute: SuperAdmin detected');

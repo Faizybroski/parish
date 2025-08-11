@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -48,6 +48,11 @@ const OnboardingFlow = () => {
   const navigate = useNavigate();
   const { profile, loading: profileLoading } = useProfile();
 
+  useEffect(() => {
+    if (!profileLoading && profile?.approval_status === "pending") {
+      navigate("/waiting-approval", { replace: true });
+    }
+  }, [profile, profileLoading, navigate]);
 
   const updateOnboardingData = (field: string, value: any) => {
     setOnboardingData(prev => ({
