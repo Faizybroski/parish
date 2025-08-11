@@ -191,213 +191,223 @@ const AdminCrossedPaths = () => {
     );
   }
 
-  return (
-    <div className="min-h-screen bg-background">
-  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <div className="space-y-8">
-      {/* Header */}
-      <div>
-        <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Crossed Paths Analytics</h1>
-        <p className="text-muted-foreground mt-1 text-sm sm:text-base">
-          Monitor user interactions and restaurant visit patterns
-        </p>
-      </div>
+return (
+  <div className="min-h-screen bg-background">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+      <div className="space-y-6 sm:space-y-8">
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {[
-          { label: "Total Crossed Paths", value: stats.totalCrossedPaths, icon: Users },
-          { label: "Active Paths", value: stats.activePaths, icon: TrendingUp },
-          { label: "Recent Activity", value: stats.recentActivity, icon: Calendar },
-          { label: "Top Restaurants", value: stats.topRestaurants.length, icon: Building },
-        ].map((stat, index) => (
-          <Card key={index} className="shadow-card border-border">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-muted-foreground text-sm">{stat.label}</p>
-                  <p className="text-2xl font-bold text-foreground">{stat.value}</p>
-                </div>
-                <stat.icon className="h-8 w-8 text-peach-gold flex-shrink-0" />
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+        {/* Header */}
+        <header>
+          <h1 className="text-xl sm:text-3xl font-bold text-foreground">
+            Crossed Paths Analytics
+          </h1>
+          <p className="text-muted-foreground mt-1 text-sm sm:text-base">
+            Monitor user interactions and restaurant visit patterns
+          </p>
+        </header>
 
-      {/* Top Restaurants */}
-      <Card className="shadow-card border-border">
-        <CardHeader>
-          <CardTitle>Top Restaurants for Crossed Paths</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-2">
-            {stats.topRestaurants.map((restaurant, index) => (
-              <div
-                key={restaurant.name}
-                className="flex flex-col sm:flex-row sm:items-center sm:justify-between"
-              >
-                <span className="text-foreground">
-                  #{index + 1} {restaurant.name}
-                </span>
-                <Badge variant="secondary" className="mt-1 sm:mt-0">
-                  {restaurant.count} crosses
-                </Badge>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Filters */}
-      <Card className="shadow-card border-border">
-        <CardContent className="p-6">
-          <div className="flex flex-col lg:flex-row gap-4">
-            <div className="flex-1 min-w-[200px]">
-              <div className="relative">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search users or restaurants..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-            </div>
-            <Select value={minCrossCount} onValueChange={setMinCrossCount}>
-              <SelectTrigger className="w-full sm:w-48">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="1">1+ Crosses</SelectItem>
-                <SelectItem value="2">2+ Crosses</SelectItem>
-                <SelectItem value="3">3+ Crosses</SelectItem>
-                <SelectItem value="5">5+ Crosses</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select value={sortBy} onValueChange={setSortBy}>
-              <SelectTrigger className="w-full sm:w-48">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="newest">Newest First</SelectItem>
-                <SelectItem value="oldest">Oldest First</SelectItem>
-                <SelectItem value="most_crosses">Most Crosses</SelectItem>
-                <SelectItem value="restaurant">By Restaurant</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Crossed Paths List */}
-      {filteredPaths.length === 0 ? (
-        <Card className="shadow-card border-border">
-          <CardContent className="py-12 text-center">
-            <Users className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-foreground mb-2">
-              No crossed paths found
-            </h3>
-            <p className="text-muted-foreground text-sm sm:text-base">
-              Try adjusting your search or filter criteria
-            </p>
-          </CardContent>
-        </Card>
-      ) : (
-        <div className="grid gap-4">
-          {filteredPaths.map((path) => (
-            <Card key={path.id} className="shadow-card border-border">
-              <CardContent className="p-6">
-                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-                  {/* Users Info */}
-                  <div className="flex flex-col sm:flex-row items-center sm:items-start sm:space-x-6 flex-1">
-                    {/* User A */}
-                    <div className="flex items-center space-x-2">
-                      <Avatar className="h-10 w-10">
-                        <AvatarImage src={path.user_a.profile_photo_url} />
-                        <AvatarFallback className="bg-peach-gold text-background">
-                          {path.user_a.first_name?.[0]}
-                          {path.user_a.last_name?.[0]}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="text-center sm:text-left">
-                        <div className="text-sm font-medium text-foreground truncate max-w-[120px]">
-                          {path.user_a.first_name} {path.user_a.last_name}
-                        </div>
-                        <div className="text-xs text-muted-foreground truncate max-w-[150px]">
-                          {path.user_a.email}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Cross Count */}
-                    <div className="flex flex-col items-center justify-center mx-0 sm:mx-4 my-2 sm:my-0">
-                      <Badge variant="secondary" className="mb-1">
-                        {path.cross_count} crosses
-                      </Badge>
-                      <div className="text-xs text-muted-foreground">↔</div>
-                    </div>
-
-                    {/* User B */}
-                    <div className="flex items-center space-x-2">
-                      <Avatar className="h-10 w-10">
-                        <AvatarImage src={path.user_b.profile_photo_url} />
-                        <AvatarFallback className="bg-peach-gold text-background">
-                          {path.user_b.first_name?.[0]}
-                          {path.user_b.last_name?.[0]}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="text-center sm:text-left">
-                        <div className="text-sm font-medium text-foreground truncate max-w-[120px]">
-                          {path.user_b.first_name} {path.user_b.last_name}
-                        </div>
-                        <div className="text-xs text-muted-foreground truncate max-w-[150px]">
-                          {path.user_b.email}
-                        </div>
-                      </div>
-                    </div>
+        {/* Stats Cards */}
+        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          {[
+            { label: "Total Crossed Paths", value: stats.totalCrossedPaths, icon: Users },
+            { label: "Active Paths", value: stats.activePaths, icon: TrendingUp },
+            { label: "Recent Activity", value: stats.recentActivity, icon: Calendar },
+            { label: "Top Restaurants", value: stats.topRestaurants.length, icon: Building },
+          ].map((stat, index) => (
+            <Card key={index} className="shadow-card border-border">
+              <CardContent className="p-4 sm:p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-muted-foreground text-xs sm:text-sm">{stat.label}</p>
+                    <p className="text-lg sm:text-2xl font-bold text-foreground">{stat.value}</p>
                   </div>
-
-                  {/* Restaurant & Action */}
-                  <div className="flex flex-col items-center sm:items-end space-y-2 sm:space-y-3 w-full sm:w-auto">
-                    <div className="text-center sm:text-right">
-                      <div className="text-sm font-medium text-foreground flex items-center justify-center sm:justify-end">
-                        <MapPin className="h-4 w-4 mr-1" />
-                        <span className="truncate max-w-[180px]">
-                          {path.restaurant_name || "Unknown location"}
-                        </span>
-                      </div>
-                      <div className="text-xs text-muted-foreground flex items-center justify-center sm:justify-end mt-1">
-                        <Calendar className="h-4 w-4 mr-1" />
-                        {new Date(path.date_crossed).toLocaleDateString()}
-                      </div>
-                    </div>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() =>
-                        createPrivateDinnerSuggestion(
-                          path.user_a_id,
-                          path.user_b_id,
-                          path.restaurant_name
-                        )
-                      }
-                    >
-                      <MessageCircle className="h-4 w-4 mr-1" />
-                      Suggest Dinner
-                    </Button>
-                  </div>
+                  <stat.icon className="h-6 w-6 sm:h-8 sm:w-8 text-peach-gold flex-shrink-0" />
                 </div>
               </CardContent>
             </Card>
           ))}
-        </div>
-      )}
+        </section>
+
+        {/* Top Restaurants */}
+        <Card className="shadow-card border-border">
+          <CardHeader>
+            <CardTitle className="text-lg sm:text-xl">
+              Top Restaurants for Crossed Paths
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              {stats.topRestaurants.map((restaurant, index) => (
+                <div
+                  key={restaurant.name}
+                  className="flex flex-col sm:flex-row sm:items-center sm:justify-between"
+                >
+                  <span className="truncate text-sm sm:text-base">
+                    #{index + 1} {restaurant.name}
+                  </span>
+                  <Badge variant="secondary" className="mt-1 sm:mt-0">
+                    {restaurant.count} crosses
+                  </Badge>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Filters */}
+        <Card className="shadow-card border-border">
+          <CardContent className="p-4 sm:p-6">
+            <div className="flex flex-col lg:flex-row flex-wrap gap-3">
+              {/* Search */}
+              <div className="flex-1 min-w-[200px]">
+                <div className="relative">
+                  <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search users or restaurants..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+              </div>
+
+              {/* Select Filters */}
+              <Select value={minCrossCount} onValueChange={setMinCrossCount}>
+                <SelectTrigger className="w-full sm:w-auto min-w-[150px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="1">1+ Crosses</SelectItem>
+                  <SelectItem value="2">2+ Crosses</SelectItem>
+                  <SelectItem value="3">3+ Crosses</SelectItem>
+                  <SelectItem value="5">5+ Crosses</SelectItem>
+                </SelectContent>
+              </Select>
+
+              <Select value={sortBy} onValueChange={setSortBy}>
+                <SelectTrigger className="w-full sm:w-auto min-w-[150px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="newest">Newest First</SelectItem>
+                  <SelectItem value="oldest">Oldest First</SelectItem>
+                  <SelectItem value="most_crosses">Most Crosses</SelectItem>
+                  <SelectItem value="restaurant">By Restaurant</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Crossed Paths */}
+        {filteredPaths.length === 0 ? (
+          <Card className="shadow-card border-border">
+            <CardContent className="py-10 text-center">
+              <Users className="h-10 w-10 text-muted-foreground mx-auto mb-3" />
+              <h3 className="text-base sm:text-lg font-semibold text-foreground mb-1">
+                No crossed paths found
+              </h3>
+              <p className="text-muted-foreground text-xs sm:text-sm">
+                Try adjusting your search or filter criteria
+              </p>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="grid gap-3 sm:gap-4">
+            {filteredPaths.map((path) => (
+              <Card key={path.id} className="shadow-card border-border">
+                <CardContent className="p-4 sm:p-6">
+                  <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 md:gap-6 flex-wrap">
+                    
+                    {/* Users Info */}
+                    <div className="flex flex-col sm:flex-row flex-wrap items-center sm:items-start sm:space-x-6 flex-1">
+                      
+                      {/* User A */}
+                      <div className="flex items-center space-x-2 min-w-[140px]">
+                        <Avatar className="h-9 w-9 sm:h-10 sm:w-10">
+                          <AvatarImage src={path.user_a.profile_photo_url} />
+                          <AvatarFallback className="bg-peach-gold text-background">
+                            {path.user_a.first_name?.[0]}
+                            {path.user_a.last_name?.[0]}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="text-center sm:text-left">
+                          <p className="text-xs sm:text-sm font-medium truncate max-w-[120px]">
+                            {path.user_a.first_name} {path.user_a.last_name}
+                          </p>
+                          <p className="text-[10px] sm:text-xs text-muted-foreground truncate max-w-[140px]">
+                            {path.user_a.email}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Cross Count */}
+                      <div className="flex flex-col items-center justify-center mx-2 my-2 sm:my-0">
+                        <Badge variant="secondary" className="mb-1 text-[10px] sm:text-xs">
+                          {path.cross_count} crosses
+                        </Badge>
+                        <div className="text-[10px] sm:text-xs text-muted-foreground">↔</div>
+                      </div>
+
+                      {/* User B */}
+                      <div className="flex items-center space-x-2 min-w-[140px]">
+                        <Avatar className="h-9 w-9 sm:h-10 sm:w-10">
+                          <AvatarImage src={path.user_b.profile_photo_url} />
+                          <AvatarFallback className="bg-peach-gold text-background">
+                            {path.user_b.first_name?.[0]}
+                            {path.user_b.last_name?.[0]}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="text-center sm:text-left">
+                          <p className="text-xs sm:text-sm font-medium truncate max-w-[120px]">
+                            {path.user_b.first_name} {path.user_b.last_name}
+                          </p>
+                          <p className="text-[10px] sm:text-xs text-muted-foreground truncate max-w-[140px]">
+                            {path.user_b.email}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Restaurant & Action */}
+                    <div className="flex flex-col items-center sm:items-end space-y-2 w-full sm:w-auto">
+                      <div className="text-center sm:text-right">
+                        <div className="text-xs sm:text-sm font-medium flex items-center justify-center sm:justify-end truncate max-w-[200px]">
+                          <MapPin className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                          {path.restaurant_name || "Unknown location"}
+                        </div>
+                        <div className="text-[10px] sm:text-xs text-muted-foreground flex items-center justify-center sm:justify-end mt-1">
+                          <Calendar className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                          {new Date(path.date_crossed).toLocaleDateString()}
+                        </div>
+                      </div>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="w-full sm:w-auto"
+                        onClick={() =>
+                          createPrivateDinnerSuggestion(
+                            path.user_a_id,
+                            path.user_b_id,
+                            path.restaurant_name
+                          )
+                        }
+                      >
+                        <MessageCircle className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                        Suggest Dinner
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   </div>
-</div>
+);
 
-  );
 };
 
 export default AdminCrossedPaths;
