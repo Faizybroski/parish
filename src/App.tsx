@@ -100,6 +100,15 @@ const App = () => (
                 }
               />
               <Route
+                path="/wallet/withdraw"
+                element={
+                  <ProtectedRoute>
+                    <Navigation />
+                    <WalletWithdraw />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
                 path="/create-event"
                 element={
                   <ProtectedRoute>
@@ -135,7 +144,7 @@ const App = () => (
                   </>
                 }
               />
-               <Route
+              <Route
                 path="/rsvp/:eventId/details"
                 element={
                   <>
@@ -321,9 +330,9 @@ const App = () => (
                 path="/admin/events/create"
                 element={
                   <ProtectedAdminRoute>
-                     <AdminLayout>
-                    <AdminCreateEvent />
-                     </AdminLayout>
+                    <AdminLayout>
+                      <AdminCreateEvent />
+                    </AdminLayout>
                   </ProtectedAdminRoute>
                 }
               />
@@ -331,19 +340,9 @@ const App = () => (
                 path="/admin/event/:eventId/edit"
                 element={
                   <ProtectedAdminRoute>
-                     <AdminLayout>
-                    <AdminEditEvent />
-                     </AdminLayout>
-                  </ProtectedAdminRoute>
-                }
-              />
-              <Route
-                path="/admin/event/:eventId/details"
-                element={
-                  <ProtectedAdminRoute>
-                     <AdminLayout>
-                    <AdminEventDetails />
-                     </AdminLayout>
+                    <AdminLayout>
+                      <AdminEditEvent />
+                    </AdminLayout>
                   </ProtectedAdminRoute>
                 }
               />
@@ -353,6 +352,26 @@ const App = () => (
                   <ProtectedAdminRoute>
                     <AdminLayout>
                       <AdminUsers />
+                    </AdminLayout>
+                  </ProtectedAdminRoute>
+                }
+              />
+              <Route
+                path="/admin/event/:eventId/details"
+                element={
+                  <ProtectedAdminRoute>
+                    <AdminLayout>
+                      <AdminEventDetails />
+                    </AdminLayout>
+                  </ProtectedAdminRoute>
+                }
+              />
+              <Route
+                path="/admin/wallet/requests"
+                element={
+                  <ProtectedAdminRoute requireSuperAdmin={false}>
+                    <AdminLayout>
+                      <AdminWalletRequests />
                     </AdminLayout>
                   </ProtectedAdminRoute>
                 }
