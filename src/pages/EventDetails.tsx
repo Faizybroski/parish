@@ -57,6 +57,7 @@ interface Event {
     last_name: string;
     profile_photo_url: string;
     email: string;
+    user_id: string;
   };
   restaurants?: {
     name: string;
@@ -207,6 +208,7 @@ const EventDetails = () => {
           *,
           profiles:creator_id (
             first_name,
+            user_id,
             last_name,
             profile_photo_url,
             email
@@ -224,9 +226,13 @@ const EventDetails = () => {
             created_at,
             profiles:user_id (
               first_name,
+              user_id,
               last_name,
               profile_photo_url,
-              email
+              email,
+              payments:payments!payments_user_id_fkey (
+                  status
+                )
             )
           )
         `
@@ -1355,7 +1361,7 @@ const EventDetails = () => {
                 <CardHeader>
                   <CardTitle>Attendees ({confirmedRSVPs.length})</CardTitle>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="p-2">
                   <div className="space-y-3">
                     {confirmedRSVPs.map((rsvp) => (
                       <div
@@ -1376,6 +1382,11 @@ const EventDetails = () => {
                             <span className="text-sm font-medium">
                               {rsvp.profiles?.first_name || "Unknown"}{" "}
                               {rsvp.profiles?.last_name || "User"}
+                              {rsvp.profiles.payments?.[0]?.status === "completed" ? (
+                                 <span className="px-2 py-1 text-xs font-semibold text-black bg-yellow-400 rounded-full ml-2">🌟 Paid</span>
+                              ) : (
+                               <span className="px-2 py-1 text-xs font-semibold text-white bg-[rgb(0,30,83)] rounded-full ml-2"> 🆓 Free</span>
+                              )}
                             </span>
                             {isCreator && (
                               <span className="text-xs text-muted-foreground">

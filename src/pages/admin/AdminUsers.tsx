@@ -714,6 +714,8 @@ const AdminUsers = () => {
   const [statusFilter, setStatusFilter] = useState("all");
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [showUserDetails, setShowUserDetails] = useState(false);
+    const [showEditModal, setShowEditModal] = useState(false);
+  const [editUserData, setEditUserData] = useState(null);
 
   useEffect(() => {
     if (
@@ -908,7 +910,14 @@ const getUserStatus = (user: User) => {
                     >
                       <Eye className="h-4 w-4" />
                     </Button>
-                    <Button size="sm" variant="outline">
+                   <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        setEditUserData(user);
+                        setShowEditModal(true);
+                      }}
+                    >
                       <Edit className="h-4 w-4" />
                     </Button>
                   </div>
@@ -927,6 +936,131 @@ const getUserStatus = (user: User) => {
     onOpenChange={setShowUserDetails}
     onUserUpdate={fetchUsers}
   />
+  <Dialog open={showEditModal} onOpenChange={setShowEditModal}>
+  <DialogContent>
+    <DialogHeader>
+      <DialogTitle>Edit User</DialogTitle>
+    </DialogHeader>
+
+    {editUserData && (
+      <div className="space-y-4">
+        <div>
+          <Label>First Name</Label>
+          <Input
+            value={editUserData.first_name}
+            onChange={(e) =>
+              setEditUserData({ ...editUserData, first_name: e.target.value })
+            }
+          />
+        </div>
+
+        <div>
+          <Label>Last Name</Label>
+          <Input
+            value={editUserData.last_name}
+            onChange={(e) =>
+              setEditUserData({ ...editUserData, last_name: e.target.value })
+            }
+          />
+        </div>
+
+        <div>
+          <Label>Role</Label>
+          <Select
+            value={editUserData.role}
+            onValueChange={(value) =>
+              setEditUserData({ ...editUserData, role: value })
+            }
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select role" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="user">User</SelectItem>
+              <SelectItem value="admin">Admin</SelectItem>
+              <SelectItem value="superadmin">Super Admin</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div>
+          <Label>Job Title</Label>
+          <Input
+            value={editUserData.job_title || ""}
+            onChange={(e) =>
+              setEditUserData({ ...editUserData, job_title: e.target.value })
+            }
+          />
+        </div>
+
+        <div>
+          <Label>City</Label>
+          <Input
+            value={editUserData.location_city || ""}
+            onChange={(e) =>
+              setEditUserData({ ...editUserData, location_city: e.target.value })
+            }
+          />
+        </div>
+          <Label>Instagram</Label>
+        <Input
+          value={editUserData.instagram_username || ""}
+          onChange={(e) =>
+            setEditUserData({
+              ...editUserData,
+              instagram_username: e.target.value,
+            })
+          }
+          placeholder="Instagram Username"
+        />
+        <Label>LinkedIn</Label>
+        <Input
+          value={editUserData.linkedin_username || ""}
+          onChange={(e) =>
+            setEditUserData({
+              ...editUserData,
+              linkedin_username: e.target.value,
+            })
+          }
+          placeholder="LinkedIn Username"
+        />
+
+        <div className="flex justify-end space-x-2">
+          <Button variant="outline" onClick={() => setShowEditModal(false)}>
+            Cancel
+          </Button>
+          <Button
+            onClick={async () => {
+              if (!editUserData) return;
+              const { error } = await supabase
+                .from("profiles")
+                .update({
+                  first_name: editUserData.first_name,
+                  last_name: editUserData.last_name,
+                  role: editUserData.role,
+                  job_title: editUserData.job_title,
+                  location_city: editUserData.location_city,
+                  instagram_username: editUserData.instagram_username || null,
+                  linkedin_username: editUserData.linkedin_username || null,
+                })
+                .eq("id", editUserData.id);
+
+              if (error) {
+                toast({ title: "Error updating user", variant: "destructive" });
+              } else {
+                toast({ title: "User updated successfully" });
+                setShowEditModal(false);
+                fetchUsers();
+              }
+            }}
+          >
+            Save Changes
+          </Button>
+        </div>
+      </div>
+    )}
+  </DialogContent>
+</Dialog>
 </div>
 
   );
