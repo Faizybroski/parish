@@ -1,5 +1,3 @@
-// Cleaned OnboardingCarousel: Removed validation logic
-
 import React, { useState } from "react";
 import { Button } from "@/components/OnboardingCarousel/ui/button";
 import { Input } from "@/components/OnboardingCarousel/ui/input";
@@ -218,45 +216,48 @@ export const OnboardingCarousel = () => {
                 )}
               </button>
             </div>
-             <div className="space-y-1">
-              <Label htmlFor="linkedin">Linked in</Label>
-              <Input
-                id="linkedin"
-                type="text"
-                placeholder="Enter your Linked in username*"
-                value={linkedin}
-                onChange={(e) => setLinkedin(e.target.value)}
-                required
-              />
-            </div>
-            <div className="space-y-1">
-              <Label htmlFor="instagram">Instagram</Label>
-              <Input
-                id="instagram"
-                type="text"
-                placeholder="Enter your instagram username*"
-                value={instagram}
-                onChange={(e) => setInstagram(e.target.value)}
-                required
-              />
-            </div>
             {!isLogin && (
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="terms"
-                  checked={agreeToTerms}
-                  onCheckedChange={(checked) =>
-                    setAgreeToTerms(checked === true)
-                  }
-                  required
-                />
-                <Label htmlFor="terms">
-                  I agree to the{" "}
-                  <a href="#" className="text-primary underline">
-                    Terms & Conditions
-                  </a>
-                </Label>
-              </div>
+              <>
+                <div className="space-y-1">
+                  <Label htmlFor="linkedin">LinkedIn</Label>
+                  <Input
+                    id="linkedin"
+                    type="text"
+                    placeholder="Enter your LinkedIn username*"
+                    value={linkedin}
+                    onChange={(e) => setLinkedin(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="instagram">Instagram</Label>
+                  <Input
+                    id="instagram"
+                    type="text"
+                    placeholder="Enter your Instagram username*"
+                    value={instagram}
+                    onChange={(e) => setInstagram(e.target.value)}
+                    required
+                  />
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="terms"
+                    checked={agreeToTerms}
+                    onCheckedChange={(checked) =>
+                      setAgreeToTerms(checked === true)
+                    }
+                    required
+                  />
+                  <Label htmlFor="terms">
+                    I agree to the{" "}
+                    <a href="#" className="text-primary underline">
+                      Terms & Conditions
+                    </a>
+                  </Label>
+                </div>
+              </>
             )}
             <Button
               type="submit"
@@ -342,14 +343,26 @@ export const OnboardingCarousel = () => {
             <img
               src="Parishus logo.png"
               alt="Parish Logo"
-              style={{ width: "30%", paddingTop: "90px",margin:"0px auto",marginBottom:"10px" }}
+              style={{
+                width: "30%",
+                paddingTop: "90px",
+                margin: "0px auto",
+                marginBottom: "10px",
+              }}
             />
-            <h1 className="text-3xl font-playfair font-extrabold text-primary mb-4" style={{ fontSize: "40px" }}>
+            <h1
+              className="text-3xl font-playfair font-extrabold text-primary mb-4"
+              style={{ fontSize: "40px" }}
+            >
               {currentCard.title}
             </h1>
             <p
               className="font-montserrat text-muted-foreground"
-              style={{ fontWeight: "800",paddingBottom: "90px",fontSize: "21px" }}
+              style={{
+                fontWeight: "800",
+                paddingBottom: "90px",
+                fontSize: "21px",
+              }}
             >
               {currentCard.description}
             </p>

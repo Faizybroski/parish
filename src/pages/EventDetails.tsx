@@ -32,6 +32,8 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
+import { useSubscriptionStatus } from '@/hooks/useSubscriptionStatus';
+import EventAnalyticsDashboard  from "@/components/analytics/EventAnalytics";
 
 interface Event {
   id: string;
@@ -89,6 +91,9 @@ const EventDetails = () => {
   const [eventReviews, setEventReviews] = useState<any[]>([]);
   const [showRSVPConfirm, setShowRSVPConfirm] = useState(false);
   const { profile } = useProfile();
+  const subscriptionStatus = useSubscriptionStatus(profile?.id);
+  const [isInterested, setIsInterested] = useState(false);
+
   useEffect(() => {
     const fetchPayments = async () => {
       const getPaymentsByEventId = async (eventId) => {
@@ -109,6 +114,69 @@ const EventDetails = () => {
       fetchPayments();
     }
   }, [event?.id]);
+
+  useEffect(() => {
+    if (!profile || !profile.id || !eventId || !event?.creator_id) return;
+    if (!event || !event.creator_id) return; 
+
+    if (profile.id === event.creator_id) return;
+      supabase.rpc("log_event_view", {
+        p_event_id: eventId,
+        p_user_id: profile.id
+      }).then(({ error }) => {
+        if (error) {
+          console.error("Error logging view:", error);
+        } else {
+          console.log("View logged successfully");
+        }
+      });
+  }, [profile?.id, profile, eventId, event?.creator_id, event]);
+
+   useEffect(() => {
+    const checkInterest = async () => {
+       if (!profile || !profile.id || !eventId) return;
+
+      const { data, error } = await supabase
+        .from("event_analytics_logs")
+        .select("id")
+        .eq("event_id", eventId)
+        .eq("user_id", profile.id)
+        .eq("action", "interest")
+        .maybeSingle();
+
+      if (!error && data) {
+        setIsInterested(true);
+      }
+    };
+
+    checkInterest();
+  }, [profile, eventId]);
+
+  const handleInterest = async () => {
+    if (!profile) {
+      toast({ title: "Login required" });
+      return;
+    }
+
+        setLoading(true);
+
+
+    const { error } = await supabase.rpc("toggle_event_interest", {
+      p_event_id: eventId,
+      p_user_id: profile.id
+    });
+
+        setLoading(false);
+
+        if (error) {
+      console.error(error);
+      toast({ title: "Error", description: "Failed to update interest.", variant: "destructive" });
+    } else {
+      setIsInterested((prev) => !prev); // optimistic toggle
+    }
+  };
+
+
   useEffect(() => {
     const getUserProfile = async () => {
       if (user) {
@@ -500,6 +568,45 @@ const EventDetails = () => {
           description: "You're no longer attending this event.",
         });
       } else {
+
+        if (subscriptionStatus === 'free' && (!event.event_fee || event.event_fee == 0)) {
+          const startOfMonth = new Date();
+          startOfMonth.setDate(1);
+          startOfMonth.setHours(0, 0, 0, 0);
+
+          const { count, error } = await supabase
+            .from("rsvps")
+            .select("*", { count: "exact", head: true })
+            .eq("user_id", userProfileId)
+            .eq("status", "confirmed") // Optional: if you track cancellations
+            .gte("created_at", startOfMonth.toISOString());
+
+          if (error) {
+            console.error("Failed to fetch RSVP count", error.message);
+            toast({
+              title: "Error",
+              description: "Couldn't check your RSVP limit. Try again.",
+              variant: "destructive",
+            });
+            return;
+          }
+
+          if (count >= 2) {
+            toast({
+              title: "RSVP Limit Reached",
+              description: "Free users can RSVP to only 2 free events per month.",
+              variant: "destructive",
+            });
+
+            // 🔁 Delay navigation for 1.5 seconds to let the toast show
+            setTimeout(() => {
+              navigate('/subscription');
+            }, 1500);
+
+            return;
+          }
+        }
+      
         const { error: rsvpError } = await supabase.from("rsvps").insert({
           event_id: eventId,
           user_id: userProfileId,
@@ -623,6 +730,7 @@ const EventDetails = () => {
         navigate("/rsvp-success");
         fetchEvent();
       }
+    
     } catch (error) {
       console.error("Error handling RSVP:", error);
       toast({
@@ -702,6 +810,17 @@ const EventDetails = () => {
             Back to Events
           </Button>
         </div>
+
+        
+        {!isCreator && (
+          <Button
+              onClick={handleInterest}
+              disabled={loading}
+              className={isInterested ? "bg-sage-green hover:bg-sage-green/90" : "bg-peach-gold hover:bg-peach-gold/90"}
+            >
+              {loading ? "Updating..." : isInterested ? "Interested" : "Show Interest"}
+            </Button>
+        )}
 
         {showRSVPConfirm && (
           <Dialog open={showRSVPConfirm} onOpenChange={setShowRSVPConfirm}>
@@ -883,6 +1002,14 @@ const EventDetails = () => {
                 )}
               </CardContent>
             </Card>
+
+            {isCreator && <Card>
+              <EventAnalyticsDashboard
+                eventId={event.id}
+                subscriptionStatus={subscriptionStatus}
+              />
+            </Card>}
+
             {isCreator && (
               <Card>
                 <CardHeader>
@@ -1109,7 +1236,20 @@ const EventDetails = () => {
                       </Button>
                     ) : (
                       <Button
-                        onClick={handlePaidRSVP}
+                        onClick={() => {
+                          if (subscriptionStatus === 'free') {
+                            toast({
+                              title: "Premium Required",
+                              description: "You need a premium subscription to RSVP for paid events.",
+                              variant: "destructive",
+                            });
+                            setTimeout(() => {
+                              navigate('/subscription');
+                            }, 1200);
+                            return;
+                          } 
+                          handlePaidRSVP(); 
+                        }}
                         disabled={isPaying}
                         className="w-full bg-indigo-600 hover:bg-indigo-700 text-white flex items-center justify-center"
                       >

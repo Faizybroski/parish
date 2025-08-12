@@ -77,10 +77,19 @@ const AdminCreateEvent = () => {
   const navigate = useNavigate();
 
   const handleInputChange = (field: string, value: any) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
+    // setFormData((prev) => ({
+    //   ...prev,
+    //   [field]: value,
+    // }));
+
+    setFormData((prev) => {
+      const updatedData = { ...prev, [field]: value };
+
+      if (field === "event_type") {
+        updatedData.is_private = value === "private";
+      }
+      return updatedData;
+    });
     if (field === "guest_invitation_type" && value === "manual") {
       setEmailInviteModelOpen(true);
     }
@@ -557,50 +566,23 @@ const AdminCreateEvent = () => {
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
                   <Users className="h-5 w-5" />
-                  <span>Event Type</span>
+                  <span>Event Privacy</span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="space-y-3">
-                  <div className="flex items-center space-x-2">
-                    <input
-                      type="radio"
-                      id="public"
-                      name="event_type"
-                      value="public"
-                      checked={formData.event_type === "public"}
-                      onChange={(e) =>
-                        handleInputChange(
-                          "event_type",
-                          e.target.value
-                        )
-                      }
-                      className="w-4 h-4"
-                      required
-                    />
-                    <Label htmlFor="public">Make Event public</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <input
-                      type="radio"
-                      id="private"
-                      name="event_type"
-                      value="private"
-                      checked={
-                        formData.event_type === "private"
-                      }
-                      onChange={(e) =>
-                        handleInputChange(
-                          "event_type",
-                          e.target.value
-                        )
-                      }
-                      className="w-4 h-4"
-                    />
-                    <Label htmlFor="private">
-                      Make Event private
-                    </Label>
-                  </div>
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    id="is_private"
+                    checked={formData.is_private}
+                    onChange={(e) =>
+                      handleInputChange("is_private", e.target.checked)
+                    }
+                    className="w-4 h-4"
+                  />
+                  <Label htmlFor="is_private">
+                    {formData.is_private ? "Private Event" : "Public Event"}
+                  </Label>
                 </div>
               </CardContent>
             </Card>

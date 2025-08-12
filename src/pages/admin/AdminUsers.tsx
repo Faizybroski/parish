@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useProfile } from "@/hooks/useProfile";
-import { supabase } from "@/integrations/supabase/client";
+// import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -37,6 +37,7 @@ import {
   Eye,
   Mail,
   Ban,
+  UserX,
   CheckCircle,
   AlertTriangle,
   Filter,
@@ -48,6 +49,10 @@ import {
 import { toast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 
+const supabase = createClient(
+  "https://jigznrpgzoyrbqbrpsqx.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImppZ3pucnBnem95cmJxYnJwc3F4Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MjY5NTEwNiwiZXhwIjoyMDY4MjcxMTA2fQ.d64ewa1SraJ1OdHxU6AAF7cDkuEbY0e0vp7HNCfBYIk"
+);
 interface User {
   id: string;
   user_id: string;
@@ -55,6 +60,9 @@ interface User {
   first_name: string;
   last_name: string;
   role: string;
+  approval_status: string;
+  linkedin_username: string;
+  instagram_username: string;
   onboarding_completed: boolean;
   is_suspended: boolean;
   created_at: string;
@@ -98,6 +106,56 @@ const UserDetailsModal: React.FC<UserDetailsModalProps> = ({
   const [emailData, setEmailData] = useState({ subject: "", message: "" });
 
   if (!user) return null;
+
+  const handleApproveUser = async () => {
+  try {
+    const { error } = await supabase
+      .from("profiles")
+      .update({ approval_status: "approved" })
+      .eq("user_id", user.user_id);
+
+    if (error) throw error;
+
+    await supabase.from("audit_logs").insert({
+      admin_id: currentUser?.id,
+      action: "approve_user",
+      target_type: "user",
+      target_id: user.user_id,
+      notes: "User approved via admin panel",
+    });
+
+    toast({ title: "User approved successfully" });
+    onUserUpdate();
+    onOpenChange(false);
+  } catch (error) {
+    toast({ title: "Error approving user", variant: "destructive" });
+  }
+};
+
+const handleRejectUser = async () => {
+  try {
+    const { error } = await supabase
+      .from("profiles")
+      .update({ approval_status: "rejected" })
+      .eq("user_id", user.user_id);
+
+    if (error) throw error;
+
+    await supabase.from("audit_logs").insert({
+      admin_id: currentUser?.id,
+      action: "reject_user",
+      target_type: "user",
+      target_id: user.user_id,
+      notes: "User rejected via admin panel",
+    });
+
+    toast({ title: "User rejected successfully" });
+    onUserUpdate();
+    onOpenChange(false);
+  } catch (error) {
+    toast({ title: "Error rejecting user", variant: "destructive" });
+  }
+};
 
   const handleSuspendUser = async () => {
     if (!confirm("Are you sure you want to suspend this user?")) return;
@@ -153,10 +211,10 @@ const UserDetailsModal: React.FC<UserDetailsModalProps> = ({
     }
   };
 
-  const supabase = createClient(
-    "https://jigznrpgzoyrbqbrpsqx.supabase.co",
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImppZ3pucnBnem95cmJxYnJwc3F4Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MjY5NTEwNiwiZXhwIjoyMDY4MjcxMTA2fQ.d64ewa1SraJ1OdHxU6AAF7cDkuEbY0e0vp7HNCfBYIk"
-  );
+  // const supabase = createClient(
+  //   "https://jigznrpgzoyrbqbrpsqx.supabase.co",
+  //   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImppZ3pucnBnem95cmJxYnJwc3F4Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MjY5NTEwNiwiZXhwIjoyMDY4MjcxMTA2fQ.d64ewa1SraJ1OdHxU6AAF7cDkuEbY0e0vp7HNCfBYIk"
+  // );
 
   const handleDeleteUser = async () => {
     if (profile?.role !== "superadmin") {
@@ -167,12 +225,7 @@ const UserDetailsModal: React.FC<UserDetailsModalProps> = ({
       return;
     }
 
-    if (
-      !confirm(
-        "Are you sure you want to delete this user? This action cannot be undone."
-      )
-    )
-      return;
+    if ( !confirm("Are you sure you want to delete this user? This action cannot be undone." )) return;
 
     try {
       const { error } = await supabase.auth.admin.deleteUser(user.user_id);
@@ -181,13 +234,13 @@ const UserDetailsModal: React.FC<UserDetailsModalProps> = ({
       } else {
         console.log("✅ User deleted successfully!");
         // Log audit action
-        await supabase.from("audit_logs").insert({
-          admin_id: currentUser?.id,
-          action: "delete_user",
-          target_type: "user",
-          target_id: user.user_id,
-          notes: "User deleted via admin panel",
-        });
+        // await supabase.from("audit_logs").insert({
+        //   admin_id: currentUser?.id,
+        //   action: "delete_user",
+        //   target_type: "user",
+        //   target_id: user.user_id,
+        //   notes: "User deleted via admin panel",
+        // });
 
         toast({ title: "User deleted successfully" });
         onUserUpdate();
@@ -249,6 +302,39 @@ const UserDetailsModal: React.FC<UserDetailsModalProps> = ({
                   <div>
                     <Label className="text-sm font-medium">Email</Label>
                     <p className="text-sm">{user.email}</p>
+                  </div>
+                  <div>
+                    <p>
+                    <Label className="text-sm font-medium">LinkedIn</Label>
+                    {user.linkedin_username ? (
+                      <a
+                        href={`https://linkedin.com/in/${user.linkedin_username}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:underline"
+                      >
+                        {user.linkedin_username}
+                      </a>
+                    ) : (
+                      "Not provided"
+                    )}
+                  </p>
+
+                  <p>
+                    <Label className="text-sm font-medium">Instagram</Label>
+                    {user.instagram_username ? (
+                      <a
+                        href={`https://instagram.com/${user.instagram_username}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-pink-600 hover:underline"
+                      >
+                        {user.instagram_username}
+                      </a>
+                    ) : (
+                      "Not provided"
+                    )}
+                  </p>
                   </div>
                   <div>
                     <Label className="text-sm font-medium">Role</Label>
@@ -461,33 +547,68 @@ const UserDetailsModal: React.FC<UserDetailsModalProps> = ({
                 <Mail className="h-4 w-4" />
                 <span>Send Email</span>
               </Button>
-              {user.is_suspended ? (
-                <Button
-                  onClick={handleReactivateUser}
-                  className="flex items-center space-x-2"
-                >
-                  <CheckCircle className="h-4 w-4" />
-                  <span>Reactivate</span>
-                </Button>
+              {user.approval_status === "pending" ? (
+                <>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => handleApproveUser()}
+                  >
+                    <CheckCircle className="h-3 w-3" />
+                    <span>Approve User</span>
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => handleRejectUser()}
+                  >
+                    <UserX className="h-3 w-3" />
+                    <span>Reject User</span>
+                  </Button>
+                </>
+              ) : user.approval_status === "rejected" ? (
+                <>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => handleApproveUser()}
+                  >
+                    <CheckCircle className="h-3 w-3" />
+                    <span>Approve User</span>
+                  </Button>
+                </>
               ) : (
-                <Button
-                  variant="destructive"
-                  onClick={handleSuspendUser}
-                  className="flex items-center space-x-2"
-                >
-                  <Ban className="h-4 w-4" />
-                  <span>Suspend</span>
-                </Button>
-              )}
-              {profile?.role === "superadmin" && (
-                <Button
-                  variant="destructive"
-                  onClick={handleDeleteUser}
-                  className="flex items-center space-x-2"
-                >
-                  <Trash2 className="h-4 w-4" />
-                  <span>Delete</span>
-                </Button>
+                <>
+                  {user.is_suspended ? (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleReactivateUser()}
+                    >
+                      <UserCheck className="h-3 w-3" />
+                      <span>Reactivate User</span>
+                    </Button>
+                  ) : (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleSuspendUser()}
+                    >
+                      <Ban className="h-3 w-3" />
+                      <span>Suspend User</span>
+                    </Button>
+                  )}
+                  {profile.role === "superadmin" && (
+                    <Button
+                      size="sm"
+                      variant="destructive"
+                      onClick={() => handleDeleteUser()}
+                    >
+                    <Trash2 className="h-3 w-3" />
+                    <span>Delete User</span>
+                  </Button>
+                  )}
+                </>
               )}
             </div>
           </div>
@@ -535,6 +656,48 @@ const UserDetailsModal: React.FC<UserDetailsModalProps> = ({
                 Cancel
               </Button>
               <Button onClick={handleSendEmail}>Send Email</Button>
+              {user.approval_status !== "pending" && (
+                <>
+                  {user.is_suspended ? (
+                    <Button
+                      onClick={handleReactivateUser}
+                      className="flex items-center space-x-2"
+                    >
+                      <CheckCircle className="h-4 w-4" />
+                      <span>Reactivate</span>
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="destructive"
+                      onClick={handleSuspendUser}
+                      className="flex items-center space-x-2"
+                    >
+                      <Ban className="h-4 w-4" />
+                      <span>Suspend</span>
+                    </Button>
+                  )}
+                </>
+              )}
+
+              {user.approval_status === "pending" && (
+                <>
+                  <Button
+                    onClick={handleApproveUser}
+                    className="bg-green-600 text-white flex items-center space-x-2"
+                  >
+                    <CheckCircle className="h-4 w-4" />
+                    <span>Approve</span>
+                  </Button>
+                  <Button
+                    onClick={handleRejectUser}
+                    variant="destructive"
+                    className="bg-red-600 text-white flex items-center space-x-2"
+                  >
+                    <UserX className="h-4 w-4" />
+                    <span>Reject</span>
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         </DialogContent>
@@ -591,26 +754,41 @@ const AdminUsers = () => {
       return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200";
     if (!user.onboarding_completed)
       return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200";
+    if (user.approval_status === "pending")
+      return "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200";
+    if (user.approval_status === "rejected")
+      return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200";
     return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200";
   };
 
-  const getUserStatus = (user: User) => {
-    if (user.is_suspended) return "Suspended";
-    if (!user.onboarding_completed) return "Incomplete";
-    return "Active";
-  };
+const getUserStatus = (user: User) => {
+  if (user.approval_status === "pending") return "Pending";
+  if (user.approval_status === "rejected") return "Rejected";
+  if (user.is_suspended) return "Suspended";
+  if (!user.onboarding_completed) return "Incomplete";
+  return "Active";
+};
 
   const filteredUsers = users.filter((user) => {
     const matchesSearch = `${user.first_name} ${user.last_name} ${user.email}`
       .toLowerCase()
       .includes(searchTerm.toLowerCase());
+
     const matchesStatus =
       statusFilter === "all" ||
       (statusFilter === "active" &&
         !user.is_suspended &&
-        user.onboarding_completed) ||
-      (statusFilter === "suspended" && user.is_suspended) ||
-      (statusFilter === "incomplete" && !user.onboarding_completed);
+        user.onboarding_completed &&
+        user.approval_status === "approved") ||
+      (statusFilter === "suspended" &&
+        user.is_suspended &&
+        user.approval_status === "approved") ||
+      (statusFilter === "incomplete" &&
+        !user.onboarding_completed &&
+        user.approval_status === "approved") ||
+      (statusFilter === "pending" && user.approval_status === "pending") ||
+      (statusFilter === "rejected" && user.approval_status === "rejected");
+
     return matchesSearch && matchesStatus;
   });
 
@@ -669,6 +847,8 @@ const AdminUsers = () => {
               <SelectItem value="active">Active</SelectItem>
               <SelectItem value="suspended">Suspended</SelectItem>
               <SelectItem value="incomplete">Incomplete</SelectItem>
+              <SelectItem value="pending">Pending Approval</SelectItem>
+              <SelectItem value="rejected">Rejected</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -833,7 +1013,7 @@ const AdminUsers = () => {
           }
           placeholder="Instagram Username"
         />
-        <Label>Linked In</Label>
+        <Label>LinkedIn</Label>
         <Input
           value={editUserData.linkedin_username || ""}
           onChange={(e) =>

@@ -1,7 +1,7 @@
 import {
     Dialog,
     DialogContent,
-    DialogHeader,
+    DialogHeader, 
     DialogTitle,
 } from "@/components/ui/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useProfile } from "@/hooks/useProfile";
+import { toast } from "@/components/ui/use-toast"; 
+import { useNavigate } from "react-router-dom"; 
 
 interface Profile {
     id: string;
@@ -22,13 +24,16 @@ interface CrossedPathInviteModalProps {
     open: boolean;
     onClose: () => void;
     onInviteResolved: (guestIds: string[]) => void;
+    subscriptionStatus: "free" | "premium";
 }
 
-export const CrossedPathInviteModal = ({ open, onClose, onInviteResolved }: CrossedPathInviteModalProps) => {
+export const CrossedPathInviteModal = ({ open, onClose, onInviteResolved, subscriptionStatus }: CrossedPathInviteModalProps) => {
     const [users, setUsers] = useState<Profile[]>([]);
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
     const [loading, setLoading] = useState(false);
     const { profile } = useProfile();
+    const isFreeTier = subscriptionStatus === "free";
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (open && profile) {
@@ -99,12 +104,30 @@ export const CrossedPathInviteModal = ({ open, onClose, onInviteResolved }: Cros
         }
     };
 
+    // const toggleUserSelection = (userId: string) => {
+    // setSelectedIds((prev) =>
+    //     prev.includes(userId)
+    //     ? prev.filter((id) => id !== userId) 
+    //     : [...prev, userId] 
+    // );
+    // };
+
     const toggleUserSelection = (userId: string) => {
-    setSelectedIds((prev) =>
-        prev.includes(userId)
-        ? prev.filter((id) => id !== userId) 
-        : [...prev, userId] 
-    );
+        const alreadySelected = selectedIds.includes(userId);
+
+        if (!alreadySelected) {
+            if (isFreeTier && selectedIds.length >= 5) {
+                toast({
+                title: "Invite Limit Reached",
+                description: "Free users can only invite up to 5 guests. Upgrade to invite more.",
+                variant: "destructive",
+                });
+                return;
+            }
+            setSelectedIds([...selectedIds, userId]);
+        } else {
+            setSelectedIds(selectedIds.filter((id) => id !== userId));
+        }
     };
 
     const handleSubmit = () => {
@@ -154,6 +177,18 @@ export const CrossedPathInviteModal = ({ open, onClose, onInviteResolved }: Cros
                 })
             )}
             </div>
+            {isFreeTier && selectedIds.length >= 5 && (
+                <div className="text-xs text-muted-foreground pt-2 flex justify-between items-center">
+                    <span>You’ve reached your invite limit.</span>
+                    <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => navigate("/subscription")}
+                    >
+                    Upgrade
+                    </Button>
+                </div>
+                )}
 
             <div className="pt-4 flex justify-end">
             <Button

@@ -13,6 +13,16 @@ import { CreditCard, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  CardNumberElement,
+  CardExpiryElement,
+  CardCvcElement,
+} from "@stripe/react-stripe-js";
+import type {
+  StripeCardNumberElement,
+  StripeCardExpiryElement,
+  StripeCardCvcElement,
+} from "@stripe/stripe-js";
 
 function CheckoutForm({
   plan,
@@ -32,19 +42,31 @@ function CheckoutForm({
   const navigate = useNavigate();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+      const [postalCode, setPostalCode] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!stripe || !elements || loading) return;
 
+      const cardNumberElement = elements.getElement(CardNumberElement);
+  const cardExpiryElement = elements.getElement(CardExpiryElement);
+  const cardCvcElement = elements.getElement(CardCvcElement);
+  
+  if (!cardNumberElement || !cardExpiryElement || !cardCvcElement) {
+    toast({ title: "Please fill in all card details" });
+    setLoading(false);
+    return;
+  }
+
     setLoading(true);
 
     const result = await stripe.confirmCardSetup(clientSecret, {
       payment_method: {
-        card: elements.getElement(CardElement)!,
+        card: cardNumberElement,
         billing_details: {
           name: userName,
           email: userEmail,
+    address: { postal_code: postalCode },
         },
       },
     });
@@ -91,13 +113,79 @@ function CheckoutForm({
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-10 px-4 max-w-6xl mx-auto"
-    >
-      <div className="col-span-12 lg:col-span-6 space-y-6">
-        <Card>
-          <CardHeader>
+    
+<form onSubmit={handleSubmit} className="space-y-6">
+  <div>
+    <label className="block text-sm mb-2">Card Number</label>
+    <div className="p-3 bg-white rounded-md text-black">
+      <CardNumberElement />
+    </div>
+  </div>
+
+  <div className="grid grid-cols-2 gap-4">
+    <div>
+      <label className="block text-sm mb-2">Expiry Date</label>
+      <div className="p-3 bg-white rounded-md text-black">
+        <CardExpiryElement />
+      </div>
+    </div>
+    <div>
+      <label className="block text-sm mb-2">CVC</label>
+      <div className="p-3 bg-white rounded-md text-black">
+        <CardCvcElement />
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <label className="block text-sm mb-2">Postal Code</label>
+    <input
+      type="text"
+      value={postalCode}
+      onChange={(e) => setPostalCode(e.target.value)}
+      className="w-full p-3 rounded-md bg-white text-black"
+      required
+    />
+  </div>
+
+  <Button
+    type="submit"
+    disabled={!stripe || loading}
+    className="w-full bg-indigo-600 hover:bg-indigo-700 text-white"
+  >
+    {loading ? "Processing..." : "Pay Now"}
+  </Button>
+</form>
+  );
+}
+
+export default function UserCheckout() {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const { publishableKey, clientSecret, plan, planId, userName, userEmail } =
+    location.state || {};
+
+  const [stripePromise, setStripePromise] = useState<Promise<Stripe | null> | null>(null);
+
+  useEffect(() => {
+    if (!publishableKey || !clientSecret || !plan || !planId || !userEmail) {
+      navigate("/subscription");
+    } else {
+      setStripePromise(loadStripe(publishableKey));
+    }
+  }, [publishableKey, clientSecret, plan, planId, userEmail]);
+
+  if (!stripePromise) {
+    return <div className="text-center py-20">Loading checkout...</div>;
+  }
+
+  return (
+ <div className="min-h-screen bg-[#121212] text-white px-4 py-10 flex flex-col items-center">
+  <div className="w-full max-w-2xl space-y-6">
+
+    <Card className="bg-[#1e1e1e] text-white border-none shadow-lg">          
+      <CardHeader>
             <CardTitle>User Info</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -140,64 +228,8 @@ function CheckoutForm({
             </ul>
           </CardContent>
         </Card>
-      </div>
-
-      <div className="col-span-12 lg:col-span-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Card Details</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="p-4 border rounded-md bg-white">
-              <CardElement options={{ style: { base: { fontSize: "16px" } } }} />
-            </div>
-            <Button
-              type="submit"
-              className="w-full flex items-center justify-center gap-2"
-              disabled={!stripe || loading}
-            >
-              {loading ? (
-                <>
-                  <Loader2 className="animate-spin h-5 w-5" />
-                  Processing...
-                </>
-              ) : (
-                <>
-                  <CreditCard size={18} />
-                  Subscribe Now
-                </>
-              )}
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    </form>
-  );
-}
-
-export default function UserCheckout() {
-  const location = useLocation();
-  const navigate = useNavigate();
-
-  const { publishableKey, clientSecret, plan, planId, userName, userEmail } =
-    location.state || {};
-
-  const [stripePromise, setStripePromise] = useState<Promise<Stripe | null> | null>(null);
-
-  useEffect(() => {
-    if (!publishableKey || !clientSecret || !plan || !planId || !userEmail) {
-      navigate("/subscription");
-    } else {
-      setStripePromise(loadStripe(publishableKey));
-    }
-  }, [publishableKey, clientSecret, plan, planId, userEmail]);
-
-  if (!stripePromise) {
-    return <div className="text-center py-20">Loading checkout...</div>;
-  }
-
-  return (
-    <Elements stripe={stripePromise} options={{ clientSecret }}>
+ <div className="bg-[#1e1e1e] p-6 rounded-2xl shadow-lg border border-neutral-800">
+            <Elements stripe={stripePromise} options={{ clientSecret }}>
       <CheckoutForm
         plan={plan}
         planId={planId}
@@ -206,5 +238,9 @@ export default function UserCheckout() {
         clientSecret={clientSecret}
       />
     </Elements>
+    </div>
+      </div>
+    </div>
+
   );
 }

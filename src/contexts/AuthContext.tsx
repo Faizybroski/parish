@@ -62,7 +62,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           last_name: metadata?.last_name,
           instagram_username: metadata?.instagram_username,
           linkedin_username: metadata?.linkedin_username,
-          role: 'user' // Always assign 'user' role during signup
+          role: 'user', // Always assign 'user' role during signup
+          approval_status: 'pending'
         }
       }
     });
