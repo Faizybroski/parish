@@ -8,7 +8,7 @@ import { Database } from '@/integrations/supabase/types';
 
 export type Profile = Database['public']['Tables']['profiles']['Row'];
 
-export const EmailInviteModal = ({ open, onClose, onInviteResolved }) => {
+export const EmailInviteModal = ({ open, onClose, onInviteResolved, getInviteEmails }) => {
   const [emails, setEmails] = useState([""])
   const [errors, setErrors] = useState([])
   const [sending, setSending] = useState(false)
@@ -31,8 +31,8 @@ export const EmailInviteModal = ({ open, onClose, onInviteResolved }) => {
 
 const handleSubmit = async () => {
     setSending(true)
-    setErrors([])
-
+    // setErrors([])
+    // console.log("emails====>",emails);
     const { data: users, error } = await supabase
       .from("profiles")
       .select("id, email")
@@ -43,19 +43,19 @@ const handleSubmit = async () => {
       setSending(false)
       return
     }
+    // const foundEmails = users.map(u => u.email)
+    // const notFound = emails.filter(email => !foundEmails.includes(email))
 
-    const foundEmails = users.map(u => u.email)
-    const notFound = emails.filter(email => !foundEmails.includes(email))
-
-    if (notFound.length > 0) {
-      setErrors(notFound)
-      setSending(false)
-      return
-    }
-
+    // if (notFound.length > 0) {
+    //   setErrors(notFound)
+    //   setSending(false)
+    //   return
+    // }
     const guestIds = users.map(u => u.id)
     onInviteResolved(guestIds) 
-
+    
+    // Getting all emails to send invites
+    getInviteEmails(emails);
     setSending(false)
     onClose()
   }
