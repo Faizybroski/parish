@@ -138,11 +138,14 @@ const AdminDashboard = () => {
   });
 
   const [users, setUsers] = useState([]);
+  const [pendingUsers, setPendingUsers] = useState([]);
   const [events, setEvents] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [pendingUserSearchTerm, setPendingUserSearchTerm] = useState("");
   const [eventSearchTerm, setEventSearchTerm] = useState("");
   const [userStatusFilter, setUserStatusFilter] = useState("all");
   const [eventStatusFilter, setEventStatusFilter] = useState("all");
+  const [pendingUserStatusFilter, setPendingUserStatusFilter] = useState("pending");
   const [loading, setLoading] = useState(true);
   const [selectedUser, setSelectedUser] = useState(null);
   const [selectedEvent, setSelectedEvent] = useState(null);
@@ -182,6 +185,9 @@ const AdminDashboard = () => {
           rsvps(*, profiles(first_name, last_name, email))
         `);
 
+      // Fetch pending users
+      const { data: pendingUsersData } = await supabase.from("profiles").select(`*`).eq("approval_status", "pending");
+
       // Calculate RSVPs for the month
       const thisMonth = new Date();
       thisMonth.setDate(1);
@@ -206,6 +212,7 @@ const AdminDashboard = () => {
 
       setUsers(usersData || []);
       setEvents(eventsData || []);
+      setPendingUsers(pendingUsersData || []);
     } catch (error) {
       console.error("Error fetching dashboard data:", error);
       toast({ title: "Error loading dashboard data", variant: "destructive" });
@@ -437,8 +444,28 @@ const AdminDashboard = () => {
       .includes(searchTerm.toLowerCase());
     const matchesStatus =
       userStatusFilter === "all" ||
-      (userStatusFilter === "active" && !user.is_suspended) ||
-      (userStatusFilter === "suspended" && user.is_suspended);
+            (userStatusFilter === "active" &&
+              !user.is_suspended &&
+              user.onboarding_completed &&
+              user.approval_status === "approved") ||
+            (userStatusFilter === "suspended" &&
+              user.is_suspended &&
+              user.approval_status === "approved") ||
+            (userStatusFilter === "incomplete" &&
+              !user.onboarding_completed &&
+              user.approval_status === "approved") ||
+            (userStatusFilter === "pending" && user.approval_status === "pending") ||
+            (userStatusFilter === "rejected" && user.approval_status === "rejected");
+    return matchesSearch && matchesStatus;
+  });
+
+    const pendingFilteredUsers = pendingUsers.filter((user) => {
+    const matchesSearch = `${user.first_name} ${user.last_name} ${user.email}`
+      .toLowerCase()
+      .includes(pendingUserSearchTerm.toLowerCase());
+    const matchesStatus =
+            (pendingUserStatusFilter === "pending" && user.approval_status === "pending") ||
+            (pendingUserStatusFilter === "rejected" && user.approval_status === "rejected");
     return matchesSearch && matchesStatus;
   });
 
@@ -731,10 +758,14 @@ const AdminDashboard = () => {
 
       {/* Management Tabs */}
       <Tabs defaultValue="users" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-2">
+        <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="users" className="flex items-center space-x-2">
             <Users className="h-4 w-4" />
             <span>User Management</span>
+          </TabsTrigger>
+          <TabsTrigger value="pending_users" className="flex items-center space-x-2">
+            <Users className="h-4 w-4" />
+            <span>Pending User Management</span>
           </TabsTrigger>
           <TabsTrigger value="events" className="flex items-center space-x-2">
             <Calendar className="h-4 w-4" />
@@ -769,6 +800,9 @@ const AdminDashboard = () => {
               <SelectItem value="all">All Users</SelectItem>
               <SelectItem value="active">Active</SelectItem>
               <SelectItem value="suspended">Suspended</SelectItem>
+              <SelectItem value="incomplete">Incomplete</SelectItem>
+              <SelectItem value="pending">Pending Approval</SelectItem>
+              <SelectItem value="rejected">Rejected</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -843,6 +877,143 @@ const AdminDashboard = () => {
                         onClick={() => handleRejectUser(user.user_id)}
                       >
                         Reject
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      {user.is_suspended ? (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => reactivateUser(user.user_id)}
+                        >
+                          <UserCheck className="h-3 w-3" />
+                        </Button>
+                      ) : (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => suspendUser(user.user_id)}
+                        >
+                          <Ban className="h-3 w-3" />
+                        </Button>
+                      )}
+                    </>
+                  )}
+                  {profile.role === "superadmin" && (
+                    <Button
+                      size="sm"
+                      variant="destructive"
+                      onClick={() => deleteUser(user.user_id)}
+                    >
+                      <Trash2 className="h-3 w-3" />
+                    </Button>
+                  )}
+                </div>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </CardContent>
+  </Card>
+</TabsContent>
+
+<TabsContent value="pending_users" className="space-y-4">
+  <Card className="max-w-full overflow-x-auto">
+    <CardHeader>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
+        <CardTitle>Pending User Management</CardTitle>
+        <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
+          <div className="flex items-center space-x-2">
+            <Search className="h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search pending users..."
+              value={pendingUserSearchTerm}
+              onChange={(e) => setPendingUserSearchTerm(e.target.value)}
+              className="w-full sm:w-64"
+            />
+          </div>
+          <Select
+            value={pendingUserStatusFilter}
+            onValueChange={setPendingUserStatusFilter}
+          >
+            <SelectTrigger className="w-full sm:w-40">
+              <SelectValue placeholder="Filter by status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="pending">Pending Approval</SelectItem>
+              <SelectItem value="rejected">Rejected</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+    </CardHeader>
+    <CardContent className="overflow-x-auto">
+      <Table className="min-w-full">
+        <TableHeader>
+          <TableRow>
+            <TableHead>Name</TableHead>
+            <TableHead>Email</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead>Joined</TableHead>
+            <TableHead>Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {pendingFilteredUsers.slice(0, 10).map((user) => (
+            <TableRow key={user.id}>
+              <TableCell className="font-medium truncate max-w-[150px]">
+                {user.first_name} {user.last_name}
+              </TableCell>
+              <TableCell className="truncate max-w-[150px]">{user.email}</TableCell>
+              <TableCell>
+                <Badge
+                  variant={user.is_suspended ? "destructive" : "default"}
+                >
+                  {user.is_suspended ? "Suspended" : "Active"}
+                </Badge>
+              </TableCell>
+              <TableCell>
+                {new Date(user.created_at).toLocaleDateString()}
+              </TableCell>
+              <TableCell>
+                <div className="flex items-center space-x-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      setSelectedUser(user);
+                      setShowUserDetails(true);
+                    }}
+                  >
+                    <Eye className="h-3 w-3" />
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      setEmailData({ ...emailData, to: user.email });
+                      setShowEmailModal(true);
+                    }}
+                  >
+                    <Mail className="h-3 w-3" />
+                  </Button>
+                  {user.approval_status === "pending" ? (
+                    <>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleApproveUser(user.user_id)}
+                      >
+                        <CheckCircle className="h-3 w-3" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        onClick={() => handleRejectUser(user.user_id)}
+                      >
+                        <UserX className="h-3 w-3" />
                       </Button>
                     </>
                   ) : (

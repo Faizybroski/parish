@@ -13,10 +13,11 @@ interface EmailInviteModalProps {
   open: boolean;
   onClose: () => void;
   onInviteResolved: (guestIds: string[]) => void;
+  getInviteEmails: (emails: string[]) => void;
   subscriptionStatus: 'loading' | 'free' | 'premium'; // passed from parent
 }
 
-export const EmailInviteModal = ({ open, onClose, onInviteResolved, subscriptionStatus }: EmailInviteModalProps) => {
+export const EmailInviteModal = ({ open, onClose, onInviteResolved, getInviteEmails, subscriptionStatus }: EmailInviteModalProps) => {
   const [emails, setEmails] = useState([""])
   const [errors, setErrors] = useState([])
   const [sending, setSending] = useState(false)
@@ -52,7 +53,7 @@ export const EmailInviteModal = ({ open, onClose, onInviteResolved, subscription
 
   const handleSubmit = async () => {
     setSending(true)
-    setErrors([])
+    // setErrors([])
 
     const nonEmptyEmails = emails.map(e => e.trim()).filter(e => e !== "");
 
@@ -74,7 +75,6 @@ export const EmailInviteModal = ({ open, onClose, onInviteResolved, subscription
       setSending(false);
       return;
     }
-
     const { data: users, error } = await supabase
       .from("profiles")
       .select("id, email")
@@ -90,20 +90,19 @@ export const EmailInviteModal = ({ open, onClose, onInviteResolved, subscription
       setSending(false)
       return
     }
+    // const foundEmails = users.map(u => u.email)
+    // const notFound = emails.filter(email => !foundEmails.includes(email))
 
-    const foundEmails = users.map(u => u.email)
-    const notFound = emails.filter(email => !foundEmails.includes(email))
-
-    if (notFound.length > 0) {
-
-      setErrors(notFound)
-      setSending(false)
-      return
-    }
-
+    // if (notFound.length > 0) {
+    //   setErrors(notFound)
+    //   setSending(false)
+    //   return
+    // }
     const guestIds = users.map(u => u.id)
     onInviteResolved(guestIds) 
-
+    
+    // Getting all emails to send invites
+    getInviteEmails(emails);
     setSending(false)
     onClose()
   }

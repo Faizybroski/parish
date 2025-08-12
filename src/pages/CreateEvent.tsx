@@ -43,6 +43,7 @@ const CreateEvent = () => {
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [emails, setEmails] = useState<string[]>([]);
+  const [invitedEmails, setInvitedEmails] = useState<string[]>([]);
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -235,7 +236,9 @@ const CreateEvent = () => {
         .select()
         .single();
 
-      if (error) throw error;
+        if (error) throw error;
+        const eventLink = `${window.location.origin}/event/${data.id}/details`;
+
       if (!invitedGuestIds || invitedGuestIds.length === 0) {
         localStorage.setItem("eventUpdated", Date.now().toString());
         window.dispatchEvent(new CustomEvent("eventUpdated"));
@@ -249,12 +252,12 @@ const CreateEvent = () => {
         navigate("/events");
         return;
       }
-      const emails = await getEmailsFromIds(invitedGuestIds);
-
+      // const emails = await getEmailsFromIds(invitedGuestIds);
+      const emails = invitedEmails;
       await sendEventInvite({
         to: emails,
         subject: "You're Invited to a Secret TableTalk 🍷",
-        text: "Hi friend, you’ve been invited to a private dinner hosted on Parish!",
+        text: `Hi friend, you’ve been invited to a private dinner hosted on Parish!\n\nJoin here: ${eventLink}`,
       });
       localStorage.setItem("eventUpdated", Date.now().toString());
       window.dispatchEvent(new CustomEvent("eventUpdated"));
@@ -339,6 +342,7 @@ const CreateEvent = () => {
             onClose={() => setEmailInviteModelOpen(false)}
             onInviteResolved={(guestIds) => setInvitedGuestIds(guestIds)}
             subscriptionStatus={subscriptionStatus}
+            getInviteEmails={(emails) => setInvitedEmails(emails)}
           />
 
           <CrossedPathInviteModal

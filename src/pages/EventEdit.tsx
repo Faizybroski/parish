@@ -74,6 +74,7 @@ const EventEdit = () => {
   const { restaurants, loading: restaurantsLoading } = useRestaurants();
   const [emailInviteModelOpen, setEmailInviteModelOpen] = useState(false);
   const [invitedGuestIds, setInvitedGuestIds] = useState<string[]>([]);
+  const [invitedEmails, setInvitedEmails] = useState<string[]>([]);
   const [crossedPathInviteModelOpen, setCrossedPathInviteModelOpen] =
     useState(false);
   const navigate = useNavigate();
@@ -272,6 +273,8 @@ const EventEdit = () => {
         .eq("id", eventId);
 
       if (error) throw error;
+       const eventLink = `${window.location.origin}/event/${data.id}/details`;
+
       if (!invitedGuestIds || invitedGuestIds.length === 0) {
         localStorage.setItem("eventUpdated", Date.now().toString());
         window.dispatchEvent(new CustomEvent("eventUpdated"));
@@ -285,12 +288,13 @@ const EventEdit = () => {
         return;
       }
 
-      const emails = await getEmailsFromIds(invitedGuestIds);
+      // const emails = await getEmailsFromIds(invitedGuestIds);
+       const emails = invitedEmails;
 
       await sendEventInvite({
         to: emails,
         subject: "You're Invited to a Secret TableTalk 🍷",
-        text: "Hi friend, you’ve been invited to a private dinner hosted on Parish!",
+        text: `Hi friend, you’ve been invited to a private dinner hosted on Parish!\n\nJoin here: ${eventLink}`,
       });
 
       localStorage.setItem("eventUpdated", Date.now().toString());
@@ -377,6 +381,7 @@ const EventEdit = () => {
             open={emailInviteModelOpen}
             onClose={() => setEmailInviteModelOpen(false)}
             onInviteResolved={(guestIds) => setInvitedGuestIds(guestIds)}
+            getInviteEmails={(emails) => setInvitedEmails(emails)}
           />
 
           <CrossedPathInviteModal
