@@ -78,13 +78,51 @@ const Dashboard = () => {
   const [selectedCrossedPath, setSelectedCrossedPath] =
     useState<CrossedPath | null>(null);
   const { profile } = useProfile();
-
+  const [walletPayments, setWalletPayments] = useState<WalletPayment[]>([]);
   useEffect(() => {
     if (profile) {
       fetchCrossedPaths();
+      fetchWalletPayments();
     }
   }, [profile]);
+  const fetchWalletPayments = async () => {
+    if (!profile?.id) return;
 
+    try {
+      const { data, error } = await supabase
+        .from("events_payments")
+        .select(
+          `
+        id,
+        creator_id,
+        event_id,
+        created_at,
+        withdraw_status,
+        events:event_id (
+          id,
+          name,
+          event_fee,
+          date_time,
+          location_name
+        )
+      `
+        )
+        .eq("creator_id", profile.user_id)
+        .eq("withdraw_status", false)
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+
+      setWalletPayments(data || []);
+    } catch (err) {
+      console.error("Error fetching wallet payments:", err);
+      toast({
+        title: "Error",
+        description: "Failed to load wallet payments",
+        variant: "destructive",
+      });
+    }
+  };
   const fetchCrossedPaths = async () => {
     if (!profile) return;
 
@@ -228,6 +266,71 @@ const Dashboard = () => {
 
           {/* Featured Admin Events Carousel */}
           <EventsCarousel />
+          <Card className="shadow-card border-border mt-6">
+            <CardHeader>
+              <CardTitle className="flex items-center justify-between">
+                My Wallet
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => navigate("/wallet/withdraw")}
+                >
+                  Request Withdrawal
+                </Button>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="overflow-auto">
+              {walletPayments?.length === 0 ? (
+                <p className="text-muted-foreground">
+                  No payments received yet.
+                </p>
+              ) : (
+                <table className="min-w-full text-sm text-left border border-border rounded-lg overflow-hidden">
+                  <thead className="bg-muted text-muted-foreground">
+                    <tr>
+                      <th className="p-3 whitespace-nowrap">Event</th>
+                      <th className="p-3 whitespace-nowrap">Date</th>
+                      <th className="p-3 whitespace-nowrap">Gross</th>
+                      <th className="p-3 whitespace-nowrap">Admin Fee (15%)</th>
+                      <th className="p-3 whitespace-nowrap">You Got</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {walletPayments.map((payment) => {
+                      const gross = payment.events?.event_fee || 0;
+                      const fee = gross * 0.15;
+                      const net = gross - fee;
+                      return (
+                        <tr
+                          key={payment.id}
+                          className="border-t border-border hover:bg-muted/50 transition"
+                        >
+                          <td className="p-3">
+                            {payment.events?.name || "Unknown Event"}
+                          </td>
+                          <td className="p-3">
+                            {payment.events?.date_time
+                              ? format(
+                                  new Date(payment.events.date_time),
+                                  "MMM dd, yyyy"
+                                )
+                              : "-"}
+                          </td>
+                          <td className="p-3">${gross}</td>
+                          <td className="p-3 text-red-500">
+                            -${fee.toFixed(2)}
+                          </td>
+                          <td className="p-3 text-green-600">
+                            ${net.toFixed(2)}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              )}
+            </CardContent>
+          </Card>
 
           {/* Main Content Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">

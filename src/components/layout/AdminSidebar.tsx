@@ -45,6 +45,7 @@ const AdminSidebar = () => {
       { title: "Dashboard", url: "/admin/dashboard", icon: LayoutDashboard },
       { title: "View all Events", url: "/admin/events", icon: Calendar },
       { title: "Plans", url: "/admin/plans", icon: DollarSign },
+      { title: "Wallet Requests", url: "/admin/wallet/requests", icon: DollarSign },
       { title: "Subscriptions", url: "/admin/manage-subscriptions", icon: Receipt },
       { title: "Restaurants", url: "/admin/restaurants", icon: UtensilsCrossed },
       { title: "Users", url: "/admin/users", icon: Users },

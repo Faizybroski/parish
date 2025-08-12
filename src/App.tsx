@@ -50,7 +50,12 @@ import UserCheckout from "./pages/UserCheckout";
 import PaymentCheckoutPage from "./pages/PaymentCheckoutPage";
 import RsvpSuccessPage from "./pages/RsvpSuccessPage";
 import AdminEventDetails from "./pages/AdminEventDetails";
-import RSVPDetails from "./pages/RSVPdetails";
+import RSVPDetails from "./pages/RSVPDetails";
+import WalletWithdraw from "./pages/WalletWithdraw";
+import AdminWalletRequests from "./pages/admin/AdminWalletRequests";
+import PendingApproval from "./pages/waitingApprovalPage";
+import RejectedRegistration from "./pages/RejectRegistration"
+import SuspendedAccount from "./pages/SuspendedAccount";
 
 const queryClient = new QueryClient();
 
@@ -95,6 +100,15 @@ const App = () => (
                 }
               />
               <Route
+                path="/wallet/withdraw"
+                element={
+                  <ProtectedRoute>
+                    <Navigation />
+                    <WalletWithdraw />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
                 path="/create-event"
                 element={
                   <ProtectedRoute>
@@ -130,7 +144,7 @@ const App = () => (
                   </>
                 }
               />
-               <Route
+              <Route
                 path="/rsvp/:eventId/details"
                 element={
                   <>
@@ -316,9 +330,9 @@ const App = () => (
                 path="/admin/events/create"
                 element={
                   <ProtectedAdminRoute>
-                     <AdminLayout>
-                    <AdminCreateEvent />
-                     </AdminLayout>
+                    <AdminLayout>
+                      <AdminCreateEvent />
+                    </AdminLayout>
                   </ProtectedAdminRoute>
                 }
               />
@@ -326,19 +340,9 @@ const App = () => (
                 path="/admin/event/:eventId/edit"
                 element={
                   <ProtectedAdminRoute>
-                     <AdminLayout>
-                    <AdminEditEvent />
-                     </AdminLayout>
-                  </ProtectedAdminRoute>
-                }
-              />
-              <Route
-                path="/admin/event/:eventId/details"
-                element={
-                  <ProtectedAdminRoute>
-                     <AdminLayout>
-                    <AdminEventDetails />
-                     </AdminLayout>
+                    <AdminLayout>
+                      <AdminEditEvent />
+                    </AdminLayout>
                   </ProtectedAdminRoute>
                 }
               />
@@ -348,6 +352,26 @@ const App = () => (
                   <ProtectedAdminRoute>
                     <AdminLayout>
                       <AdminUsers />
+                    </AdminLayout>
+                  </ProtectedAdminRoute>
+                }
+              />
+              <Route
+                path="/admin/event/:eventId/details"
+                element={
+                  <ProtectedAdminRoute>
+                    <AdminLayout>
+                      <AdminEventDetails />
+                    </AdminLayout>
+                  </ProtectedAdminRoute>
+                }
+              />
+              <Route
+                path="/admin/wallet/requests"
+                element={
+                  <ProtectedAdminRoute requireSuperAdmin={false}>
+                    <AdminLayout>
+                      <AdminWalletRequests />
                     </AdminLayout>
                   </ProtectedAdminRoute>
                 }
@@ -492,6 +516,14 @@ const App = () => (
                   </ProtectedAdminRoute>
                 }
               />
+              <Route 
+                path="/waiting-approval"
+                element={
+                  <ProtectedRoute>
+                    <PendingApproval/>
+                  </ProtectedRoute>
+              }
+              />
               <Route
                 path="/admin/manage-subscriptions"
                 element={
@@ -499,6 +531,22 @@ const App = () => (
                     <AdminLayout>
                       <ManageSubscriptions />
                     </AdminLayout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route 
+                path="rejected-profile"
+                element={
+                  <ProtectedRoute>
+                    <RejectedRegistration />
+                  </ProtectedRoute>
+                }
+              />
+              <Route 
+                path="suspended-user"
+                element={
+                  <ProtectedRoute>
+                    <SuspendedAccount />
                   </ProtectedRoute>
                 }
               />

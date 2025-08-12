@@ -37,6 +37,8 @@ import { CrossedPathInviteModal } from "@/components/Invitationmodals/CrossedPat
 import { getEmailsFromIds } from "@/lib/getEmailsFromIds";
 import { sendEventInvite } from "@/lib/sendInvite";
 import GooglePlacesEventsForm from "@/components/restaurants/GooglePlacesEventsForm";
+import { useSubscriptionStatus } from '@/hooks/useSubscriptionStatus';
+
 const CreateEvent = () => {
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -61,7 +63,7 @@ const CreateEvent = () => {
     is_mystery_dinner: false,
     guest_invitation_type: "",
     is_paid: false,
-    event_fee: 0,
+    event_fee: "",
   });
   const [newTag, setNewTag] = useState("");
   const { user, loading: authLoading } = useAuth();
@@ -69,9 +71,9 @@ const CreateEvent = () => {
   const { restaurants, loading: restaurantsLoading } = useRestaurants();
   const [emailInviteModelOpen, setEmailInviteModelOpen] = useState(false);
   const [invitedGuestIds, setInvitedGuestIds] = useState<string[]>([]);
-  const [crossedPathInviteModelOpen, setCrossedPathInviteModelOpen] =
-    useState(false);
+  const [crossedPathInviteModelOpen, setCrossedPathInviteModelOpen] = useState(false);
   const navigate = useNavigate();
+  const subscriptionStatus = useSubscriptionStatus(profile?.id);
 
   const handleInputChange = (field: string, value: any) => {
     setFormData((prev) => ({
@@ -165,6 +167,33 @@ const CreateEvent = () => {
     setLoading(true);
 
     try {
+      if (subscriptionStatus === "free") {
+        const now = new Date();
+        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+        const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+
+        const { count, error: countError } = await supabase
+          .from("events")
+          .select("*", { count: "exact", head: true })
+          .eq("creator_id", profile.id)
+          .gte("created_at", startOfMonth.toISOString())
+          .lte("created_at", endOfMonth.toISOString());
+
+        if (countError) throw countError;
+
+        if (count >= 2) {
+          toast({
+            title: "Event Limit Reached",
+            description: "Free-tier users can only create 2 events per month. Upgrade to Premium to unlock unlimited events.",
+            variant: "destructive",
+          });
+          setTimeout(() => {
+            navigate("/subscription");
+          }, 1500);
+          setLoading(false);
+          return;
+        }
+      }
       const eventDateTime = new Date(`${formData.date}T${formData.time}`);
       let rsvpDeadline = null;
 
@@ -309,12 +338,14 @@ const CreateEvent = () => {
             open={emailInviteModelOpen}
             onClose={() => setEmailInviteModelOpen(false)}
             onInviteResolved={(guestIds) => setInvitedGuestIds(guestIds)}
+            subscriptionStatus={subscriptionStatus}
           />
 
           <CrossedPathInviteModal
             open={crossedPathInviteModelOpen}
             onClose={() => setCrossedPathInviteModelOpen(false)}
             onInviteResolved={(guestIds) => setInvitedGuestIds(guestIds)}
+            subscriptionStatus={subscriptionStatus}
           />
 
           <form onSubmit={handleSubmit} className="space-y-8">
@@ -669,6 +700,11 @@ const CreateEvent = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
+                                  {subscriptionStatus === 'free' && (
+                    <div className="text-sm text-orange-600 mb-2 font-medium">
+                      You must upgrade to premium to create paid events.
+                    </div>
+                  )}
                 <div className="flex items-center space-x-2">
                   <Checkbox
                     id="is_paid"
@@ -676,6 +712,7 @@ const CreateEvent = () => {
                     onCheckedChange={(checked) =>
                       handleInputChange("is_paid", checked)
                     }
+                    disabled={subscriptionStatus === 'free'}
                   />
                   <Label htmlFor="is_paid">This is a paid event</Label>
                 </div>
@@ -691,7 +728,7 @@ const CreateEvent = () => {
                         min="0"
                         step="0.01"
                         placeholder="0.00"
-                        value={formData.event_fee}
+                        value={formData.event_fee ?? ""}
                         onChange={(e) =>
                           handleInputChange(
                             "event_fee",

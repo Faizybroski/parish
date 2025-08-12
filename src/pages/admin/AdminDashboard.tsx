@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useProfile } from "@/hooks/useProfile";
-import { supabase } from "@/integrations/supabase/client";
+// import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -118,6 +118,10 @@ const generateStubData = () => {
 
   return { userGrowthData, eventTrendsData, revenueData, diningStylesData };
 };
+const supabase = createClient(
+  "https://jigznrpgzoyrbqbrpsqx.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImppZ3pucnBnem95cmJxYnJwc3F4Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MjY5NTEwNiwiZXhwIjoyMDY4MjcxMTA2fQ.d64ewa1SraJ1OdHxU6AAF7cDkuEbY0e0vp7HNCfBYIk"
+);
 
 const AdminDashboard = () => {
   const { user, signOut } = useAuth();
@@ -210,6 +214,54 @@ const AdminDashboard = () => {
     }
   };
 
+    const handleApproveUser = async (userId: string) => {
+    try {
+      const { error } = await supabase
+        .from("profiles")
+        .update({ approval_status: "approved" })
+        .eq("user_id", userId);
+  
+      if (error) throw error;
+  
+      await supabase.from("audit_logs").insert({
+        admin_id: user?.id,
+        action: "approve_user",
+        target_type: "user",
+        target_id: userId,
+        notes: "User approved via admin panel",
+      });
+  
+      toast({ title: "User approved successfully" });
+      fetchDashboardData();
+    } catch (error) {
+      toast({ title: "Error approving user", variant: "destructive" });
+    }
+  };
+  
+  const handleRejectUser = async (userId: string) => {
+    try {
+      const { error } = await supabase
+        .from("profiles")
+        .update({ approval_status: "rejected" })
+        .eq("user_id", userId);
+  
+      if (error) throw error;
+  
+      await supabase.from("audit_logs").insert({
+        admin_id: user?.id,
+        action: "reject_user",
+        target_type: "user",
+        target_id: userId,
+        notes: "User rejected via admin panel",
+      });
+  
+      toast({ title: "User rejected successfully" });
+      fetchDashboardData();
+    } catch (error) {
+      toast({ title: "Error rejecting user", variant: "destructive" });
+    }
+  };
+
   const suspendUser = async (userId: string) => {
     if (!confirm("Are you sure you want to suspend this user?")) return;
 
@@ -290,20 +342,31 @@ const AdminDashboard = () => {
   //   }
   // };
 
-  const deleteUser = async (userId: string) => {
-    const supabase = createClient(
-      "https://jigznrpgzoyrbqbrpsqx.supabase.co",
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImppZ3pucnBnem95cmJxYnJwc3F4Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MjY5NTEwNiwiZXhwIjoyMDY4MjcxMTA2fQ.d64ewa1SraJ1OdHxU6AAF7cDkuEbY0e0vp7HNCfBYIk"
-    );
-    async function deleteUser(userId) {
-      const { error } = await supabase.auth.admin.deleteUser(userId);
-      if (error) {
-        console.error("❌ Error deleting user:", error.message);
-      } else {
-        console.log("✅ User deleted successfully!");
+    const deleteUser = async (userId: string) => {
+      if (profile?.role !== "superadmin") {
+        toast({
+          title: "Only Super Admins can delete users",
+          variant: "destructive",
+        });
+        return;
       }
-    }
-  };
+
+      if (!confirm("Are you sure you want to delete this user? This action cannot be undone."))return;
+
+      try {
+        const { error } = await supabase.auth.admin.deleteUser(userId);
+        if (error) {
+          console.error("❌ Error deleting user:", error.message);
+        } else {
+          console.log("✅ User deleted successfully!");
+          toast({ title: "User deleted successfully" });
+        }
+        fetchDashboardData();
+
+      } catch (error) {
+        toast({ title: "Error deleting user", variant: "destructive" });
+      }
+    };
 
   const deleteEvent = async (eventId: string) => {
     if (!confirm("Are you sure you want to delete this event?")) return;
@@ -765,22 +828,43 @@ const AdminDashboard = () => {
                   >
                     <Mail className="h-3 w-3" />
                   </Button>
-                  {user.is_suspended ? (
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => reactivateUser(user.user_id)}
-                    >
-                      <UserCheck className="h-3 w-3" />
-                    </Button>
+                  {user.approval_status === "pending" ? (
+                    <>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleApproveUser(user.user_id)}
+                      >
+                        Approve
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        onClick={() => handleRejectUser(user.user_id)}
+                      >
+                        Reject
+                      </Button>
+                    </>
                   ) : (
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => suspendUser(user.user_id)}
-                    >
-                      <Ban className="h-3 w-3" />
-                    </Button>
+                    <>
+                      {user.is_suspended ? (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => reactivateUser(user.user_id)}
+                        >
+                          <UserCheck className="h-3 w-3" />
+                        </Button>
+                      ) : (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => suspendUser(user.user_id)}
+                        >
+                          <Ban className="h-3 w-3" />
+                        </Button>
+                      )}
+                    </>
                   )}
                   {profile.role === "superadmin" && (
                     <Button
@@ -956,6 +1040,37 @@ const AdminDashboard = () => {
                       <p>
                         <strong>Phone:</strong>{" "}
                         {selectedUser.phone || "Not provided"}
+                      </p>
+                      <p>
+                        <strong>LinkedIn:</strong>{" "}
+                        {selectedUser.linkedin_username ? (
+                          <a
+                            href={`https://linkedin.com/in/${selectedUser.linkedin_username}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-600 hover:underline"
+                          >
+                            {selectedUser.linkedin_username}
+                          </a>
+                        ) : (
+                          "Not provided"
+                        )}
+                      </p>
+
+                      <p>
+                        <strong>Instagram:</strong>{" "}
+                        {selectedUser.instagram_username ? (
+                          <a
+                            href={`https://instagram.com/${selectedUser.instagram_username}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-pink-600 hover:underline"
+                          >
+                            {selectedUser.instagram_username}
+                          </a>
+                        ) : (
+                          "Not provided"
+                        )}
                       </p>
                       <p>
                         <strong>Location:</strong>{" "}

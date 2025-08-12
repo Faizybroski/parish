@@ -44,6 +44,7 @@ interface Event {
     first_name?: string;
     last_name?: string;
     profile_photo_url?: string;
+    role?: "admin"| "superadmin" | "user";
   };
   rsvps?: {
     id: string;
@@ -108,7 +109,8 @@ const ExploreEvents = () => {
           profiles:creator_id (
             first_name,
             last_name,
-            profile_photo_url
+            profile_photo_url,
+            role
           ),
           rsvps (
             id,
@@ -500,16 +502,26 @@ const shareEvent = async (name: string, description: string) => {
                     {event.rsvp_count || 0}/{event.max_attendees} RSVPed
                   </div>
                 )}
- {typeof event.is_paid !== 'undefined' && (
-  <div className="text-sm font-medium py-2 text-white">
-    {event.is_paid
-      ? `💵 Paid Event – $${event.event_fee}`
-      : "🆓 Free Event"}
-  </div>
-)}
+                {typeof event.is_paid !== 'undefined' && (
+                  <div className="text-sm font-medium py-2 text-white">
+                    {event.is_paid
+                      ? `💵 Paid Event – $${event.event_fee}`
+                      : "🆓 Free Event"}
+                  </div>
+                )}
+                {(event.profiles.role === 'admin' || event.profiles.role === 'superadmin') &&(
+                  event.is_paid
+                  ?
+                  (<span className="px-3 py-1 text-xs font-semibold text-black bg-yellow-400 rounded-full w-32">
+                    🌟 Premium
+                  </span>)
+                  :
+                  ( <span className="px-3 py-1 text-xs font-semibold text-white bg-blue-600 rounded-full w-32">
+                    🏅 Official
+                  </span>)
+                )}
                 <div className='flex items-center'>
                   <MapPin className="w-6 h-6 text-white" />
-
                   {/* Location */}
                   <div className="text-sm flex flex-col ml-2">
                     <span className="">{event.location_name || 'Location not specified'}</span>

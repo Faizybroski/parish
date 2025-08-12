@@ -37,6 +37,7 @@ const Profile = () => {
   const { user, signOut } = useAuth();
   const { profile, refetch } = useProfile();
   const navigate = useNavigate();
+   const [paymentStatus, setPaymentStatus] = useState("free");
 
   React.useEffect(() => {
     if (profile) {
@@ -56,6 +57,27 @@ const Profile = () => {
       });
     }
   }, [profile]);
+
+  React.useEffect(() => {
+    const fetchPaymentStatus = async () => {
+      if (!user) return;
+
+      const { data, error } = await supabase
+        .from("payments")
+        .select("status")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false })
+        .limit(1);
+
+      if (error) {
+        console.error("Error fetching payment status:", error);
+      } else {
+        setPaymentStatus(data?.[0]?.status || "free");
+      }
+    };
+
+    fetchPaymentStatus();
+  }, [user]);
 
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -285,6 +307,17 @@ const Profile = () => {
                     <p className="text-muted-foreground">{profile.job_title}</p>
                   )}
                 </div>
+                <p>
+                      {paymentStatus === "completed" ? (
+                        <span className="px-3 py-1 text-xs font-semibold text-black bg-yellow-400 rounded-full">
+                          🌟 Paid
+                        </span>
+                      ) : (
+                        <span className="px-3 py-1 text-xs font-semibold text-white bg-[rgb(0,30,83)] rounded-full">
+                          🆓 Free
+                        </span>
+                      )}
+                    </p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

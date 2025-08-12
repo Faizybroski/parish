@@ -9,15 +9,20 @@ import {
   useElements,
   CardElement,
 } from "@stripe/react-stripe-js";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { useProfile } from "@/hooks/useProfile";
+import { CreditCard, Calendar, Lock, MapPin, Loader2 } from "lucide-react";
 import {
   CardNumberElement,
   CardExpiryElement,
   CardCvcElement,
-} from '@stripe/react-stripe-js';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { CreditCard, Loader2 } from "lucide-react";
-import { useProfile } from "@/hooks/useProfile";
+} from "@stripe/react-stripe-js";
+import type {
+  StripeCardNumberElement,
+  StripeCardExpiryElement,
+  StripeCardCvcElement,
+} from "@stripe/stripe-js";
 
 interface Event {
   id: string;
@@ -105,42 +110,42 @@ export default function PaymentCheckoutPage() {
     //   </div>
     // </div>
 
-    <div className="min-h-screen bg-[#121212] text-white px-4 py-12 flex flex-col items-center justify-start">
-  <div className="w-full max-w-6xl">
-    <h1 className="text-4xl font-bold text-center mb-10">Secure Payment</h1>
+ <div className="min-h-screen bg-[#121212] text-white px-4 py-10 flex flex-col items-center">
+  <div className="w-full max-w-2xl space-y-6">
 
-    {/* Cards Section */}
-    <div className="flex flex-col md:flex-row justify-center items-stretch gap-6 mb-10">
-      {event && (
-        <Card className="flex-1 bg-[#1f1f1f] text-white shadow-lg border-none">
-          <CardHeader>
-            <CardTitle className="text-lg">🎉 Event Info</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2 text-sm">
-            <div className="font-semibold text-lg">{event.name}</div>
-            <div className="text-muted-foreground">{event.date_time} – {event.location_name}</div>
-            <p className="text-muted-foreground">{event.description}</p>
-          </CardContent>
-        </Card>
-      )}
+    {/* User Info Card */}
+    <Card className="bg-[#1e1e1e] text-white border-none shadow-lg">
+      <CardHeader>
+        <CardTitle>👤 User Info</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-2 text-sm">
+        <div className="text-lg font-semibold">
+          <strong>Name:</strong> {userName}
+        </div>
+        <div className="text-muted-foreground">
+          <strong>Email:</strong> {userEmail}
+        </div>
+      </CardContent>
+    </Card>
 
-      <Card className="flex-1 bg-[#1f1f1f] text-white shadow-lg border-none">
+    {/* Event Info Card */}
+    {event && (
+      <Card className="bg-[#1e1e1e] text-white border-none shadow-lg">
         <CardHeader>
-          <CardTitle className="text-lg">👤 User Info</CardTitle>
+          <CardTitle>🎉 Event Info</CardTitle>
         </CardHeader>
         <CardContent className="space-y-2 text-sm">
-          <div className="font-semibold text-base">
-            <strong>Name:</strong> {userName}
-          </div>
+          <div className="text-lg font-semibold">{event.name}</div>
           <div className="text-muted-foreground">
-            <strong>Email:</strong> {userEmail}
+            {event.date_time} – {event.location_name}
           </div>
+          <p className="text-muted-foreground">{event.description}</p>
         </CardContent>
       </Card>
-    </div>
+    )}
 
-    {/* Payment Form Section */}
-    <div className="w-full max-w-xl mx-auto">
+    {/* Payment Form */}
+    <div className="bg-[#1e1e1e] p-6 rounded-2xl shadow-lg border border-neutral-800">
       <Elements stripe={stripePromise} options={{ clientSecret }}>
         <CheckoutForm
           userName={userName}
@@ -150,8 +155,10 @@ export default function PaymentCheckoutPage() {
         />
       </Elements>
     </div>
+
   </div>
 </div>
+
   );
 }
 
@@ -161,6 +168,7 @@ function CheckoutForm({ userName, userEmail, clientSecret, eventId }) {
   const { profile } = useProfile();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+    const [postalCode, setPostalCode] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -168,15 +176,56 @@ function CheckoutForm({ userName, userEmail, clientSecret, eventId }) {
     if (!stripe || !elements || !clientSecret) return;
     setLoading(true);
 
-    const result = await stripe.confirmCardPayment(clientSecret, {
-      payment_method: {
-        card: elements.getElement(CardElement),
-        billing_details: {
-          name: userName,
-          email: userEmail,
-        },
-      },
-    });
+    // const cardNumberElement = elements.getElement(CardNumberElement) as StripeCardNumberElement | null;
+
+    // if (!cardNumberElement) {
+    //   setLoading(false);
+    //   toast({ title: "Please enter card details" });
+    //   return;
+    // }
+
+    // const result = await stripe.confirmCardPayment(clientSecret, {
+    //   payment_method: {
+    //     card: cardNumberElement,
+    //     billing_details: {
+    //       name: userName,
+    //       email: userEmail,   
+    //                 address: {
+    //         postal_code: postalCode,
+    //       },
+    //     },
+    //   },
+    // });
+
+    const cardNumberElement = elements.getElement(CardNumberElement);
+const cardExpiryElement = elements.getElement(CardExpiryElement);
+const cardCvcElement = elements.getElement(CardCvcElement);
+
+if (!cardNumberElement || !cardExpiryElement || !cardCvcElement) {
+  toast({ title: "Please fill in all card details" });
+  setLoading(false);
+  return;
+}
+
+const { paymentMethod, error } = await stripe.createPaymentMethod({
+  type: 'card',
+  card: cardNumberElement,  
+  billing_details: {
+    name: userName,
+    email: userEmail,
+    address: { postal_code: postalCode },
+  },
+});
+
+if (error) {
+  toast({ title: error.message });
+  setLoading(false);
+  return;
+}
+
+const result = await stripe.confirmCardPayment(clientSecret, {
+  payment_method: paymentMethod.id,
+});
 
     if (result?.paymentIntent?.status === "succeeded") {
       const userId = profile.user_id;
@@ -316,50 +365,48 @@ function CheckoutForm({ userName, userEmail, clientSecret, eventId }) {
     setLoading(false);
   };
 
-    return (
-    // <form onSubmit={handleSubmit} className="w-full">
-<form
-  onSubmit={handleSubmit}
-  className="w-full bg-[#1f1f1f] p-6 rounded-2xl shadow-xl space-y-6 border border-neutral-800"
->
-  <h2 className="text-2xl font-semibold text-center mb-2">💳 Payment Details</h2>
+  return (
+    <form onSubmit={handleSubmit} className="space-y-6">
+  <div>
+    <label className="block text-sm mb-2">Card Number</label>
+    <div className="p-3 bg-white rounded-md text-black">
+      <CardNumberElement />
+    </div>
+  </div>
 
-  <div className="border border-gray-300 rounded-md bg-white p-4 text-black">
-    <CardElement
-      options={{
-        style: {
-          base: {
-            fontSize: "16px",
-            color: "#32325d",
-            fontFamily: "Arial, sans-serif",
-            '::placeholder': { color: '#aab7c4' },
-          },
-          invalid: {
-            color: "#fa755a",
-          },
-        },
-      }}
+  <div className="grid grid-cols-2 gap-4">
+    <div>
+      <label className="block text-sm mb-2">Expiry Date</label>
+      <div className="p-3 bg-white rounded-md text-black">
+        <CardExpiryElement />
+      </div>
+    </div>
+    <div>
+      <label className="block text-sm mb-2">CVC</label>
+      <div className="p-3 bg-white rounded-md text-black">
+        <CardCvcElement />
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <label className="block text-sm mb-2">Postal Code</label>
+    <input
+      type="text"
+      value={postalCode}
+      onChange={(e) => setPostalCode(e.target.value)}
+      className="w-full p-3 rounded-md bg-white text-black"
+      required
     />
   </div>
 
   <Button
     type="submit"
-    className="w-full flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium"
     disabled={!stripe || loading}
+    className="w-full bg-indigo-600 hover:bg-indigo-700 text-white"
   >
-    {loading ? (
-      <>
-        <Loader2 className="animate-spin h-5 w-5" />
-        Processing...
-      </>
-    ) : (
-      <>
-        <CreditCard size={18} />
-        Pay Now
-      </>
-    )}
+    {loading ? "Processing..." : "Pay Now"}
   </Button>
 </form>
-
   );
 }
