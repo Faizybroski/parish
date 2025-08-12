@@ -18,7 +18,21 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 
   // ALL HOOKS MUST BE CALLED FIRST - before any conditional logic or early returns
   useEffect(() => {
-    // Only run redirection logic when we have both user and profile data
+
+    if (!authLoading && !profileLoading && profile) {
+      if (profile.approval_status === "pending" && profile.onboarding_completed) {
+        return navigate('/waiting-approval', { replace: true });
+      }
+
+      if (profile.approval_status === "rejected") {
+        return navigate('/rejected-profile', { replace: true });
+      }
+
+      if (profile.is_suspended) {
+        return navigate("/suspended-user", { replace: true });
+      }
+    }
+        // Only run redirection logic when we have both user and profile data
     if (user && profile && !authLoading && !profileLoading) {
       const currentPath = location.pathname;
 

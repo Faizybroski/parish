@@ -120,10 +120,10 @@ const App = () => (
               <Route
                 path="/explore"
                 element={
-                  <>
+                  <ProtectedRoute>
                     <Navigation />
                     <ExploreEvents />
-                  </>
+                    </ProtectedRoute>
                 }
               />
               <Route
@@ -138,19 +138,19 @@ const App = () => (
               <Route
                 path="/event/:eventId/details"
                 element={
-                  <>
+                  <ProtectedRoute>
                     <Navigation />
                     <EventDetails />
-                  </>
+                  </ProtectedRoute>
                 }
               />
               <Route
                 path="/rsvp/:eventId/details"
                 element={
-                  <>
+                  <ProtectedRoute>
                     <Navigation />
                     <RSVPDetails />
-                  </>
+                  </ProtectedRoute>
                 }
               />
               <Route
