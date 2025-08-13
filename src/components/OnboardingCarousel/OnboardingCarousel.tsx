@@ -81,6 +81,14 @@ export const OnboardingCarousel = () => {
               description: "Signed in successfully.",
             });
       } else {
+        if (!isLogin && !linkedin && !instagram) {
+          toast({
+            title: "Social Media User Name Required",
+            description: "Please enter at least your LinkedIn or Instagram username.",
+            variant: "destructive",
+          });
+          return;
+        }
         const { error } = await signUp(email, password, {
           first_name: firstName,
           last_name: lastName,
@@ -226,7 +234,6 @@ export const OnboardingCarousel = () => {
                     placeholder="Enter your LinkedIn username*"
                     value={linkedin}
                     onChange={(e) => setLinkedin(e.target.value)}
-                    required
                   />
                 </div>
                 <div className="space-y-1">
@@ -237,7 +244,6 @@ export const OnboardingCarousel = () => {
                     placeholder="Enter your Instagram username*"
                     value={instagram}
                     onChange={(e) => setInstagram(e.target.value)}
-                    required
                   />
                 </div>
 
