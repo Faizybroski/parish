@@ -56,6 +56,7 @@ import AdminWalletRequests from "./pages/admin/AdminWalletRequests";
 import PendingApproval from "./pages/waitingApprovalPage";
 import RejectedRegistration from "./pages/RejectRegistration"
 import SuspendedAccount from "./pages/SuspendedAccount";
+import {AdminLogin} from "./components/adminLogin/AdminLogin";
 
 const queryClient = new QueryClient();
 
@@ -549,6 +550,10 @@ const App = () => (
                     <SuspendedAccount />
                   </ProtectedRoute>
                 }
+              />
+              <Route 
+                path="/admin/login"
+                element={<AdminLogin />}
               />
               <Route path="/test-auth" element={<TestAuthSystem />} />
               <Route path="/debug-role" element={<RoleDebugger />} />

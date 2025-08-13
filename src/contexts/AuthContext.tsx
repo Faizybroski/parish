@@ -7,7 +7,7 @@ interface AuthContextType {
   session: Session | null;
   loading: boolean;
   signUp: (email: string, password: string, metadata?: any) => Promise<{ error: any }>;
-  signIn: (email: string, password: string) => Promise<{ error: any }>;
+  signIn: (email: string, password: string, expectedRole: 'admin' | 'user') => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<{ error: any }>;
 }
@@ -72,41 +72,60 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return { error };
   };
 
-  const signIn = async (email: string, password: string) => {
+  const signIn = async (email: string, password: string, expectedRole: 'admin' | 'user') => {
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
-      password
+      password,
+
     });
     
+    if (error) {
+      return { error };
+    }
+
+    if (!data.user) {
+      return { error: { message: 'Invalid login attempt' } };
+    }
+
     // If login successful, redirect based on user role
-    if (!error && data.user) {
       // Get user profile to determine role
-      const { data: profile } = await supabase
+      const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select('role')
         .eq('user_id', data.user.id)
         .single();
-      
-      if (profile?.role) {
-        setTimeout(() => {
-          switch (profile.role) {
-            case 'superadmin':
-              window.location.href = '/superadmin/dashboard';
-              break;
-            case 'admin':
-              window.location.href = '/admin/dashboard';
-              break;
-            case 'user':
-            default:
-              window.location.href = '/user/dashboard';
-              break;
-          }
-        }, 100); // Small delay to ensure auth state is updated
+
+      if (profileError) return { error: profileError };
+
+      const articleMap: Record<'admin' | 'user', string> = {
+        admin: 'an admin',
+        user: 'a user',
+      };
+
+      if (profile?.role !== expectedRole) {
+        await supabase.auth.signOut();
+        return { error: { message: `${email} is not ${articleMap[expectedRole]}` } };
       }
-    }
+      
+      setTimeout(() => {
+        switch (profile.role) {
+          case 'superadmin':
+            window.location.href = '/superadmin/dashboard';
+            break;
+          case 'admin':
+            window.location.href = '/admin/dashboard';
+            break;
+          case 'user':
+          default:
+            window.location.href = '/user/dashboard';
+            break;
+        }
+      }, 100); // Small delay to ensure auth state is updated
     
     return { error };
-  };
+  }
+    
+  
 
   const signOut = async () => {
     await supabase.auth.signOut();

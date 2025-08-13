@@ -69,7 +69,7 @@ export const OnboardingCarousel = () => {
     setLoading(true);
     try {
       if (isLogin) {
-        const { error } = await signIn(email, password);
+        const { error } = await signIn(email, password, 'user');
         error
           ? toast({
               title: "Error",
