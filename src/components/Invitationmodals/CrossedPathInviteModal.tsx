@@ -24,7 +24,7 @@ interface CrossedPathInviteModalProps {
     open: boolean;
     onClose: () => void;
     onInviteResolved: (guestIds: string[]) => void;
-    subscriptionStatus: "free" | "premium";
+    subscriptionStatus: 'loading' | 'free' | 'premium';
 }
 
 export const CrossedPathInviteModal = ({ open, onClose, onInviteResolved, subscriptionStatus }: CrossedPathInviteModalProps) => {

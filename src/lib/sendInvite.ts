@@ -20,7 +20,7 @@ export const sendEventInvite = async ({
   });
 
   if (error) {
-    throw new Error(error.message || "Failed to send invites");
+    throw new Error(error.message || "Failed to send email");
   }
 
   return data;

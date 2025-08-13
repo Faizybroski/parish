@@ -48,6 +48,7 @@ import {
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { format } from "date-fns";
+import { sendEventInvite } from "@/lib/sendInvite";
 
 const supabase = createClient(
   "https://jigznrpgzoyrbqbrpsqx.supabase.co",
@@ -108,54 +109,74 @@ const UserDetailsModal: React.FC<UserDetailsModalProps> = ({
   if (!user) return null;
 
   const handleApproveUser = async () => {
-  try {
-    const { error } = await supabase
-      .from("profiles")
-      .update({ approval_status: "approved" })
-      .eq("user_id", user.user_id);
+    try {
+      const { data: updatedProfiles, error: updateError } = await supabase
+        .from("profiles")
+        .update({ approval_status: "approved" })
+        .eq("user_id", user.user_id)
+        .select("email");
 
-    if (error) throw error;
+        if (updateError) throw updateError;
 
-    await supabase.from("audit_logs").insert({
-      admin_id: currentUser?.id,
-      action: "approve_user",
-      target_type: "user",
-      target_id: user.user_id,
-      notes: "User approved via admin panel",
-    });
+        const approvedUserEmail = updatedProfiles?.[0]?.email;
+        if (!approvedUserEmail) throw new Error("User email not found");
 
-    toast({ title: "User approved successfully" });
-    onUserUpdate();
-    onOpenChange(false);
-  } catch (error) {
-    toast({ title: "Error approving user", variant: "destructive" });
-  }
-};
+      await supabase.from("audit_logs").insert({
+        admin_id: currentUser?.id,
+        action: "approve_user",
+        target_type: "user",
+        target_id: user.user_id,
+        notes: "User approved via admin panel",
+      });
 
-const handleRejectUser = async () => {
-  try {
-    const { error } = await supabase
-      .from("profiles")
-      .update({ approval_status: "rejected" })
-      .eq("user_id", user.user_id);
+      await sendEventInvite({
+        to: approvedUserEmail,
+        subject: "🎉 Welcome to Parish – You’re Officially Approved!",
+        text: `Hi there,\nGreat news — your profile has been approved by our team! You’re now part of an exclusive community of food lovers and private dining enthusiasts. 🍷\nWe’re excited to have you join our next intimate dinner experience.\nWarm regards,\nThe Parish Team`,
+      });
 
-    if (error) throw error;
+      toast({ title: "User approved successfully" });
+      onUserUpdate();
+      onOpenChange(false);
+    } catch (error) {
+      toast({ title: "Error approving user", variant: "destructive" });
+    }
+  };
 
-    await supabase.from("audit_logs").insert({
-      admin_id: currentUser?.id,
-      action: "reject_user",
-      target_type: "user",
-      target_id: user.user_id,
-      notes: "User rejected via admin panel",
-    });
+  const handleRejectUser = async () => {
+    try {
+      const { data: updatedProfiles, error: updateError } = await supabase
+        .from("profiles")
+        .update({ approval_status: "rejected" })
+        .eq("user_id", user.user_id)
+        .select("email");
 
-    toast({ title: "User rejected successfully" });
-    onUserUpdate();
-    onOpenChange(false);
-  } catch (error) {
-    toast({ title: "Error rejecting user", variant: "destructive" });
-  }
-};
+      if (updateError) throw updateError;
+
+      const approvedUserEmail = updatedProfiles?.[0]?.email;
+      if (!approvedUserEmail) throw new Error("User email not found");
+
+      await supabase.from("audit_logs").insert({
+        admin_id: currentUser?.id,
+        action: "reject_user",
+        target_type: "user",
+        target_id: user.user_id,
+        notes: "User rejected via admin panel",
+      });
+
+      await sendEventInvite({
+        to: approvedUserEmail,
+        subject: "Update on Your Parish Application",
+        text: `Hi there,\nThank you for your interest in joining Parish. After reviewing your application, we’re unable to approve your profile at this time.\nWe truly appreciate the time you took to apply, but we don't believe our app is the right fit for you at the moment.\nWarm regards,\nThe Parish Team`,
+      });
+
+      toast({ title: "User rejected successfully" });
+      onUserUpdate();
+      onOpenChange(false);
+    } catch (error) {
+      toast({ title: "Error rejecting user", variant: "destructive" });
+    }
+  };
 
   const handleSuspendUser = async () => {
     if (!confirm("Are you sure you want to suspend this user?")) return;

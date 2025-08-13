@@ -80,6 +80,7 @@ import {
   YAxis,
   ResponsiveContainer,
 } from "recharts";
+import { sendEventInvite } from "@/lib/sendInvite";
 
 // Generate stub data for charts
 const generateStubData = () => {
@@ -221,14 +222,18 @@ const AdminDashboard = () => {
     }
   };
 
-    const handleApproveUser = async (userId: string) => {
+  const handleApproveUser = async (userId: string) => {
     try {
-      const { error } = await supabase
+      const { data: updatedProfiles, error: updateError } = await supabase
         .from("profiles")
         .update({ approval_status: "approved" })
-        .eq("user_id", userId);
+        .eq("user_id", userId)
+        .select("email");
   
-      if (error) throw error;
+      if (updateError) throw updateError;
+
+      const approvedUserEmail = updatedProfiles?.[0]?.email;
+      if (!approvedUserEmail) throw new Error("User email not found");
   
       await supabase.from("audit_logs").insert({
         admin_id: user?.id,
@@ -236,6 +241,12 @@ const AdminDashboard = () => {
         target_type: "user",
         target_id: userId,
         notes: "User approved via admin panel",
+      });
+
+      await sendEventInvite({
+        to: approvedUserEmail,
+        subject: "Welcome to Parish – You’re Officially Approved!",
+        text: `Hi there,\nGreat news — your profile has been approved by our team! You’re now part of an exclusive community of food lovers and private dining enthusiasts. \nWe’re excited to have you join our next intimate dinner experience.\nWarm regards,\nThe Parish Team`,
       });
   
       toast({ title: "User approved successfully" });
@@ -247,12 +258,16 @@ const AdminDashboard = () => {
   
   const handleRejectUser = async (userId: string) => {
     try {
-      const { error } = await supabase
+      const { data: updatedProfiles, error: updateError } = await supabase
         .from("profiles")
         .update({ approval_status: "rejected" })
-        .eq("user_id", userId);
+        .eq("user_id", userId)
+        .select("email");
   
-      if (error) throw error;
+      if (updateError) throw updateError;
+
+      const approvedUserEmail = updatedProfiles?.[0]?.email;
+      if (!approvedUserEmail) throw new Error("User email not found");
   
       await supabase.from("audit_logs").insert({
         admin_id: user?.id,
@@ -260,6 +275,12 @@ const AdminDashboard = () => {
         target_type: "user",
         target_id: userId,
         notes: "User rejected via admin panel",
+      });
+
+      await sendEventInvite({
+        to: approvedUserEmail,
+        subject: "Update on Your Parish Application",
+        text: `Hi there,\nThank you for your interest in joining Parish. After reviewing your application, we’re unable to approve your profile at this time.\nWe truly appreciate the time you took to apply, but we don't believe our app is the right fit for you at the moment.\nWarm regards,\nThe Parish Team`,
       });
   
       toast({ title: "User rejected successfully" });
