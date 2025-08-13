@@ -38,6 +38,7 @@ import { CrossedPathInviteModal } from "@/components/Invitationmodals/CrossedPat
 import { getEmailsFromIds } from "@/lib/getEmailsFromIds";
 import { sendEventInvite } from "@/lib/sendInvite";
 import GooglePlacesEventsForm from "@/components/restaurants/GooglePlacesEventsForm";
+import { useSubscriptionStatus } from '@/hooks/useSubscriptionStatus';
 
 const EventEdit = () => {
   const { eventId } = useParams<{ eventId: string }>();
@@ -75,9 +76,10 @@ const EventEdit = () => {
   const [emailInviteModelOpen, setEmailInviteModelOpen] = useState(false);
   const [invitedGuestIds, setInvitedGuestIds] = useState<string[]>([]);
   const [invitedEmails, setInvitedEmails] = useState<string[]>([]);
-  const [crossedPathInviteModelOpen, setCrossedPathInviteModelOpen] =
-    useState(false);
+  const [crossedPathInviteModelOpen, setCrossedPathInviteModelOpen] = useState(false);
   const navigate = useNavigate();
+  const subscriptionStatus = useSubscriptionStatus(profile?.id);
+
   useEffect(() => {
     if (eventId) {
       fetchEvent();
@@ -271,9 +273,9 @@ const EventEdit = () => {
           event_fee: formData.is_paid ? formData.event_fee : null,
         } as any)
         .eq("id", eventId);
-
-      if (error) throw error;
-       const eventLink = `${window.location.origin}/event/${data.id}/details`;
+        
+        if (error) throw error;
+        const eventLink = `${window.location.origin}/event/${eventId}/details`;
 
       if (!invitedGuestIds || invitedGuestIds.length === 0) {
         localStorage.setItem("eventUpdated", Date.now().toString());
@@ -381,6 +383,7 @@ const EventEdit = () => {
             open={emailInviteModelOpen}
             onClose={() => setEmailInviteModelOpen(false)}
             onInviteResolved={(guestIds) => setInvitedGuestIds(guestIds)}
+            subscriptionStatus={subscriptionStatus}
             getInviteEmails={(emails) => setInvitedEmails(emails)}
           />
 
@@ -388,6 +391,7 @@ const EventEdit = () => {
             open={crossedPathInviteModelOpen}
             onClose={() => setCrossedPathInviteModelOpen(false)}
             onInviteResolved={(guestIds) => setInvitedGuestIds(guestIds)}
+            subscriptionStatus={subscriptionStatus}
           />
 
           <form onSubmit={handleSubmit} className="space-y-8">
@@ -495,9 +499,9 @@ const EventEdit = () => {
                 </div>
 
                <GooglePlacesEventsForm
-  formData={formData}
-  onChange={handleInputChange}
-/>
+                  formData={formData}
+                  onChange={handleInputChange}
+                />
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="max_attendees">Maximum Attendees *</Label>
@@ -742,6 +746,11 @@ const EventEdit = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
+                 {subscriptionStatus === 'free' && (
+                    <div className="text-sm text-orange-600 mb-2 font-medium">
+                      You must upgrade to premium to create paid events.
+                    </div>
+                  )}
                 <div className="flex items-center space-x-2">
                   <Checkbox
                     id="is_paid"
@@ -749,6 +758,7 @@ const EventEdit = () => {
                     onCheckedChange={(checked) =>
                       handleInputChange("is_paid", checked)
                     }
+                    disabled={subscriptionStatus === 'free'}
                   />
                   <Label htmlFor="is_paid">This is a paid event</Label>
                 </div>

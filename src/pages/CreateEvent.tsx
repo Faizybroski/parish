@@ -704,7 +704,7 @@ const CreateEvent = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                                  {subscriptionStatus === 'free' && (
+                  {subscriptionStatus === 'free' && (
                     <div className="text-sm text-orange-600 mb-2 font-medium">
                       You must upgrade to premium to create paid events.
                     </div>

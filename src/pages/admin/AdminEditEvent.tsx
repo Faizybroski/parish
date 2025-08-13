@@ -274,7 +274,7 @@ const AdminEditEvent = () => {
         .eq("id", eventId);
 
       if (error) throw error;
-       const eventLink = `${window.location.origin}/event/${data.id}/details`;
+       const eventLink = `${window.location.origin}/event/${eventId}/details`;
 
       if (!invitedGuestIds || invitedGuestIds.length === 0) {
         localStorage.setItem("eventUpdated", Date.now().toString());
