@@ -143,7 +143,7 @@ function CheckoutForm({
       type="text"
       value={postalCode}
       onChange={(e) => setPostalCode(e.target.value)}
-      className="w-full p-3 rounded-md bg-white text-black"
+      className="w-full px-3 py-2 rounded-md bg-white text-black"
       required
     />
   </div>
