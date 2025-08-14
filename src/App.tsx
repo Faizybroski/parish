@@ -553,7 +553,11 @@ const App = () => (
               />
               <Route 
                 path="/admin/login"
-                element={<AdminLogin />}
+                element={
+                  <ProtectedRoute>
+                    <AdminLogin />
+                  </ProtectedRoute>
+                }
               />
               <Route path="/test-auth" element={<TestAuthSystem />} />
               <Route path="/debug-role" element={<RoleDebugger />} />
