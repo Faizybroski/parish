@@ -80,7 +80,7 @@ const AdminManagement = () => {
           email: data.email,
           first_name: data.first_name,
           last_name: data.last_name,
-          role: 'moderator', // Always create as moderator (admin role)
+          role: 'admin', 
           password_hash: 'to_be_set', // This would be handled by auth system
           is_active: true
         }]);
@@ -165,16 +165,15 @@ const AdminManagement = () => {
   );
 
   const getRoleBadgeVariant = (role: string) => {
-    return role === 'super_admin' ? 'default' : 'secondary';
+    return 'default'
   };
 
   const getStats = () => {
     const total = admins.length;
     const active = admins.filter(a => a.is_active).length;
-    const superAdmins = admins.filter(a => a.role === 'super_admin').length;
-    const moderators = admins.filter(a => a.role === 'moderator').length;
+    const Admins = admins.filter(a => a.role === 'admin').length;
     
-    return { total, active, superAdmins, moderators };
+    return { total, active, Admins };
   };
 
   const stats = getStats();
@@ -311,14 +310,8 @@ const AdminManagement = () => {
     </Card>
     <Card>
       <CardContent className="p-4 text-center">
-        <p className="text-2xl font-bold text-purple-600">{stats.superAdmins}</p>
-        <p className="text-sm text-muted-foreground">Super Admins</p>
-      </CardContent>
-    </Card>
-    <Card>
-      <CardContent className="p-4 text-center">
-        <p className="text-2xl font-bold text-blue-600">{stats.moderators}</p>
-        <p className="text-sm text-muted-foreground">Moderators</p>
+        <p className="text-2xl font-bold text-purple-600">{stats.Admins}</p>
+        <p className="text-sm text-muted-foreground">Admins</p>
       </CardContent>
     </Card>
   </div>
@@ -361,11 +354,7 @@ const AdminManagement = () => {
               <TableCell>
                 <div className="flex items-center space-x-3">
                   <div className="h-8 w-8 bg-muted rounded-full flex items-center justify-center shrink-0">
-                    {admin.role === 'super_admin' ? (
-                      <Crown className="h-4 w-4 text-yellow-600" />
-                    ) : (
-                      <Shield className="h-4 w-4 text-blue-600" />
-                    )}
+                    <Shield className="h-4 w-4 text-blue-600" />
                   </div>
                   <div className="truncate max-w-[120px]">
                     <div className="font-medium">{admin.first_name} {admin.last_name}</div>
@@ -375,7 +364,7 @@ const AdminManagement = () => {
               <TableCell className="truncate max-w-[150px]">{admin.email}</TableCell>
               <TableCell>
                 <Badge variant={getRoleBadgeVariant(admin.role)}>
-                  {admin.role === 'super_admin' ? 'Super Admin' : 'Admin'}
+                  Admin
                 </Badge>
               </TableCell>
               <TableCell>

@@ -33,17 +33,13 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                   </h1>
                 </div>
                 <Badge 
-                  variant={profile?.role === 'superadmin' ? 'default' : 'secondary'} 
+                  variant='default'
                   className="flex items-center space-x-1.5 px-3 py-1.5 rounded-full"
                 >
-                  {profile?.role === 'superadmin' ? (
-                    <Crown className="h-3.5 w-3.5" />
-                  ) : (
-                    <Shield className="h-3.5 w-3.5" />
-                  )}
-                  <span className="font-medium">
-                    {profile?.role === 'superadmin' ? 'Super Admin' : 'Admin'}
-                  </span>
+                <Shield className="h-3.5 w-3.5" />
+                <span className="font-medium">
+                  Admin
+                </span>
                 </Badge>
               </div>
             </div>

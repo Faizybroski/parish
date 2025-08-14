@@ -164,7 +164,7 @@ const AdminDashboard = () => {
   useEffect(() => {
     if (
       profile &&
-      (profile.role === "admin" || profile.role === "superadmin")
+      (profile.role === "admin")
     ) {
       fetchDashboardData();
     }
@@ -345,7 +345,7 @@ const AdminDashboard = () => {
   // const deleteUser = async (userId: string) => {
   //   if (!confirm('Are you sure you want to delete this user? This action cannot be undone.')) return;
 
-  //   if (profile?.role !== 'superadmin') {
+  //   if (profile?.role !== 'admin') {
   //     toast({ title: "Only Super Admins can delete users", variant: "destructive" });
   //     return;
   //   }
@@ -371,14 +371,6 @@ const AdminDashboard = () => {
   // };
 
     const deleteUser = async (userId: string) => {
-      if (profile?.role !== "superadmin") {
-        toast({
-          title: "Only Super Admins can delete users",
-          variant: "destructive",
-        });
-        return;
-      }
-
       if (!confirm("Are you sure you want to delete this user? This action cannot be undone."))return;
 
       try {
@@ -510,7 +502,7 @@ const AdminDashboard = () => {
     );
   }
 
-  if (!profile || (profile.role !== "admin" && profile.role !== "superadmin")) {
+  if (!profile || (profile.role !== "admin")) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-background">
         <div className="text-center space-y-4">
@@ -921,7 +913,6 @@ const AdminDashboard = () => {
                       )}
                     </>
                   )}
-                  {profile.role === "superadmin" && (
                     <Button
                       size="sm"
                       variant="destructive"
@@ -929,7 +920,6 @@ const AdminDashboard = () => {
                     >
                       <Trash2 className="h-3 w-3" />
                     </Button>
-                  )}
                 </div>
               </TableCell>
             </TableRow>
@@ -1058,7 +1048,6 @@ const AdminDashboard = () => {
                       )}
                     </>
                   )}
-                  {profile.role === "superadmin" && (
                     <Button
                       size="sm"
                       variant="destructive"
@@ -1066,7 +1055,6 @@ const AdminDashboard = () => {
                     >
                       <Trash2 className="h-3 w-3" />
                     </Button>
-                  )}
                 </div>
               </TableCell>
             </TableRow>

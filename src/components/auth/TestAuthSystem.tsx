@@ -26,14 +26,6 @@ const TestAuthSystem = () => {
       icon: Shield,
       color: 'bg-green-500'
     },
-    {
-      role: 'superadmin',
-      email: 'superadmin@test.com',
-      password: 'super123', 
-      name: 'Test SuperAdmin',
-      icon: Crown,
-      color: 'bg-purple-500'
-    }
   ]);
 
   if (user) {
@@ -111,7 +103,6 @@ const TestAuthSystem = () => {
           <ul className="text-sm text-yellow-700 dark:text-yellow-300 space-y-1">
             <li><strong>User:</strong> → Main Dashboard (/)</li>
             <li><strong>Admin:</strong> → Admin Dashboard (/admin/dashboard)</li>
-            <li><strong>SuperAdmin:</strong> → SuperAdmin Dashboard (/admin/dashboard)</li>
           </ul>
         </div>
       </CardContent>

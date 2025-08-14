@@ -167,12 +167,12 @@ export const useRestaurants = () => {
 
   const canEdit = (restaurant: Restaurant) => {
     if (!profile) return false;
-    return profile.role === 'superadmin' || profile.role === 'admin' || restaurant.creator_id === profile.id;
+    return profile.role === 'admin' || restaurant.creator_id === profile.id;
   };
 
   const canDelete = (restaurant: Restaurant) => {
     if (!profile) return false;
-    return profile.role === 'superadmin' || profile.role === 'admin' || restaurant.creator_id === profile.id;
+    return profile.role === 'admin' || restaurant.creator_id === profile.id;
   };
 
   return {

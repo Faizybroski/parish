@@ -44,7 +44,7 @@ interface Event {
     first_name?: string;
     last_name?: string;
     profile_photo_url?: string;
-    role?: "admin"| "superadmin" | "user";
+    role?: "admin"| "user";
   };
   rsvps?: {
     id: string;
@@ -509,7 +509,7 @@ const shareEvent = async (name: string, description: string) => {
                       : "🆓 Free Event"}
                   </div>
                 )}
-                {(event.profiles.role === 'admin' || event.profiles.role === 'superadmin') &&(
+                {(event.profiles.role === 'admin') &&(
                   event.is_paid
                   ?
                   (<span className="px-3 py-1 text-xs font-semibold text-black bg-yellow-400 rounded-full w-32">

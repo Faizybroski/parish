@@ -120,12 +120,12 @@ export const usePlans = () => {
 
   const canEdit = () => {
     if (!profile) return false;
-    return profile.role === "superadmin" || profile.role === "admin";
+    return profile.role === "admin";
   };
 
   const canDelete = () => {
     if (!profile) return false;
-    return profile.role === "superadmin" || profile.role === "admin";
+    return profile.role === "admin";
   };
 
   return {

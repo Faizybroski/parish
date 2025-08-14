@@ -49,7 +49,7 @@ const Navigation = () => {
       { icon: Receipt, label: "Subscriptions", path: "/subscription" },
     ];
 
-    if (profile?.role === "admin" || profile?.role === "superadmin") {
+    if (profile?.role === "admin") {
       baseItems.push({
         icon: CreditCard,
         label: "Subscription",

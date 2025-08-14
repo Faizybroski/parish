@@ -292,7 +292,7 @@ const App = () => (
               <Route
                 path="/superadmin/dashboard"
                 element={
-                  <ProtectedAdminRoute requireSuperAdmin={true}>
+                  <ProtectedAdminRoute requireAdmin={true}>
                     <SuperAdminDashboard />
                   </ProtectedAdminRoute>
                 }
@@ -300,7 +300,7 @@ const App = () => (
               <Route
                 path="/admin/dashboard"
                 element={
-                  <ProtectedAdminRoute requireSuperAdmin={false}>
+                  <ProtectedAdminRoute requireAdmin={false}>
                     <AdminLayout>
                       <AdminDashboard />
                     </AdminLayout>
@@ -370,7 +370,7 @@ const App = () => (
               <Route
                 path="/admin/wallet/requests"
                 element={
-                  <ProtectedAdminRoute requireSuperAdmin={false}>
+                  <ProtectedAdminRoute requireAdmin={false}>
                     <AdminLayout>
                       <AdminWalletRequests />
                     </AdminLayout>
@@ -440,7 +440,7 @@ const App = () => (
               <Route
                 path="/admin/admin-management"
                 element={
-                  <ProtectedAdminRoute requireSuperAdmin={true}>
+                  <ProtectedAdminRoute requireAdmin={true}>
                     <AdminLayout>
                       <AdminManagement />
                     </AdminLayout>
@@ -450,7 +450,7 @@ const App = () => (
               <Route
                 path="/admin/settings"
                 element={
-                  <ProtectedAdminRoute requireSuperAdmin={true}>
+                  <ProtectedAdminRoute requireAdmin={true}>
                     <AdminLayout>
                       <AdminSettings />
                     </AdminLayout>
