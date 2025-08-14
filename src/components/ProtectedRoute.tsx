@@ -5,6 +5,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import AuthPage from '@/components/auth/AuthPage';
 import OnboardingFlow from '@/components/onboarding/OnboardingFlow';
 import { Loader2 } from 'lucide-react';
+import { AdminLogin } from '@/components/adminLogin/AdminLogin';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -85,6 +86,13 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
         return;
       }
 
+      if ((profile.role === 'admin' || profile.role === 'superadmin') 
+          && currentPath === '/admin/login') {
+        console.log('🚫 ProtectedRoute: Admin already logged in, redirecting...');
+        navigate('/admin/dashboard', { replace: true });
+        return;
+      }
+
       // Role-based redirection logic - Admins should ALWAYS be redirected to admin area
       if (profile.role === 'superadmin') {
         console.log('👑 ProtectedRoute: SuperAdmin detected');
@@ -144,6 +152,9 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   }
 
   if (!user) {
+    if (location.pathname === "/admin/login") {
+      return <AdminLogin />; // render AdminLogin component
+    }
     return <AuthPage />;
   }
 
