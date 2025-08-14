@@ -72,7 +72,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return { error };
   };
 
-  const signIn = async (email: string, password: string, expectedRole: 'admin' | 'user'| 'superadmin') => {
+  const signIn = async (email: string, password: string, expectedRole: 'admin' | 'user') => {
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
