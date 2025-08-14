@@ -54,7 +54,7 @@ export const OnboardingCarousel = () => {
   const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const { signIn, signUp } = useAuth();
+  const { signIn, signUp, resetPassword } = useAuth();
 
   const handleNext = () => {
     if (currentStep < onboardingCards.length) setCurrentStep(currentStep + 1);
@@ -265,6 +265,39 @@ export const OnboardingCarousel = () => {
                 </div>
               </>
             )}
+            {isLogin && (
+            <div className="text-right">
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      if (!email) {
+                        toast({
+                          title: "Enter your email first",
+                          description: "Please enter your email in the field above.",
+                          variant: "destructive",
+                        });
+                        return;
+                      }
+                      const { error } = await resetPassword(email);
+                      if (error) {
+                        toast({
+                          title: "Error",
+                          description: error.message,
+                          variant: "destructive",
+                        });
+                      } else {
+                        toast({
+                          title: "Check your email",
+                          description: "Password reset link sent.",
+                        });
+                      }
+                    }}
+                    className="text-primary text-sm underline"
+                  >
+                    Forgot Password?
+                  </button>
+              </div>
+)}
             <Button
               type="submit"
               className="w-full py-3 bg-secondary hover:bg-secondary/70 font-semibold"

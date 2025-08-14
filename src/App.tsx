@@ -57,6 +57,7 @@ import PendingApproval from "./pages/waitingApprovalPage";
 import RejectedRegistration from "./pages/RejectRegistration"
 import SuspendedAccount from "./pages/SuspendedAccount";
 import {AdminLogin} from "./components/adminLogin/AdminLogin";
+import ResetPassword from "./pages/ResetPassword";
 
 const queryClient = new QueryClient();
 
@@ -554,6 +555,10 @@ const App = () => (
               <Route 
                 path="/admin/login"
                 element={<AdminLogin />}
+              />
+              <Route 
+                path="/reset-password"
+                element={<ResetPassword/>}
               />
               <Route path="/test-auth" element={<TestAuthSystem />} />
               <Route path="/debug-role" element={<RoleDebugger />} />
