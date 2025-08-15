@@ -20,7 +20,7 @@ export const AdminLogin = () => {
     e.preventDefault();
     setLoading(true);
     try {
-        const { error } = await signIn(email, password, 'admin');
+        const { error } = await signIn(email, password, 'superadmin');
         error
           ? toast({
               title: "Error",
