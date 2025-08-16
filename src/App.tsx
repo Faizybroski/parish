@@ -140,10 +140,10 @@ const App = () => (
               <Route
                 path="/event/:eventId/details"
                 element={
-                  <ProtectedRoute>
+                  <>
                     <Navigation />
                     <EventDetails />
-                  </ProtectedRoute>
+                  </>
                 }
               />
               <Route
