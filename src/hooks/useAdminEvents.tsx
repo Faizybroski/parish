@@ -14,11 +14,11 @@ export const useAdminEvents = () => {
 
   const fetchAdminEvents = async () => {
     try {
-      // First get all admin/superadmin profile IDs
+      // First get all admin profile IDs
       const { data: adminProfiles, error: profileError } = await supabase
         .from('profiles')
         .select('id')
-        .in('role', ['admin', 'superadmin']);
+        .in('role', ['admin']);
 
       if (profileError) throw profileError;
 

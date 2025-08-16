@@ -14,8 +14,6 @@ const RoleDebugger = () => {
 
   const getRoleIcon = (role: string) => {
     switch (role) {
-      case 'superadmin':
-        return <Crown className="h-4 w-4 text-purple-500" />;
       case 'admin':
         return <Shield className="h-4 w-4 text-green-500" />;
       default:
@@ -25,8 +23,6 @@ const RoleDebugger = () => {
 
   const getRoleColor = (role: string) => {
     switch (role) {
-      case 'superadmin':
-        return 'bg-purple-500';
       case 'admin':
         return 'bg-green-500';
       default:
@@ -36,7 +32,6 @@ const RoleDebugger = () => {
 
   const getExpectedRoute = (role: string) => {
     switch (role) {
-      case 'superadmin':
       case 'admin':
         return '/admin/dashboard';
       default:
@@ -127,7 +122,7 @@ const RoleDebugger = () => {
                 Go to Home
               </Button>
               
-              {(profile.role === 'admin' || profile.role === 'superadmin') && (
+              {(profile.role === 'admin') && (
                 <Button 
                   variant="outline"
                   onClick={() => navigate('/admin/dashboard')}

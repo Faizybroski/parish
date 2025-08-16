@@ -98,27 +98,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (profileError) return { error: profileError };
 
-      const articleMap: Record<'superadmin' | 'admin' | 'user', string> = {
-        superadmin: 'a superadmin',
+      const articleMap: Record< 'admin' | 'user', string> = {
         admin: 'an admin',
         user: 'a user',
       };
 
-      if (expectedRole === 'admin') {
-        if (profile?.role !== 'admin' && profile?.role !== 'superadmin') {
-          await supabase.auth.signOut();
-          return { error: { message: `${email} is not ${articleMap[expectedRole]}` } };
-        }
-      } else if (profile?.role !== expectedRole) {
+      if (profile?.role !== expectedRole) {
         await supabase.auth.signOut();
         return { error: { message: `${email} is not ${articleMap[expectedRole]}` } };
       }
       
       setTimeout(() => {
         switch (profile.role) {
-          case 'superadmin':
-            window.location.href = '/superadmin/dashboard';
-            break;
           case 'admin':
             window.location.href = '/admin/dashboard';
             break;

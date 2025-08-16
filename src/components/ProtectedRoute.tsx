@@ -86,7 +86,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
         return;
       }
 
-      if ((profile.role === 'admin' || profile.role === 'superadmin') 
+      if ((profile.role === 'admin') 
           && currentPath === '/admin/login') {
         console.log('🚫 ProtectedRoute: Admin already logged in, redirecting...');
         navigate('/admin/dashboard', { replace: true });
@@ -94,15 +94,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
       }
 
       // Role-based redirection logic - Admins should ALWAYS be redirected to admin area
-      if (profile.role === 'superadmin') {
-        console.log('👑 ProtectedRoute: SuperAdmin detected');
-        // SuperAdmin should always go to /admin/dashboard unless already on admin routes
-        if (!currentPath.startsWith('/admin')) {
-          console.log('🔄 ProtectedRoute: Redirecting superadmin to /admin/dashboard');
-          navigate('/admin/dashboard', { replace: true });
-          return;
-        }
-      } else if (profile.role === 'admin') {
+      if (profile.role === 'admin') {
         console.log('🛡️ ProtectedRoute: Admin detected');
         // Admin should always go to /admin/dashboard unless already on admin routes
         if (!currentPath.startsWith('/admin')) {
@@ -162,7 +154,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     return <OnboardingFlow />;
   }
 
-  // Admin and superadmin users don't need onboarding - they go directly to admin panel
+  // Admin don't need onboarding - they go directly to admin panel
   // The useEffect above handles their redirection
 
   return <>{children}</>;

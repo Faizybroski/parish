@@ -54,15 +54,9 @@ const AdminSidebar = () => {
       { title: "Analytics", url: "/admin/analytics", icon: BarChart3 },
       { title: "Notifications", url: "/admin/notifications", icon: Bell },
       { title: "Reports", url: "/admin/reports", icon: FileText },
+      { title: "Admin Management", url: "/admin/admin-management", icon: Shield },
+      { title: "Global Settings", url: "/admin/settings", icon: Settings }
     ];
-
-    // Super Admin gets additional items
-    if (profile?.role === 'superadmin') {
-      baseItems.push(
-        { title: "Admin Management", url: "/admin/admin-management", icon: Shield },
-        { title: "Global Settings", url: "/admin/settings", icon: Settings }
-      );
-    }
 
     return baseItems;
   };
@@ -75,13 +69,9 @@ const AdminSidebar = () => {
       <SidebarContent className="py-6">
         <SidebarGroup>
           <SidebarGroupLabel className="flex items-center space-x-3 px-4 py-3 mb-4 bg-gradient-to-r from-primary/10 to-primary/5 rounded-lg mx-3">
-            {profile?.role === 'superadmin' ? (
-              <Crown className="h-5 w-5 text-primary" />
-            ) : (
-              <Shield className="h-5 w-5 text-primary" />
-            )}
+            <Shield className="h-5 w-5 text-primary" />
             <span className="font-semibold text-foreground">
-              {profile?.role === 'superadmin' ? 'Super Admin' : 'Admin'} Panel
+              Admin Panel
             </span>
           </SidebarGroupLabel>
 

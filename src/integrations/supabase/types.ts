@@ -719,7 +719,7 @@ export type Database = {
       }
     }
     Enums: {
-      admin_role: "super_admin" | "moderator"
+      admin_role: "admin"
       dietary_preference:
         | "vegetarian"
         | "vegan"
@@ -749,7 +749,7 @@ export type Database = {
       payment_status: "pending" | "completed" | "failed" | "refunded"
       rsvp_status: "yes" | "no" | "maybe" | "pending"
       subscription_plan: "monthly" | "yearly"
-      user_role: "user" | "admin" | "superadmin"
+      user_role: "user" | "admin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -877,7 +877,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      admin_role: ["super_admin", "moderator"],
+      admin_role: ["admin"],
       dietary_preference: [
         "vegetarian",
         "vegan",
@@ -910,7 +910,7 @@ export const Constants = {
       payment_status: ["pending", "completed", "failed", "refunded"],
       rsvp_status: ["yes", "no", "maybe", "pending"],
       subscription_plan: ["monthly", "yearly"],
-      user_role: ["user", "admin", "superadmin"],
+      user_role: ["user", "admin"],
     },
   },
 } as const

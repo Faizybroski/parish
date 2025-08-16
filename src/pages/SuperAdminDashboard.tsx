@@ -15,7 +15,7 @@ const SuperAdminDashboard = () => {
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-foreground">
-          Super Admin Dashboard
+          Admin Dashboard
         </h1>
         <p className="text-muted-foreground mt-2">
           Welcome back, {profile?.first_name || user?.email}! You have full system access.

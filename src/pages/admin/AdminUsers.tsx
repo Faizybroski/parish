@@ -238,14 +238,6 @@ const UserDetailsModal: React.FC<UserDetailsModalProps> = ({
   // );
 
   const handleDeleteUser = async () => {
-    if (profile?.role !== "superadmin") {
-      toast({
-        title: "Only Super Admins can delete users",
-        variant: "destructive",
-      });
-      return;
-    }
-
     if ( !confirm("Are you sure you want to delete this user? This action cannot be undone." )) return;
 
     try {
@@ -619,7 +611,6 @@ const UserDetailsModal: React.FC<UserDetailsModalProps> = ({
                       <span>Suspend User</span>
                     </Button>
                   )}
-                  {profile.role === "superadmin" && (
                     <Button
                       size="sm"
                       variant="destructive"
@@ -628,7 +619,6 @@ const UserDetailsModal: React.FC<UserDetailsModalProps> = ({
                     <Trash2 className="h-3 w-3" />
                     <span>Delete User</span>
                   </Button>
-                  )}
                 </>
               )}
             </div>
@@ -741,7 +731,7 @@ const AdminUsers = () => {
   useEffect(() => {
     if (
       profile &&
-      (profile.role === "admin" || profile.role === "superadmin")
+      (profile.role === "admin")
     ) {
       fetchUsers();
     }
@@ -999,7 +989,6 @@ const getUserStatus = (user: User) => {
             <SelectContent>
               <SelectItem value="user">User</SelectItem>
               <SelectItem value="admin">Admin</SelectItem>
-              <SelectItem value="superadmin">Super Admin</SelectItem>
             </SelectContent>
           </Select>
         </div>

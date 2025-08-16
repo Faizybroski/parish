@@ -6,12 +6,12 @@ import { Loader2 } from 'lucide-react';
 
 interface ProtectedAdminRouteProps {
   children: React.ReactNode;
-  requireSuperAdmin?: boolean;
+  requireAdmin?: boolean;
 }
 
 const ProtectedAdminRoute: React.FC<ProtectedAdminRouteProps> = ({ 
   children, 
-  requireSuperAdmin = false 
+  requireAdmin = false 
 }) => {
   const { user, loading: authLoading } = useAuth();
   const { profile, loading: profileLoading } = useProfile();
@@ -36,20 +36,19 @@ const ProtectedAdminRoute: React.FC<ProtectedAdminRouteProps> = ({
   }
 
   // Check if user has admin access
-  const hasAdminAccess = profile.role === 'admin' || profile.role === 'superadmin';
-  const hasSuperAdminAccess = profile.role === 'superadmin';
+  const hasAdminAccess = profile.role === 'admin';
 
   if (!hasAdminAccess) {
     return <Navigate to="/" replace />;
   }
 
-  if (requireSuperAdmin && !hasSuperAdminAccess) {
+  if (requireAdmin && !hasAdminAccess) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center space-y-4">
           <h1 className="text-2xl font-bold text-red-600">Access Denied</h1>
           <p className="text-muted-foreground">
-            This area requires SuperAdmin privileges.
+            This area requires Admin privileges.
           </p>
         </div>
       </div>

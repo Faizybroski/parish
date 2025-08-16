@@ -50,7 +50,7 @@ const AdminReservations = () => {
   const [statusFilter, setStatusFilter] = useState('all');
 
   useEffect(() => {
-    if (profile && (profile.role === 'admin' || profile.role === 'superadmin')) {
+    if (profile && (profile.role === 'admin')) {
       fetchReservations();
     }
   }, [profile]);
@@ -149,7 +149,7 @@ const AdminReservations = () => {
 
   const stats = getStats();
 
-  if (!profile || (profile.role !== 'admin' && profile.role !== 'superadmin')) {
+  if (!profile || (profile.role !== 'admin')) {
     return (
       <AdminLayout>
         <div className="flex items-center justify-center min-h-screen">

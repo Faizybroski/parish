@@ -77,7 +77,7 @@ const EventsCarousel = () => {
       const { data: adminProfiles, error: profileError } = await supabase
         .from("profiles")
         .select("id")
-        .in("role", ["admin", "superadmin"]);
+        .in("role", ["admin"]);
 
       if (profileError) throw profileError;
 
