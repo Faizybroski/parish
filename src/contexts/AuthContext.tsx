@@ -8,6 +8,7 @@ interface AuthContextType {
   loading: boolean;
   signUp: (email: string, password: string, metadata?: any) => Promise<{ error: any }>;
   signIn: (email: string, password: string, expectedRole: 'admin' | 'user') => Promise<{ error: any }>;
+  signInWithGoogle: () => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<{ error: any }>;
   updatePassword: (newPassword: string) => Promise<{ error: any }>;
@@ -77,9 +78,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
-
     });
+
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('user_id', data.user.id)
+      .single();
     
+    const articleMap: Record< 'admin' | 'user', string> = {
+      admin: 'an admin',
+      user: 'a user',
+    };
+  
+    if (profile?.role !== expectedRole) {
+      await supabase.auth.signOut();
+      if (expectedRole === 'admin') {
+        window.location.href = '/admin/login';
+      } 
+      return { error: { message: `${email} is not ${articleMap[expectedRole]}` } };
+    }
+
     if (error) {
       return { error };
     }
@@ -88,42 +107,32 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return { error: { message: 'Invalid login attempt' } };
     }
 
-    // If login successful, redirect based on user role
-      // Get user profile to determine role
-      const { data: profile, error: profileError } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('user_id', data.user.id)
-        .single();
-
-      if (profileError) return { error: profileError };
-
-      const articleMap: Record< 'admin' | 'user', string> = {
-        admin: 'an admin',
-        user: 'a user',
-      };
-
-      if (profile?.role !== expectedRole) {
-        await supabase.auth.signOut();
-        return { error: { message: `${email} is not ${articleMap[expectedRole]}` } };
-      }
+    if (profileError) return { error: profileError };
       
-      setTimeout(() => {
-        switch (profile.role) {
-          case 'admin':
-            window.location.href = '/admin/dashboard';
-            break;
-          case 'user':
-          default:
-            window.location.href = '/user/dashboard';
-            break;
-        }
-      }, 100); // Small delay to ensure auth state is updated
-    
+    setTimeout(() => {
+      switch (profile.role) {
+        case 'admin':
+          window.location.href = '/admin/dashboard';
+          break;
+        case 'user':
+        default:
+          window.location.href = '/user/dashboard';
+          break;
+      }
+    }, 100); // Small delay to ensure auth state is updated
     return { error };
   }
     
-  
+  const signInWithGoogle = async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: window.location.origin, 
+      },
+    });
+
+    return { error };
+  };
 
   const signOut = async () => {
     await supabase.auth.signOut();
@@ -137,12 +146,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const updatePassword = async (newPassword: string) => {
-  const { data, error } = await supabase.auth.updateUser({
-    password: newPassword,
-  });
-  return { data, error };
-};
-
+    const { data, error } = await supabase.auth.updateUser({
+      password: newPassword,
+    });
+    return { data, error };
+  };
 
   const value = {
     user,
@@ -151,6 +159,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     signUp,
     signIn,
     signOut,
+    signInWithGoogle,
     resetPassword,
     updatePassword
   };

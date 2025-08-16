@@ -54,7 +54,7 @@ export const OnboardingCarousel = () => {
   const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const { signIn, signUp, resetPassword } = useAuth();
+  const { signIn, signUp, resetPassword, signInWithGoogle } = useAuth();
 
   const handleNext = () => {
     if (currentStep < onboardingCards.length) setCurrentStep(currentStep + 1);
@@ -329,7 +329,12 @@ export const OnboardingCarousel = () => {
             </div>
             <div className="flex gap-3">
               <Button
-                onClick={() => toast({ title: "Google login not implemented" })}
+                onClick={async () => {
+                  const { error } = await signInWithGoogle();
+                  if (error) {
+                    console.error("Google login error:", error.message);
+                  }
+                }}
                 className="flex-1 py-3 border hover:bg-secondary/40 text-foreground bg-transparent"
               >
                 <img
