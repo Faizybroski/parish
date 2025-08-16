@@ -65,7 +65,7 @@ const Profile = () => {
       const { data, error } = await supabase
         .from("payments")
         .select("status")
-        .eq("user_id", user.id)
+        .eq("user_id", profile?.id)
         .order("created_at", { ascending: false })
         .limit(1);
 

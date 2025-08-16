@@ -83,8 +83,8 @@ export const OnboardingCarousel = () => {
       } else {
         if (!isLogin && !linkedin && !instagram) {
           toast({
-            title: "Social Media User Name Required",
-            description: "Please enter at least your LinkedIn or Instagram username.",
+            title: "Social Media is Required",
+            description: " Please Enter Instagram or Linkedin ",
             variant: "destructive",
           });
           return;
