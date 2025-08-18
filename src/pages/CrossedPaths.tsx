@@ -60,28 +60,33 @@ const CrossedPaths = () => {
 
     try {
       // First get basic crossed paths using proper foreign key joins
-      const { data: crossedPathsData, error } = await supabase
-        .from('crossed_paths')
-        .select(`
-          *,
-          user1:profiles!crossed_paths_user1_id_fkey(
-            id, user_id, first_name, last_name, profile_photo_url, job_title, 
-            location_city, dining_style, dietary_preferences, gender_identity
-                payments:payments!payments_user_id_fkey (
-                        status
-                )
-          ),
-          user2:profiles!crossed_paths_user2_id_fkey(
-            id, user_id, first_name, last_name, profile_photo_url, job_title, 
-            location_city, dining_style, dietary_preferences, gender_identity
-              payments:payments!payments_user_id_fkey (
-                    status
-              )
-          )
-        `)
-        .or(`user1_id.eq.${profile.user_id},user2_id.eq.${profile.user_id}`)
-        .eq('is_active', true)
-        .order('matched_at', { ascending: false });
+  const { data: crossedPathsData, error } = await supabase
+  .from('crossed_paths')
+  .select(`
+    *,
+    user1:profiles!crossed_paths_user1_id_fkey(
+      id, user_id, first_name, last_name, profile_photo_url, job_title, 
+      location_city, dining_style, dietary_preferences, gender_identity,
+      payments:payments!payments_user_id_fkey (
+        id, user_id, status, updated_at
+      )
+    ),
+    user2:profiles!crossed_paths_user2_id_fkey(
+      id, user_id, first_name, last_name, profile_photo_url, job_title, 
+      location_city, dining_style, dietary_preferences, gender_identity,
+      payments:payments!payments_user_id_fkey (
+        id, user_id, status, updated_at
+      )
+    )
+  `)
+  .or(`user1_id.eq.${profile.user_id},user2_id.eq.${profile.user_id}`)
+  .eq('is_active', true)
+  .order('matched_at', { ascending: false })
+  // 👇 apply ordering+limit on the joined payments table
+  .order('updated_at', { foreignTable: 'user1.payments', ascending: false })
+  .limit(1, { foreignTable: 'user1.payments' })
+  .order('updated_at', { foreignTable: 'user2.payments', ascending: false })
+  .limit(1, { foreignTable: 'user2.payments' });
 
       if (error) {
         console.error('Error fetching crossed paths:', error);

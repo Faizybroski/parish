@@ -221,8 +221,9 @@ const AdminCreateEvent = () => {
 
       if (error) throw error;
       const eventLink = `${window.location.origin}/event/${data.id}/details`;
+      const emails = invitedEmails;
 
-      if (!invitedGuestIds || invitedGuestIds.length === 0) {
+     if ( (!emails || emails.length === 0) && (!invitedGuestIds || invitedGuestIds.length === 0)) {
         localStorage.setItem("eventUpdated", Date.now().toString());
         window.dispatchEvent(new CustomEvent("eventUpdated"));
 
@@ -236,7 +237,6 @@ const AdminCreateEvent = () => {
         return;
       }
       // const emails = await getEmailsFromIds(invitedGuestIds);
-       const emails = invitedEmails;
 
       await sendEventInvite({
         to: emails,

@@ -275,8 +275,9 @@ const AdminEditEvent = () => {
 
       if (error) throw error;
        const eventLink = `${window.location.origin}/event/${eventId}/details`;
+       const emails = invitedEmails;
 
-      if (!invitedGuestIds || invitedGuestIds.length === 0) {
+      if ( (!emails || emails.length === 0) && (!invitedGuestIds || invitedGuestIds.length === 0)) {
         localStorage.setItem("eventUpdated", Date.now().toString());
         window.dispatchEvent(new CustomEvent("eventUpdated"));
 
@@ -290,8 +291,6 @@ const AdminEditEvent = () => {
       }
 
       // const emails = await getEmailsFromIds(invitedGuestIds);
-      const emails = invitedEmails;
-
       await sendEventInvite({
         to: emails,
         subject: "You're Invited to a Secret TableTalk 🍷",

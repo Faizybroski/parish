@@ -202,44 +202,46 @@ const EventDetails = () => {
 
     try {
       const { data, error } = await supabase
-        .from("events")
-        .select(
-          `
-          *,
-          profiles:creator_id (
+      .from("events")
+      .select(
+        `
+        *,
+        profiles:creator_id (
+          first_name,
+          user_id,
+          last_name,
+          profile_photo_url,
+          email
+        ),
+        restaurants:restaurant_id (
+          name,
+          city,
+          country,
+          full_address
+        ),
+        rsvps (
+          id,
+          user_id,
+          status,
+          created_at,
+          profiles:user_id (
+            id,
             first_name,
             user_id,
             last_name,
             profile_photo_url,
-            email
-          ),
-          restaurants:restaurant_id (
-            name,
-            city,
-            country,
-            full_address
-          ),
-          rsvps (
-            id,
-            user_id,
-            status,
-            created_at,
-            profiles:user_id (
-              first_name,
-              user_id,
-              last_name,
-              profile_photo_url,
-              email,
-              payments:payments!payments_user_id_fkey (
-                  status
-                )
+            email,
+            payments:payments_user_id_fkey (
+              id,
+              status,
+              updated_at
             )
           )
-        `
         )
-        .eq("id", eventId)
-        .single();
-
+      `
+      )
+      .eq("id", eventId)
+      .single();
       if (error) throw error;
       setEvent(data);
     } catch (error) {

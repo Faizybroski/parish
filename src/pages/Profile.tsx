@@ -61,11 +61,20 @@ const Profile = () => {
   React.useEffect(() => {
     const fetchPaymentStatus = async () => {
       if (!user) return;
+        const { data : profileId, error: ProfileError } = await supabase
+        .from("profiles")
+        .select("id")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false })
+        .limit(1);
+      if (ProfileError) {
+        return;
+      }
 
       const { data, error } = await supabase
         .from("payments")
         .select("status")
-        .eq("user_id", profile?.id)
+        .eq("user_id", profileId[0]?.id)
         .order("created_at", { ascending: false })
         .limit(1);
 
