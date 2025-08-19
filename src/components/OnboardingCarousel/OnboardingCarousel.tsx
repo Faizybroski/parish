@@ -236,6 +236,11 @@ export const OnboardingCarousel = () => {
                     onChange={(e) => setLinkedin(e.target.value)}
                   />
                 </div>
+                <div className="flex items-center justify-center">
+                    <div className="flex-grow border-t border-primary"></div>
+                    <span className="text-primary font-semibold px-2">OR</span>
+                    <div className="flex-grow border-t border-primary"></div>
+                </div>
                 <div className="space-y-1">
                   <Label htmlFor="instagram">Instagram</Label>
                   <Input
