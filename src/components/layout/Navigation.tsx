@@ -71,76 +71,93 @@ const Navigation = () => {
             onClick={() => navigate("/")}
             className="cursor-pointer flex items-center space-x-1 shrink-0"
           >
-            <img className="w-8 h-8 object-contain" src="/Parishus logo.png" alt="Logo" />
+            <img
+              className="w-8 h-8 object-contain"
+              src="/Parishus logo.png"
+              alt="Logo"
+            />
             <h1 className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent whitespace-nowrap">
               Parish
             </h1>
           </div>
-
-          {/* Desktop Menu */}
-          <div className="hidden md:flex items-center space-x-6">
-            {navItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = location.pathname === item.path;
-              return (
-                <Button
-                  key={item.path}
-                  variant="ghost"
-                  className={`flex items-center space-x-1 ${
-                    isActive
-                      ? "text-peach-gold bg-peach-gold/10"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`}
-                  onClick={() => navigate(item.path)}
-                >
-                  <Icon className="h-5 w-5" />
-                  <span>{item.label}</span>
-                </Button>
-              );
-            })}
-          </div>
-
-          {/* Right Side */}
-          <div className="flex items-center space-x-4">
-            <NotificationCenter />
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  className="relative h-8 w-8 rounded-full"
-                >
-                  <Avatar className="h-8 w-8">
-                    <AvatarImage src={profile?.profile_photo_url || ""} />
-                    <AvatarFallback className="bg-peach-gold/20 text-peach-gold">
-                      {profile?.first_name?.[0]}
-                      {profile?.last_name?.[0]}
-                    </AvatarFallback>
-                  </Avatar>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56" align="end" forceMount>
-                <DropdownMenuItem onClick={() => navigate("/profile")}>
-                  <User className="mr-2 h-4 w-4" />
-                  Profile
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleSignOut}>
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Sign Out
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            {/* Hamburger Icon */}
-            <div className="md:hidden">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setIsOpen(!isOpen)}
-              >
-                {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          {!user ? (
+            <div className="flex items-center space-x-4">
+              <Button onClick={() => navigate("/")} variant="outline">
+                Sign In
               </Button>
             </div>
-          </div>
+          ) : (
+            <>
+              {/* Desktop Menu */}
+              <div className="hidden md:flex items-center space-x-6">
+                {navItems.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = location.pathname === item.path;
+                  return (
+                    <Button
+                      key={item.path}
+                      variant="ghost"
+                      className={`flex items-center space-x-1 ${
+                        isActive
+                          ? "text-peach-gold bg-peach-gold/10"
+                          : "text-muted-foreground hover:text-foreground"
+                      }`}
+                      onClick={() => navigate(item.path)}
+                    >
+                      <Icon className="h-5 w-5" />
+                      <span>{item.label}</span>
+                    </Button>
+                  );
+                })}
+              </div>
+
+              {/* Right Side */}
+              <div className="flex items-center space-x-4">
+                <NotificationCenter />
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      className="relative h-8 w-8 rounded-full"
+                    >
+                      <Avatar className="h-8 w-8">
+                        <AvatarImage src={profile?.profile_photo_url || ""} />
+                        <AvatarFallback className="bg-peach-gold/20 text-peach-gold">
+                          {profile?.first_name?.[0]}
+                          {profile?.last_name?.[0]}
+                        </AvatarFallback>
+                      </Avatar>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-56" align="end" forceMount>
+                    <DropdownMenuItem onClick={() => navigate("/profile")}>
+                      <User className="mr-2 h-4 w-4" />
+                      Profile
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={handleSignOut}>
+                      <LogOut className="mr-2 h-4 w-4" />
+                      Sign Out
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+
+                {/* Hamburger Icon */}
+                <div className="md:hidden">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setIsOpen(!isOpen)}
+                  >
+                    {isOpen ? (
+                      <X className="h-6 w-6" />
+                    ) : (
+                      <Menu className="h-6 w-6" />
+                    )}
+                  </Button>
+                </div>
+              </div>
+            </>
+          )}
         </div>
 
         {/* Mobile Menu */}
