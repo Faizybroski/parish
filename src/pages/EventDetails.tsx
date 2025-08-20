@@ -521,6 +521,7 @@ const EventDetails = () => {
           title: "RSVP Failed",
           description: "Please first sign in to RSVP.",
         });
+        navigate("/");
         return;
       }
     setShowRSVPConfirm(true);
