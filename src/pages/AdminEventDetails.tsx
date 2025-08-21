@@ -204,11 +204,11 @@ const AdminEventDetails = () => {
       await navigator.share({
         title: event?.name,
         text: event?.description,
-        url: window.location.href,
+        url: window.location.origin + `/event/${event?.id}/details`,
       });
     } catch (error) {
       // Fallback to copying URL
-      navigator.clipboard.writeText(window.location.href);
+      navigator.clipboard.writeText(window.location.origin + `/event/${event?.id}/details`);
       toast({
         title: "Link copied!",
         description: "Event link copied to clipboard",

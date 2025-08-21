@@ -36,6 +36,7 @@ import { useSubscriptionStatus } from '@/hooks/useSubscriptionStatus';
 import EventAnalyticsDashboard  from "@/components/analytics/EventAnalytics";
 
 interface Event {
+  is_paid: boolean;
   id: string;
   name: string;
   description: string;
@@ -749,11 +750,11 @@ const EventDetails = () => {
       await navigator.share({
         title: event?.name,
         text: event?.description,
-        url: window.location.href,
+        url: window.location.origin + `/event/${event?.id}/details`,
       });
     } catch (error) {
       // Fallback to copying URL
-      navigator.clipboard.writeText(window.location.href);
+      navigator.clipboard.writeText(window.location.origin + `/event/${eventId}/details`);
       toast({
         title: "Link copied!",
         description: "Event link copied to clipboard",
@@ -891,9 +892,12 @@ const EventDetails = () => {
                     </div>
                   </div>
                   <div className="flex space-x-2">
-                    <Button variant="outline" size="sm" onClick={shareEvent}>
-                      <Share2 className="h-4 w-4" />
-                    </Button>
+                    {!event.is_paid && (
+                      <Button variant="outline" size="sm" onClick={shareEvent}>
+                       <Share2 className="h-4 w-4" />
+                      </Button>
+                    )}
+            
                     {isCreator && (
                       <Button
                         variant="outline"

@@ -9,6 +9,7 @@ interface AuthContextType {
   signUp: (email: string, password: string, metadata?: any) => Promise<{ error: any }>;
   signIn: (email: string, password: string, expectedRole: 'admin' | 'user') => Promise<{ error: any }>;
   signInWithGoogle: () => Promise<{ error: any }>;
+  signInWithApple: () => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<{ error: any }>;
   updatePassword: (newPassword: string) => Promise<{ error: any }>;
@@ -133,6 +134,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     return { error };
   };
+  const signInWithApple = async () => {
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "apple",
+        options: {
+          redirectTo: window.location.origin,
+        },
+      });
+
+      if (error) {
+        console.error("Apple sign-in error:", error.message);
+        return { error };
+      }
+
+      return { error: null };
+    } catch (err) {
+      console.error("Unexpected error during Apple sign-in:", err);
+      return { error: { message: "Unexpected error during Apple login." } };
+    }
+  };
 
   const signOut = async () => {
     await supabase.auth.signOut();
@@ -160,6 +181,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     signIn,
     signOut,
     signInWithGoogle,
+    signInWithApple,
     resetPassword,
     updatePassword
   };

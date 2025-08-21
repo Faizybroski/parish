@@ -152,7 +152,7 @@ const shareEvent = async (name: string, description: string, eventId: string) =>
       url: window.location.origin + `/event/${eventId}/details`,
     });
   } catch (error) {
-    navigator.clipboard.writeText(window.location.href);
+    navigator.clipboard.writeText(window.location.origin + `/event/${eventId}/details`);
     toast({
       title: "Link copied!",
       description: "Event link copied to clipboard",

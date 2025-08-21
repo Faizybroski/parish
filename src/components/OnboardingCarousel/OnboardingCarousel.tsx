@@ -56,9 +56,7 @@ export const OnboardingCarousel = ({ startStep = 0 }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [loading, setLoading] = useState(false);
-  console.log("Current Step:=================>>>>>", currentStep);
-
-  const { signIn, signUp, resetPassword, signInWithGoogle } = useAuth();
+  const { signIn, signUp, resetPassword, signInWithGoogle, signInWithApple } = useAuth();
 
   const handleNext = () => {
     if (currentStep < onboardingCards.length) setCurrentStep(currentStep + 1);
@@ -354,7 +352,12 @@ export const OnboardingCarousel = ({ startStep = 0 }) => {
                 Google
               </Button>
               <Button
-                onClick={() => toast({ title: "Apple login not implemented" })}
+                 onClick={async () => {
+                  const { error } = await signInWithApple();
+                  if (error) {
+                    console.error("Apple login error:", error.message);
+                  }
+                }}
                 className="flex-1 py-3 text-white hover:bg-secondary/40 bg-transparent border"
               >
                 <img

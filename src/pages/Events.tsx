@@ -273,15 +273,15 @@ const Events = () => {
       console.error("Error fetching my events:", error);
     }
   };
-const shareEvent = async (name: string, description: string) => {
+const shareEvent = async (name: string, description: string, eventId: string) => {
   try {
     await navigator.share({
       title: name,
       text: description,
-      url: window.location.href,
+       url: window.location.origin + `/event/${eventId}/details`,
     });
   } catch (error) {
-    navigator.clipboard.writeText(window.location.href);
+    navigator.clipboard.writeText(window.location.origin + `/event/${eventId}/details`);
     toast({
       title: "Link copied!",
       description: "Event link copied to clipboard",
@@ -641,12 +641,12 @@ const shareEvent = async (name: string, description: string) => {
           </div>
         )}
         {typeof event.is_paid !== 'undefined' && (
-  <div className="text-sm font-medium py-2 text-white">
-    {event.is_paid
-      ? `💵 Paid Event – $${event.event_fee}`
-      : "🆓 Free Event"}
-  </div>
-)}
+          <div className="text-sm font-medium py-2 text-white">
+            {event.is_paid
+              ? `💵 Paid Event – $${event.event_fee}`
+              : "🆓 Free Event"}
+          </div>
+        )}
         <div className='flex items-center'>
           <MapPin className="w-4 h-4 text-white" />
 
@@ -696,13 +696,16 @@ const shareEvent = async (name: string, description: string) => {
               <Trash2 className="h-4 w-4" />
             </Button>
           )}
-<Button
-  variant="outline"
-  size="sm"
-  onClick={() => shareEvent(event.name, event.description)}
->
-  <Share2 className="h-4 w-4" />
-</Button>
+         {!event.is_paid &&(
+           <Button
+              variant="outline"
+              size="sm"
+              onClick={() => shareEvent(event.name, event.description, event.id)}
+            >
+            <Share2 className="h-4 w-4" />
+            </Button>
+         )} 
+        
 
           {/* RSVP Button (for all events with available spots) */}
           {/* {spotsLeft > 0 && !isCreator && (

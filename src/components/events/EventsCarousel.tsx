@@ -393,19 +393,21 @@ const EventsCarousel = () => {
 
                       {/* Bottom Buttons - mt-auto pushes them down */}
                       <div className="flex gap-2 w-full mt-auto">
-                        <Button
-                          onClick={() => navigate(`/event/${event.id}/details`)}
-                          className="w-12 px-4 py-4 text-lg border border-secondary font-medium bg-transparent text-white hover:bg-secondary/90"
-                        >
-                          <Share2 className="h-4 w-4" />
-                        </Button>
+                        {!event.is_paid && (
+                           <Button
+                            onClick={() => navigate(`/event/${event.id}/details`)}
+                            className="w-12 px-4 py-4 text-lg border border-secondary font-medium bg-transparent text-white hover:bg-secondary/90"
+                          >
+                            <Share2 className="h-4 w-4" />
+                          </Button>
+                        )}
                         <Button
                           onClick={() => navigate(`/rsvp/${event.id}/details`)}
                           className="flex-grow px-4 py-4 text-lg font-medium bg-secondary text-black hover:bg-secondary/90 flex items-center gap-2 justify-center"
                         >
                           {rsvpStatus === "yes" ? "Un-RSVP" : "RSVP"}
                           <ChevronRight className="w-5 h-5" />
-                        </Button>
+                      </Button>
                       </div>
                     </CardContent>
                   </Card>

@@ -102,15 +102,15 @@ const AdminEvents = () => {
       setEventToDelete(null);
     }
   };
-const shareEvent = async (name: string, description: string) => {
+const shareEvent = async (name: string, description: string, eventId: string) => {
   try {
     await navigator.share({
       title: name,
       text: description,
-      url: window.location.href,
+      url: window.location.origin + `/event/${eventId}/details`,
     });
   } catch (error) {
-    navigator.clipboard.writeText(window.location.href);
+    navigator.clipboard.writeText(window.location.origin + `/event/${eventId}/details`);
     toast({
       title: "Link copied!",
       description: "Event link copied to clipboard",
@@ -278,7 +278,7 @@ const shareEvent = async (name: string, description: string) => {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => shareEvent(event.name, event.description)}
+                        onClick={() => shareEvent(event.name, event.description, event.id)}
                       >
                         <Share2 className="h-4 w-4" />
                       </Button>
