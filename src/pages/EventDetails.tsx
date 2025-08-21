@@ -518,10 +518,10 @@ const EventDetails = () => {
   const handleRSVP = async () => {
     if (!user || !userProfileId || !event) {
      toast({
-          title: "RSVP Failed",
-          description: "Please first sign in to RSVP.",
+          title: "Almost There!",
+          description: "You’ll need to sign in or sign up before you can RSVP and join this event.",
         });
-        navigate("/");
+       navigate("/", { state: { startStep: 1 } });
         return;
       }
     setShowRSVPConfirm(true);

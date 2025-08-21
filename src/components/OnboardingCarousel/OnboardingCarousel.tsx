@@ -3,6 +3,7 @@ import { Button } from "@/components/OnboardingCarousel/ui/button";
 import { Input } from "@/components/OnboardingCarousel/ui/input";
 import { Label } from "@/components/OnboardingCarousel/ui/label";
 import { Card } from "@/components/OnboardingCarousel/ui/card";
+import { useLocation } from "react-router-dom";
 import { Checkbox } from "@/components/OnboardingCarousel/ui/checkbox";
 import { ChevronLeft, ChevronRight, Eye, EyeOff, Loader2 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -41,8 +42,10 @@ const onboardingCards = [
     image: "/images/Carousel 3.png",
   },
 ];
-export const OnboardingCarousel = () => {
-  const [currentStep, setCurrentStep] = useState(0);
+export const OnboardingCarousel = ({ startStep = 0 }) => {
+  const location = useLocation();
+  const passedStep = location.state?.startStep ?? startStep;
+  const [currentStep, setCurrentStep] = useState(passedStep);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [firstName, setFirstName] = useState("");
@@ -53,6 +56,7 @@ export const OnboardingCarousel = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [loading, setLoading] = useState(false);
+  console.log("Current Step:=================>>>>>", currentStep);
 
   const { signIn, signUp, resetPassword, signInWithGoogle } = useAuth();
 
