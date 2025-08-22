@@ -32,6 +32,8 @@ const WalletWithdraw = () => {
   const [totalPayments, setTotalPayments] = useState(0);
   const [paymentNote, setPaymentNote] = useState("");
   const [loading, setLoading] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<"Venmo" | "CashApp" | "PayPal" | "">("");  
+  const [accountDetails, setAccountDetails] = useState("");
 
   useEffect(() => {
     if (profile) {
@@ -82,7 +84,7 @@ const WalletWithdraw = () => {
   };
 
   const handleSendWallet = async () => {
-    if (!paymentNote.trim()) {
+    if (!paymentNote.trim() || !paymentMethod || !accountDetails.trim()) {
       toast({
         title: "Missing Details",
         description: "Please enter details before sending.",
@@ -100,6 +102,8 @@ const WalletWithdraw = () => {
             note: paymentNote,
             total_amount: totalPayments,
             status: "pending",
+            payment_method: paymentMethod,
+            account_details: accountDetails,
           },
         ]);
       if (insertError) throw insertError;
@@ -108,6 +112,8 @@ const WalletWithdraw = () => {
         description: "Wallet request sent to admin successfully!",
       });
       setPaymentNote("");
+      setPaymentMethod("");
+      setAccountDetails("");
       fetchWalletPayments();
     } catch {
       toast({
@@ -193,7 +199,7 @@ const WalletWithdraw = () => {
           <CardHeader>
             <CardTitle>Send Wallet to Admin</CardTitle>
           </CardHeader>
-          <CardContent>
+          {/* <CardContent>
             <Input
               placeholder="Enter details for admin..."
               value={paymentNote}
@@ -201,6 +207,65 @@ const WalletWithdraw = () => {
               className="mb-3"
               disabled={loading}
             />
+            <Button
+              className="w-full flex items-center gap-2"
+              onClick={handleSendWallet}
+              disabled={loading || totalPayments === 0}
+            >
+              {loading ? (
+                <>
+                  <Loader2 size={18} className="animate-spin" />
+                  Processing...
+                </>
+              ) : (
+                <>
+                  <Wallet size={18} /> Send Wallet to Admin
+                </>
+              )}
+            </Button>
+          </CardContent> */}
+          <CardContent>
+            {/* Payment Method Selection */}
+            <div className="mb-3">
+              <label className="block mb-1 font-medium">Select Payment Method:</label>
+              <div className="flex gap-4">
+                {["Venmo", "CashApp", "PayPal"].map((method) => (
+                  <label key={method} className="flex items-center gap-2">
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      value={method}
+                      checked={paymentMethod === method}
+                      onChange={() => setPaymentMethod(method as any)}
+                      disabled={loading}
+                      className="accent-primary"
+                    />
+                    {method}
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Account Details */}
+            {paymentMethod && (
+              <Input
+                placeholder={`Enter your ${paymentMethod} username/email`}
+                value={accountDetails}
+                onChange={(e) => setAccountDetails(e.target.value)}
+                className="mb-3"
+                disabled={loading}
+              />
+            )}
+
+            {/* Notes */}
+            <Input
+              placeholder="Enter details for admin..."
+              value={paymentNote}
+              onChange={(e) => setPaymentNote(e.target.value)}
+              className="mb-3"
+              disabled={loading}
+            />
+
             <Button
               className="w-full flex items-center gap-2"
               onClick={handleSendWallet}
