@@ -958,7 +958,7 @@ const EventDetails = () => {
                     </div>
                   </div>
                   <div className="flex items-center space-x-3">
-                    <MapPin className="h-5 w-5 text-muted-foreground" />
+                    <MapPin className="h-10 w-10 text-muted-foreground" />
                     <div>
                       <p className="font-medium">{event.location_name}</p>
                       {event.restaurants && (

@@ -408,17 +408,16 @@ export const OnboardingCarousel = ({ startStep = 0 }) => {
             />
             <h1
               className="text-3xl font-playfair font-extrabold text-primary mb-4"
-              style={{ fontSize: "70px",
-                       fontFamily: "cooper"
-                      }}
+              style={{ fontSize: "70px", color: "#9dc0b3", fontFamily: "cooper" }}
             >
               {currentCard.title}
             </h1>
             <p
               className="font-montserrat text-muted-foreground"
               style={{
-                fontWeight: "800",
+                fontWeight: "600",
                 paddingBottom: "90px",
+                color: "#f7c992",
                 fontSize: "21px",
               }}
             >
