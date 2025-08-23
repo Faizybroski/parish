@@ -15,6 +15,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import { sendEventInvite } from "@/lib/sendInvite";
 
 type WithdrawRequest = {
   id: string;
@@ -78,7 +79,7 @@ const AdminWalletRequests = () => {
     }
   };
 
-  const handleApprove = async (id: string) => {
+  const handleApprove = async (id: string, email) => {
     setLoading(id);
     try {
       const { data: wallet, error: walletError } = await supabase
@@ -104,6 +105,72 @@ const AdminWalletRequests = () => {
 
       if (approveError) throw approveError;
 
+      await sendEventInvite({
+        to: email,
+        subject: "Your Withdrawal Request Has Been Approved",
+        html: `
+          <!DOCTYPE html>
+          <html>
+            <head>
+              <meta charset="UTF-8" />
+              <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+              <title>Withdrawal Approved</title>
+            </head>
+            <body style="margin:0; padding:0; background-color:#f9fafb; font-family:Arial, sans-serif; color:#333;">
+              <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f9fafb; padding:20px;">
+                <tr>
+                  <td align="center">
+                    <table width="600" cellpadding="0" cellspacing="0" style="background-color:#ffffff; border-radius:12px; overflow:hidden; box-shadow:0 4px 12px rgba(0,0,0,0.1);">
+                      
+                      <!-- Header -->
+                      <tr>
+                        <td align="center" style="background-color:#111827; padding:40px 20px;">
+                          <h1 style="margin:0; font-size:26px; color:#ffffff;">Withdrawal Approved ✅</h1>
+                        </td>
+                      </tr>
+
+                      <!-- Body -->
+                      <tr>
+                        <td style="padding:30px; font-size:16px; line-height:1.6; color:#444;">
+                          <p>Hi there,</p>
+                          <p>
+                            We’re pleased to let you know that your <strong>withdrawal request</strong> has been 
+                            <span style="color:#16a34a; font-weight:bold;">approved</span>.
+                          </p>
+
+                          <p>
+                            The funds will be processed and transferred to your registered payout method shortly.  
+                            Depending on your bank or payment provider, this may take <strong>1–3 business days</strong>.
+                          </p>
+
+                          <p style="margin-top:20px;">
+                            You can check your wallet history anytime in your <a href="https://your-app-link.com/dashboard" style="color:#7c3aed; text-decoration:none; font-weight:bold;">dashboard</a>.
+                          </p>
+
+                          <p style="margin-top:30px; font-size:14px; color:#888;">
+                            – The Parish Finance Team
+                          </p>
+                        </td>
+                      </tr>
+
+                      <!-- Footer -->
+                      <tr>
+                        <td align="center" style="background-color:#f3f4f6; padding:20px; font-size:12px; color:#666;">
+                          <p style="margin:0;">Parish • Secure Withdrawals</p>
+                          <p style="margin:5px 0 0;">If you did not request this withdrawal, please contact support immediately.</p>
+                        </td>
+                      </tr>
+
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </body>
+          </html>
+          `,
+        }
+      );
+
       toast({
         title: "Success",
         description: "Request approved successfully!",
@@ -122,7 +189,7 @@ const AdminWalletRequests = () => {
   };
 
   // Reject
-  const handleReject = async (id: string) => {
+  const handleReject = async (id: string, email) => {
     setLoading(id);
     try {
       // Fetch the withdraw request first
@@ -139,6 +206,84 @@ const AdminWalletRequests = () => {
         .update({ status: "rejected" })
         .eq("id", id);
       if (rejectError) throw rejectError;
+
+      await sendEventInvite({
+        to: email,
+        subject: "Your Withdrawal Request Has Been Rejected",
+        html: `
+          <!DOCTYPE html>
+            <html>
+              <head>
+                <meta charset="UTF-8" />
+                <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+                <title>Withdrawal Rejected</title>
+              </head>
+              <body style="margin:0; padding:0; background-color:#f9fafb; font-family:Arial, sans-serif; color:#333;">
+                <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f9fafb; padding:20px;">
+                  <tr>
+                    <td align="center">
+                      <table width="600" cellpadding="0" cellspacing="0" style="background-color:#ffffff; border-radius:12px; overflow:hidden; box-shadow:0 4px 12px rgba(0,0,0,0.1);">
+                        
+                        <!-- Header -->
+                        <tr>
+                          <td align="center" style="background-color:#991b1b; padding:40px 20px;">
+                            <h1 style="margin:0; font-size:26px; color:#ffffff;">Withdrawal Rejected ❌</h1>
+                          </td>
+                        </tr>
+
+                        <!-- Body -->
+                        <tr>
+                          <td style="padding:30px; font-size:16px; line-height:1.6; color:#444;">
+                            <p>Hi there,</p>
+                            <p>
+                              We regret to inform you that your <strong>withdrawal request</strong> has been 
+                              <span style="color:#dc2626; font-weight:bold;">rejected</span>.
+                            </p>
+
+                            <p>
+                              This could be due to one of the following reasons:
+                            </p>
+                            <ul style="margin:10px 0 20px 20px; color:#555;">
+                              <li>Insufficient funds in your wallet</li>
+                              <li>Incorrect or incomplete payout details</li>
+                              <li>Request did not meet compliance requirements</li>
+                            </ul>
+
+                            <p>
+                              Please review your account and try again.  
+                              If you believe this is a mistake, reach out to our support team for clarification.
+                            </p>
+
+                            <p style="margin-top:20px; text-align:center;">
+                              <a href="https://your-app-link.com/support" 
+                                style="display:inline-block; background-color:#dc2626; color:#ffffff; text-decoration:none; padding:14px 24px; border-radius:8px; font-weight:bold; font-size:16px;">
+                                Contact Support
+                              </a>
+                            </p>
+
+                            <p style="margin-top:30px; font-size:14px; color:#888;">
+                              – The Parish Finance Team
+                            </p>
+                          </td>
+                        </tr>
+
+                        <!-- Footer -->
+                        <tr>
+                          <td align="center" style="background-color:#f3f4f6; padding:20px; font-size:12px; color:#666;">
+                            <p style="margin:0;">Parish • Secure Withdrawals</p>
+                            <p style="margin:5px 0 0;">If you did not request this withdrawal, please ignore this email.</p>
+                          </td>
+                        </tr>
+
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+              </body>
+            </html>
+          `
+        }
+      );
 
       toast({
         title: "Success",
@@ -158,7 +303,7 @@ const AdminWalletRequests = () => {
   };
 
   // On Hold
-  const handleOnHold = async (id: string) => {
+  const handleOnHold = async (id: string, email) => {
     setLoading(id);
     try {
       const { data: wallet, error: walletError } = await supabase
@@ -173,6 +318,79 @@ const AdminWalletRequests = () => {
         .update({ status: "onhold" })
         .eq("id", id);
       if (holdError) throw holdError;
+
+      await sendEventInvite({
+        to: email,
+        subject: "Your Withdrawal Request is On Hold",
+        html: `
+          <!DOCTYPE html>
+            <html>
+              <head>
+                <meta charset="UTF-8" />
+                <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+                <title>Withdrawal On Hold</title>
+              </head>
+              <body style="margin:0; padding:0; background-color:#f9fafb; font-family:Arial, sans-serif; color:#333;">
+                <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f9fafb; padding:20px;">
+                  <tr>
+                    <td align="center">
+                      <table width="600" cellpadding="0" cellspacing="0" style="background-color:#ffffff; border-radius:12px; overflow:hidden; box-shadow:0 4px 12px rgba(0,0,0,0.1);">
+                        
+                        <!-- Header -->
+                        <tr>
+                          <td align="center" style="background-color:#ca8a04; padding:40px 20px;">
+                            <h1 style="margin:0; font-size:26px; color:#ffffff;">Withdrawal On Hold ⏳</h1>
+                          </td>
+                        </tr>
+
+                        <!-- Body -->
+                        <tr>
+                          <td style="padding:30px; font-size:16px; line-height:1.6; color:#444;">
+                            <p>Hi there,</p>
+                            <p>
+                              Your <strong>withdrawal request</strong> is currently 
+                              <span style="color:#ca8a04; font-weight:bold;">on hold</span> while our team reviews it.
+                            </p>
+
+                            <p>
+                              This may happen if additional verification is required, or if we need to confirm certain account details before proceeding.
+                            </p>
+
+                            <p>
+                              We’ll notify you once the review is complete.  
+                              This process typically takes <strong>1–2 business days</strong>.
+                            </p>
+
+                            <p style="margin-top:20px; text-align:center;">
+                              <a href="https://your-app-link.com/support" 
+                                style="display:inline-block; background-color:#ca8a04; color:#ffffff; text-decoration:none; padding:14px 24px; border-radius:8px; font-weight:bold; font-size:16px;">
+                                Contact Support
+                              </a>
+                            </p>
+
+                            <p style="margin-top:30px; font-size:14px; color:#888;">
+                              – The Parish Finance Team
+                            </p>
+                          </td>
+                        </tr>
+
+                        <!-- Footer -->
+                        <tr>
+                          <td align="center" style="background-color:#f3f4f6; padding:20px; font-size:12px; color:#666;">
+                            <p style="margin:0;">Parish • Secure Withdrawals</p>
+                            <p style="margin:5px 0 0;">If you did not request this withdrawal, please contact support immediately.</p>
+                          </td>
+                        </tr>
+
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+              </body>
+            </html>
+          `
+        } 
+      );
 
       toast({
         title: "Success",
@@ -327,7 +545,7 @@ const AdminWalletRequests = () => {
                           <Menu.Item as="button">
                             {({ active }) => (
                               <button
-                                onClick={() => handleApprove(req.id)}
+                                onClick={() => handleApprove(req.id, req.profiles?.email)}
                                 disabled={loading === req.id}
                                 className={`flex items-center gap-2 px-3 py-2 w-full text-left text-sm ${
                                   active ? "bg-muted/50" : ""
@@ -354,7 +572,7 @@ const AdminWalletRequests = () => {
                           <Menu.Item as="button">
                             {({ active }) => (
                               <button
-                                onClick={() => handleReject(req.id)}
+                                onClick={() => handleReject(req.id, req.profiles?.email)}
                                 disabled={loading === req.id}
                                 className={`flex items-center gap-2 px-3 py-2 w-full text-left text-sm ${
                                   active ? "bg-muted/50" : ""
@@ -369,7 +587,7 @@ const AdminWalletRequests = () => {
                           <Menu.Item as="button">
                             {({ active }) => (
                               <button
-                                onClick={() => handleOnHold(req.id)}
+                                onClick={() => handleOnHold(req.id, req.profiles?.email)}
                                 disabled={loading === req.id}
                                 className={`flex items-center gap-2 px-3 py-2 w-full text-left text-sm ${
                                   active ? "bg-muted/50" : ""
