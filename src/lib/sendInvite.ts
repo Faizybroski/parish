@@ -4,10 +4,12 @@ export const sendEventInvite = async ({
   to,
   subject,
   text,
+  html
 }: {
   to: string[];
   subject: string;
-  text: string;
+  text?: string;
+  html?: string;
 }) => {
   const session = supabase.auth.getSession ? (await supabase.auth.getSession()).data.session : null;
 
@@ -16,7 +18,7 @@ export const sendEventInvite = async ({
   }
 
   const { data, error } = await supabase.functions.invoke("send-event-invite", {
-    body: { to, subject, text },
+    body: { to, subject, text, html },
   });
 
   if (error) {
