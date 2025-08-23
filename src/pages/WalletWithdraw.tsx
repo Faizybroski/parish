@@ -36,6 +36,36 @@ const WalletWithdraw = () => {
   const [accountDetails, setAccountDetails] = useState("");
 
   useEffect(() => {
+  if (!profile?.user_id) return;
+
+  // Subscribe to withdrawal status changes for the current user
+  const channel = supabase
+    .channel("wallet-withdraw-status")
+    .on(
+      "postgres_changes",
+      {
+        event: "UPDATE",
+        schema: "public",
+        table: "wallet_withdraw_requests",
+        filter: `creator_id=eq.${profile.user_id}`, // only listen for this user
+      },
+      (payload) => {
+        const newStatus = payload.new.status;
+        toast({
+          title: "Withdrawal Update",
+          description: `Your withdrawal request is now "${newStatus}".`,
+        });
+      }
+    )
+    .subscribe();
+
+  return () => {
+    supabase.removeChannel(channel);
+  };
+}, [profile?.user_id, toast]);
+
+
+  useEffect(() => {
     if (profile) {
       fetchWalletPayments();
     }

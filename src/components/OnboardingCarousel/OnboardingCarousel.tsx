@@ -17,7 +17,7 @@ const onboardingCards = [
   {
     id: 1,
     type: "intro-title",
-    title: "Parish",
+    title: "ParishUs",
     description: "UNIQUE DINING EXPERIENCES EVERY WEEK",
     image: null,
   },
@@ -400,15 +400,17 @@ export const OnboardingCarousel = ({ startStep = 0 }) => {
               src="Parishus logo.png"
               alt="Parish Logo"
               style={{
-                width: "30%",
+                width: "20%",
                 paddingTop: "90px",
                 margin: "0px auto",
-                marginBottom: "10px",
+                marginBottom: "30px",
               }}
             />
             <h1
               className="text-3xl font-playfair font-extrabold text-primary mb-4"
-              style={{ fontSize: "40px" }}
+              style={{ fontSize: "70px",
+                       fontFamily: "cooper"
+                      }}
             >
               {currentCard.title}
             </h1>
