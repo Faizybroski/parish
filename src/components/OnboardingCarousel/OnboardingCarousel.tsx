@@ -49,8 +49,6 @@ export const OnboardingCarousel = ({ startStep = 0 }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [firstName, setFirstName] = useState("");
-  const [instagram, setInstagram] = useState("");
-  const [linkedin, setLinkedin] = useState("");
   const [lastName, setLastName] = useState("");
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
@@ -83,19 +81,9 @@ export const OnboardingCarousel = ({ startStep = 0 }) => {
               description: "Signed in successfully.",
             });
       } else {
-        if (!isLogin && !linkedin && !instagram) {
-          toast({
-            title: "Social Media is Required",
-            description: " Please Enter Instagram or Linkedin ",
-            variant: "destructive",
-          });
-          return;
-        }
         const { error } = await signUp(email, password, {
           first_name: firstName,
           last_name: lastName,
-          instagram_username: instagram,
-          linkedin_username: linkedin,
           role: "user",
         });
         error
@@ -239,32 +227,6 @@ export const OnboardingCarousel = ({ startStep = 0 }) => {
             </div>
             {!isLogin && (
               <>
-                <div className="space-y-1">
-                  <Label htmlFor="linkedin">LinkedIn</Label>
-                  <Input
-                    id="linkedin"
-                    type="text"
-                    placeholder="Enter your LinkedIn username*"
-                    value={linkedin}
-                    onChange={(e) => setLinkedin(e.target.value)}
-                  />
-                </div>
-                <div className="flex items-center justify-center">
-                    <div className="flex-grow border-t border-primary"></div>
-                    <span className="text-primary font-semibold px-2">OR</span>
-                    <div className="flex-grow border-t border-primary"></div>
-                </div>
-                <div className="space-y-1">
-                  <Label htmlFor="instagram">Instagram</Label>
-                  <Input
-                    id="instagram"
-                    type="text"
-                    placeholder="Enter your Instagram username*"
-                    value={instagram}
-                    onChange={(e) => setInstagram(e.target.value)}
-                  />
-                </div>
-
                 <div className="flex items-center space-x-2">
                   <Checkbox
                     id="terms"
@@ -315,7 +277,7 @@ export const OnboardingCarousel = ({ startStep = 0 }) => {
                     Forgot Password?
                   </button>
               </div>
-)}
+          )}
             <Button
               type="submit"
               className="w-full py-3 bg-secondary hover:bg-secondary/70 font-semibold"

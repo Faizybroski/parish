@@ -58,6 +58,8 @@ import RejectedRegistration from "./pages/RejectRegistration"
 import SuspendedAccount from "./pages/SuspendedAccount";
 import {AdminLogin} from "./components/adminLogin/AdminLogin";
 import ResetPassword from "./pages/ResetPassword";
+import AuthPage from "@/components/auth/AuthPage";
+import { SocialLinks } from "@/components/SocialMedia/SocialMedia"
 
 const queryClient = new QueryClient();
 
@@ -70,10 +72,23 @@ const App = () => (
         <BrowserRouter>
           <div className="min-h-screen bg-background text-foreground">
             <Routes>
-              <Route
+              {/* <Route
                 path="/auth"
                 element={<div>Auth page rendered by ProtectedRoute</div>}
+              /> */}
+              <Route
+                path="/auth"
+                element={<AuthPage />}
               />
+              <Route 
+                path="/social-media"
+                element={
+                  
+                  <ProtectedRoute>
+                  <SocialLinks />
+                  </ProtectedRoute>
+                }
+                />
               <Route
                 path="/"
                 element={
