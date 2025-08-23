@@ -134,12 +134,23 @@ export const OnboardingCarousel = ({ startStep = 0 }) => {
             <Button onClick={handleBack} variant="ghost" size="icon">
               <ChevronLeft className="w-5 h-5" />
             </Button>
-            <div className="flex items-center">
-              <ParishLogo />
-              <h1 className="text-2xl font-extrabold font-playfair text-primary">
-                Parish
-              </h1>
-            </div>
+           <div className="flex flex-col items-center">
+          <div className="mb-6 ">
+            <ParishLogo />
+          </div>
+          <div>
+            <h1
+              className="text-2xl font-extrabold font-playfair text-primary"
+              style={{
+                fontSize: "60px",
+                color: "#9dc0b3",
+                fontFamily: "cooper",
+              }}
+            >
+              ParishUs
+            </h1>
+          </div>
+        </div>
             <div className="w-6" />
           </div>
 

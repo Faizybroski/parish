@@ -72,12 +72,13 @@ const Navigation = () => {
             className="cursor-pointer flex items-center space-x-1 shrink-0"
           >
             <img
-              className="w-8 h-8 object-contain"
+              className="w-10 h-8 mr-2 object-contain"
               src="/Parishus logo.png"
               alt="Logo"
             />
-            <h1 className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent whitespace-nowrap">
-              Parish
+            <h1 className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent whitespace-nowrap"
+             style={{ fontSize: "30px", color: "#9dc0b3", fontFamily: "cooper" }}>
+              ParishUs
             </h1>
           </div>
           {!user ? (
