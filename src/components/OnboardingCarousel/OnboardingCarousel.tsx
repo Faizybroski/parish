@@ -389,9 +389,7 @@ export const OnboardingCarousel = ({ startStep = 0 }) => {
               className="font-montserrat text-muted-foreground"
               style={{
                 fontWeight: "600",
-                fontWeight: "600",
                 paddingBottom: "90px",
-                color: "#f7c992",
                 color: "#f7c992",
                 fontSize: "21px",
               }}

@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import ParishLogo from "@/components/ui/logo";
 import { useAuth } from "@/contexts/AuthContext";
 import { useProfile } from "@/hooks/useProfile";
@@ -14,33 +15,64 @@ export const SocialLinks = () => {
   const { user, loading: authLoading } = useAuth();
   const { profile, loading: profileLoading } = useProfile();
 
-  const handleEmailLogin = async (e) => {
+  // Pre-fill if user already has socials
+  useEffect(() => {
+    if (profile) {
+      setInstagram(profile.instagram_username || "");
+      setLinkedin(profile.linkedin_username || "");
+    }
+  }, [profile]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
     if (!linkedin && !instagram) {
       toast({
         title: "Social Media is Required",
-        description: " Please Enter Instagram or Linkedin ",
+        description: "Please enter Instagram or LinkedIn.",
         variant: "destructive",
       });
       return;
     }
-    const { data, error } = await supabase
+
+    if (!profile?.id) {
+      toast({
+        title: "Error",
+        description: "Profile not found.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const { error } = await supabase
       .from("profiles")
-      .insert({
-        instagram_username: instagram,
-        linkedin_username: linkedin,
+      .update({
+        instagram_username: instagram || null,
+        linkedin_username: linkedin || null,
       })
       .eq("id", profile.id);
 
-      error
-              ? toast({
-                  title: "Error",
-                  description: error.message,
-                  variant: "destructive",
-                })
-              : toast({
-                  title: "Social Meida Accounts are updated",
-                });
+    if (error) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Success",
+        description: "Social media accounts updated.",
+      });
+    }
   };
+
+  if (authLoading || profileLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p>Loading...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center">
@@ -66,43 +98,46 @@ export const SocialLinks = () => {
           <div className="w-6" />
         </div>
         <h2 className="text-xl font-semibold">Share your socials</h2>
-        <p className="text-muted-foreground">
-          Add your LinkedIn or Instagram to make it easier to connect with
-          others
+        <p className="text-muted-foreground mb-4">
+          Add your LinkedIn or Instagram to make it easier to connect with others.
         </p>
 
-        <form onSubmit={handleEmailLogin} className="space-y-5">
-          <div className="space-y-4">
-            {/* LinkedIn */}
-            <div>
-              <Label htmlFor="linkedin">LinkedIn Profile</Label>
-              <Input
-                id="linkedin"
-                type="url"
-                placeholder="Enter your LinkedIn username*"
-                value={data.linkedin || ""}
-                onChange={(e) => setLinkedin(e.target.value)}
-                className="mt-2"
-              />
-            </div>
-            <div className="flex items-center justify-center">
-              <div className="flex-grow border-t border-primary"></div>
-              <span className="text-primary font-semibold px-2">OR</span>
-              <div className="flex-grow border-t border-primary"></div>
-            </div>
-
-            {/* Instagram */}
-            <div>
-              <Label htmlFor="instagram">Instagram</Label>
-              <Input
-                id="instagram"
-                placeholder="Enter your Instagram username*"
-                value={data.instagram || ""}
-                onChange={(e) => setInstagram(e.target.value)}
-                className="mt-2"
-              />
-            </div>
+        <form onSubmit={handleSubmit} className="space-y-5">
+          {/* LinkedIn */}
+          <div>
+            <Label htmlFor="linkedin">LinkedIn Profile</Label>
+            <Input
+              id="linkedin"
+              type="text"
+              placeholder="Enter your LinkedIn username*"
+              value={linkedin}
+              onChange={(e) => setLinkedin(e.target.value)}
+              className="mt-2"
+            />
           </div>
+
+          <div className="flex items-center justify-center">
+            <div className="flex-grow border-t border-primary"></div>
+            <span className="text-primary font-semibold px-2">OR</span>
+            <div className="flex-grow border-t border-primary"></div>
+          </div>
+
+          {/* Instagram */}
+          <div>
+            <Label htmlFor="instagram">Instagram</Label>
+            <Input
+              id="instagram"
+              type="text"
+              placeholder="Enter your Instagram username*"
+              value={instagram}
+              onChange={(e) => setInstagram(e.target.value)}
+              className="mt-2"
+            />
+          </div>
+
+          <Button type="submit" className="w-full">
+            Save Socials
+          </Button>
         </form>
       </Card>
     </div>
