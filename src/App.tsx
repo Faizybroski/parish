@@ -82,13 +82,8 @@ const App = () => (
               />
               <Route 
                 path="/social-media"
-                element={
-                  
-                  <ProtectedRoute>
-                  <SocialLinks />
-                  </ProtectedRoute>
-                }
-                />
+                element={<SocialLinks />}
+              />
               <Route
                 path="/"
                 element={

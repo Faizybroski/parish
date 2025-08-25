@@ -17,7 +17,7 @@ const onboardingCards = [
   {
     id: 1,
     type: "intro-title",
-    title: "ParishUs",
+    title: "Parish",
     description: "UNIQUE DINING EXPERIENCES EVERY WEEK",
     image: null,
   },
@@ -135,7 +135,7 @@ export const OnboardingCarousel = ({ startStep = 0 }) => {
                 fontFamily: "cooper",
               }}
             >
-              ParishUs
+              Parish
             </h1>
           </div>
         </div>

@@ -44,12 +44,12 @@ const FAQItem: React.FC<FAQItemProps> = ({ question, answer, defaultOpen = false
 export const FAQ: React.FC = () => {
   const faqs = [
     {
-      question: "How does ParishUs work?",
+      question: "How does Parish work?",
       answer: "We match small groups of five to six people for dinners, coffee, or tea based on shared interests and conversation preferences. You'll receive the time and location after you RSVP or check out.",
       defaultOpen: true
     },
     {
-      question: "What is included with ParishUs?",
+      question: "What is included with Parish?",
       answer: "Your RSVP gives you access to our platform, a reserved seat at a partner venue, and our matching. Food and drinks are not included — each guest pays their own bill at the venue."
     },
     {
@@ -70,7 +70,7 @@ export const FAQ: React.FC = () => {
     },
     {
       question: "Do I pay for my own food and drinks?",
-      answer: "Yes. ParishUs organizes the meetup and the match; each attendee pays their individual check directly to the venue."
+      answer: "Yes. Parish organizes the meetup and the match; each attendee pays their individual check directly to the venue."
     }
   ];
 

@@ -33,7 +33,17 @@ export const ParishUsLanding: React.FC = () => {
       <header className="sticky top-0 z-50 backdrop-blur-md border-b border-border/50 bg-background/80">
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center">
-            <ParishLogo />
+            <div className="cursor-pointer flex items-center space-x-1 shrink-0">
+              <img
+                className="w-10 h-8 mr-2 object-contain"
+                src="/Parishus logo.png"
+                alt="Logo"
+              />
+              <h1 className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent whitespace-nowrap"
+              style={{ fontSize: "30px", color: "#9dc0b3", fontFamily: "cooper" }}>
+                Parish
+              </h1>
+            </div>
           </div>
           
           <nav className="hidden md:flex items-center gap-8 text-sm font-medium">
@@ -42,12 +52,12 @@ export const ParishUsLanding: React.FC = () => {
             <a href="#faq" className="text-foreground/70 hover:text-primary transition-colors">FAQ</a>
           </nav>
           
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3 justify-end">
             <Button variant="outline" size="default" onClick={() => setShowAuth(true)}>
-              Host a Dinner
+              &nbsp;&nbsp;Host a Dinner&nbsp;&nbsp;
             </Button>
             <Button variant="default" size="default" onClick={() => setShowAuth(true)}>
-              Reserve My Seat
+              Reserve My Seat 
             </Button>
           </div>
         </div>
@@ -86,9 +96,6 @@ export const ParishUsLanding: React.FC = () => {
               </div>
               
               <div className="flex flex-wrap gap-3">
-                <div className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-secondary/10 text-secondary border border-secondary/20">
-                  159 joined last week in NYC
-                </div>
                 <div className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-accent/10 text-accent border border-accent/20">
                   Weekly dinners • coffees • teas
                 </div>
@@ -383,7 +390,7 @@ export const ParishUsLanding: React.FC = () => {
               <ParishLogo />
             </div>
             <p className="text-primary-foreground/80 text-center">
-              © {new Date().getFullYear()} Parish • Meet with meaning
+              © {new Date().getFullYear()} Parish
             </p>
           </div>
         </div>

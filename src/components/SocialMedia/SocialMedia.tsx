@@ -8,8 +8,10 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useProfile } from "@/hooks/useProfile";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
 
 export const SocialLinks = () => {
+  const navigate = useNavigate();
   const [instagram, setInstagram] = useState("");
   const [linkedin, setLinkedin] = useState("");
   const { user, loading: authLoading } = useAuth();
@@ -63,6 +65,8 @@ export const SocialLinks = () => {
         title: "Success",
         description: "Social media accounts updated.",
       });
+      navigate('/dashboard');
+
     }
   };
 
@@ -91,7 +95,7 @@ export const SocialLinks = () => {
                   fontFamily: "cooper",
                 }}
               >
-                ParishUs
+                Parish
               </h1>
             </div>
           </div>
