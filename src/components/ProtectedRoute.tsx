@@ -6,6 +6,8 @@ import AuthPage from '@/components/auth/AuthPage';
 import OnboardingFlow from '@/components/onboarding/OnboardingFlow';
 import { Loader2 } from 'lucide-react';
 import { AdminLogin } from '@/components/adminLogin/AdminLogin';
+import { ParishUsLanding } from '@/pages/LandingPage';
+import { SocialLinks } from "@/components/SocialMedia/SocialMedia"
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -147,7 +149,11 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     if (location.pathname === "/admin/login") {
       return <AdminLogin />; // render AdminLogin component
     }
-    return <AuthPage />;
+    return <ParishUsLanding />;
+  }
+
+  if (profile  && profile.role === 'user' && !profile.instagram_username && !profile.linkedin_username) {
+    return navigate('social-media');
   }
 
   if (profile && !profile.onboarding_completed && profile.role === 'user') {
