@@ -20,8 +20,10 @@ import {
   Shield
 } from 'lucide-react';
 import AuthPage from "@/components/auth/AuthPage"
+import { useNavigate } from 'react-router-dom';
 
 export const ParishUsLanding: React.FC = () => {
+  const navigate= useNavigate();
   const [showAuth, setShowAuth] = useState(false);
 
   if (showAuth) {
@@ -372,7 +374,7 @@ export const ParishUsLanding: React.FC = () => {
             We're happy to help you get started
           </p>
           <div className="flex items-center justify-center gap-4">
-            <Button variant="default" size="default" onClick={() => setShowAuth(true)}>
+            <Button variant="default" size="default" onClick={() => navigate('contact-us')}>
               Contact Support
             </Button>
             <Button variant="outline" size="default" onClick={() => setShowAuth(true)}>

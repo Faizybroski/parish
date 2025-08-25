@@ -60,6 +60,7 @@ import {AdminLogin} from "./components/adminLogin/AdminLogin";
 import ResetPassword from "./pages/ResetPassword";
 import AuthPage from "@/components/auth/AuthPage";
 import { SocialLinks } from "@/components/SocialMedia/SocialMedia"
+import { ContactPage } from "@/pages/Contact";
 
 const queryClient = new QueryClient();
 
@@ -92,6 +93,10 @@ const App = () => (
                     <Dashboard />
                   </ProtectedRoute>
                 }
+              />
+              <Route 
+                path="contact-us"
+                element={<ContactPage />}  
               />
               <Route
                 path="/dashboard"
