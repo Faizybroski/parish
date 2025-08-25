@@ -36,8 +36,7 @@ const WalletWithdraw = () => {
   const [accountDetails, setAccountDetails] = useState("");
 
   useEffect(() => {
-  if (!profile?.user_id) return; // wait until profile loaded
-
+    if (!user?.id) return; 
   const channel = supabase
     .channel("wallet-withdraw-status")
     .on(
@@ -46,7 +45,7 @@ const WalletWithdraw = () => {
         event: "UPDATE",
         schema: "public",
         table: "wallet_withdraw_requests",
-        filter: `creator_id=eq.${profile.user_id}`, // only listen for this user
+        filter: `creator_id=eq.${user.id}`, 
       },
       async (payload) => {
         const newStatus = payload.new.status;
@@ -77,7 +76,7 @@ const WalletWithdraw = () => {
   return () => {
     supabase.removeChannel(channel);
   };
-}, [profile?.user_id, user?.id, toast]);
+}, [profile?.id, user?.id, toast]);
 
 
   useEffect(() => {
