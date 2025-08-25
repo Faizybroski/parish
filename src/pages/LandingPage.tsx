@@ -52,6 +52,7 @@ export const ParishUsLanding: React.FC = () => {
             <a href="#how" className="text-foreground/70 hover:text-primary transition-colors">How it works</a>
             <a href="#events" className="text-foreground/70 hover:text-primary transition-colors">Events</a>
             <a href="#faq" className="text-foreground/70 hover:text-primary transition-colors">FAQ</a>
+            <a  onClick={() => navigate('contact-us')} className=" cursor-pointer text-foreground/70 hover:text-primary transition-colors">Contact Us</a>
           </nav>
           
           <div className="flex flex-wrap items-center gap-3 justify-end">
