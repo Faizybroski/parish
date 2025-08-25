@@ -235,13 +235,13 @@ const AdminDashboard = () => {
       const approvedUserEmail = updatedProfiles?.[0]?.email;
       if (!approvedUserEmail) throw new Error("User email not found");
   
-      await supabase.from("audit_logs").insert({
-        admin_id: user?.id,
-        action: "approve_user",
-        target_type: "user",
-        target_id: userId,
-        notes: "User approved via admin panel",
-      });
+      // await supabase.from("audit_logs").insert({
+      //   admin_id: user?.id,
+      //   action: "approve_user",
+      //   target_type: "user",
+      //   target_id: userId,
+      //   notes: "User approved via admin panel",
+      // });
 
       await sendEventInvite({
         to: approvedUserEmail,
@@ -269,13 +269,13 @@ const AdminDashboard = () => {
       const approvedUserEmail = updatedProfiles?.[0]?.email;
       if (!approvedUserEmail) throw new Error("User email not found");
   
-      await supabase.from("audit_logs").insert({
-        admin_id: user?.id,
-        action: "reject_user",
-        target_type: "user",
-        target_id: userId,
-        notes: "User rejected via admin panel",
-      });
+      // await supabase.from("audit_logs").insert({
+      //   admin_id: user?.id,
+      //   action: "reject_user",
+      //   target_type: "user",
+      //   target_id: userId,
+      //   notes: "User rejected via admin panel",
+      // });
 
       await sendEventInvite({
         to: approvedUserEmail,
@@ -302,13 +302,13 @@ const AdminDashboard = () => {
       if (error) throw error;
 
       // Log audit action
-      await supabase.from("audit_logs").insert({
-        admin_id: user?.id,
-        action: "suspend_user",
-        target_type: "user",
-        target_id: userId,
-        notes: "User suspended via admin panel",
-      });
+      // await supabase.from("audit_logs").insert({
+      //   admin_id: user?.id,
+      //   action: "suspend_user",
+      //   target_type: "user",
+      //   target_id: userId,
+      //   notes: "User suspended via admin panel",
+      // });
 
       toast({ title: "User suspended successfully" });
       fetchDashboardData();
@@ -327,13 +327,13 @@ const AdminDashboard = () => {
       if (error) throw error;
 
       // Log audit action
-      await supabase.from("audit_logs").insert({
-        admin_id: user?.id,
-        action: "reactivate_user",
-        target_type: "user",
-        target_id: userId,
-        notes: "User reactivated via admin panel",
-      });
+      // await supabase.from("audit_logs").insert({
+      //   admin_id: user?.id,
+      //   action: "reactivate_user",
+      //   target_type: "user",
+      //   target_id: userId,
+      //   notes: "User reactivated via admin panel",
+      // });
 
       toast({ title: "User reactivated successfully" });
       fetchDashboardData();
@@ -400,13 +400,13 @@ const AdminDashboard = () => {
       if (error) throw error;
 
       // Log audit action
-      await supabase.from("audit_logs").insert({
-        admin_id: user?.id,
-        action: "delete_event",
-        target_type: "event",
-        target_id: eventId,
-        notes: "Event deleted via admin panel",
-      });
+      // await supabase.from("audit_logs").insert({
+      //   admin_id: user?.id,
+      //   action: "delete_event",
+      //   target_type: "event",
+      //   target_id: eventId,
+      //   notes: "Event deleted via admin panel",
+      // });
 
       toast({ title: "Event deleted successfully" });
       fetchDashboardData();
@@ -427,13 +427,13 @@ const AdminDashboard = () => {
       if (error) throw error;
 
       // Log audit action
-      await supabase.from("audit_logs").insert({
-        admin_id: user?.id,
-        action: "cancel_event",
-        target_type: "event",
-        target_id: eventId,
-        notes: "Event cancelled via admin panel",
-      });
+      // await supabase.from("audit_logs").insert({
+      //   admin_id: user?.id,
+      //   action: "cancel_event",
+      //   target_type: "event",
+      //   target_id: eventId,
+      //   notes: "Event cancelled via admin panel",
+      // });
 
       toast({ title: "Event cancelled successfully" });
       fetchDashboardData();

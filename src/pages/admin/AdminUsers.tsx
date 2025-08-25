@@ -121,13 +121,13 @@ const UserDetailsModal: React.FC<UserDetailsModalProps> = ({
         const approvedUserEmail = updatedProfiles?.[0]?.email;
         if (!approvedUserEmail) throw new Error("User email not found");
 
-      await supabase.from("audit_logs").insert({
-        admin_id: currentUser?.id,
-        action: "approve_user",
-        target_type: "user",
-        target_id: user.user_id,
-        notes: "User approved via admin panel",
-      });
+      // await supabase.from("audit_logs").insert({
+      //   admin_id: currentUser?.id,
+      //   action: "approve_user",
+      //   target_type: "user",
+      //   target_id: user.user_id,
+      //   notes: "User approved via admin panel",
+      // });
 
       await sendEventInvite({
         to: approvedUserEmail,
@@ -156,13 +156,13 @@ const UserDetailsModal: React.FC<UserDetailsModalProps> = ({
       const approvedUserEmail = updatedProfiles?.[0]?.email;
       if (!approvedUserEmail) throw new Error("User email not found");
 
-      await supabase.from("audit_logs").insert({
-        admin_id: currentUser?.id,
-        action: "reject_user",
-        target_type: "user",
-        target_id: user.user_id,
-        notes: "User rejected via admin panel",
-      });
+      // await supabase.from("audit_logs").insert({
+      //   admin_id: currentUser?.id,
+      //   action: "reject_user",
+      //   target_type: "user",
+      //   target_id: user.user_id,
+      //   notes: "User rejected via admin panel",
+      // });
 
       await sendEventInvite({
         to: approvedUserEmail,
@@ -190,13 +190,13 @@ const UserDetailsModal: React.FC<UserDetailsModalProps> = ({
       if (error) throw error;
 
       // Log audit action
-      await supabase.from("audit_logs").insert({
-        admin_id: currentUser?.id,
-        action: "suspend_user",
-        target_type: "user",
-        target_id: user.user_id,
-        notes: "User suspended via admin panel",
-      });
+      // await supabase.from("audit_logs").insert({
+      //   admin_id: currentUser?.id,
+      //   action: "suspend_user",
+      //   target_type: "user",
+      //   target_id: user.user_id,
+      //   notes: "User suspended via admin panel",
+      // });
 
       toast({ title: "User suspended successfully" });
       onUserUpdate();
@@ -216,13 +216,13 @@ const UserDetailsModal: React.FC<UserDetailsModalProps> = ({
       if (error) throw error;
 
       // Log audit action
-      await supabase.from("audit_logs").insert({
-        admin_id: currentUser?.id,
-        action: "reactivate_user",
-        target_type: "user",
-        target_id: user.user_id,
-        notes: "User reactivated via admin panel",
-      });
+      // await supabase.from("audit_logs").insert({
+      //   admin_id: currentUser?.id,
+      //   action: "reactivate_user",
+      //   target_type: "user",
+      //   target_id: user.user_id,
+      //   notes: "User reactivated via admin panel",
+      // });
 
       toast({ title: "User reactivated successfully" });
       onUserUpdate();
