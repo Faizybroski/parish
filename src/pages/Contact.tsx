@@ -12,6 +12,7 @@ import ParishLogo from "@/components/ui/logo";
 
 export const ContactPage: React.FC = () => {
   const navigate = useNavigate();
+  const [showAuth, setShowAuth] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -86,19 +87,29 @@ export const ContactPage: React.FC = () => {
               </h1>
             </div>
           </div>
+          
+          <div className="flex flex-wrap items-center gap-3 justify-end">
+                <nav className=" md:flex items-center gap-8 text-sm font-medium mx-4">
+                    <a  onClick={() => navigate('/')} className=" cursor-pointer text-foreground/70 hover:text-primary transition-colors">Home</a>
+                </nav>
+                <Button variant="default" size="default" onClick={() => setShowAuth(true)}>
+                              Reserve My Seat 
+                </Button>
+            </div>
         </div>
+       
       </header>
 
       {/* Contact Section */}
 <main className="flex-grow flex items-center justify-center px-4 py-20 bg-card/20">
   <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-10">
     {/* Info Section */}
-    <section className=" p-10 flex flex-col justify-center">
-      <h3 className="text-2xl font-bold mb-4">Let's Start a Conversation</h3>
-      <p className="text-foreground/70 mb-8">
+    <section className=" p-4 flex flex-col justify-center">
+      <h1 className="text-4xl font-bold mb-8">Let's Start a Conversation</h1>
+      <p className="text-foreground/70 mb-12 text-base">
         We are always excited to work on new projects and help businesses achieve their digital goals. Whether you need a simple website or a complex software solution, we're here to help.
       </p>
-      <div className="mb-6 flex items-center gap-3">
+      <div className="mb-12 flex items-center gap-3">
         <div className="bg-primary/10 p-2 rounded-full">
           <svg width="24" height="24" fill="none" stroke="currentColor" className="text-primary"><path d="M4 4h16v16H4V4zm8 8v4m0-4a4 4 0 1 0-4-4m4 4a4 4 0 1 1 4-4" /></svg>
         </div>
@@ -107,18 +118,9 @@ export const ContactPage: React.FC = () => {
           <a href="mailto:info@websolixs.com" className="text-primary underline">support@parishus.com</a>
         </div>
       </div>
-      <div className="mb-6 flex items-center gap-3">
-        <div className="bg-primary/10 p-2 rounded-full">
-          <svg width="24" height="24" fill="none" stroke="currentColor" className="text-primary"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z" /></svg>
-        </div>
-        <div>
-          <div className="font-medium">Location</div>
-          <div className="text-foreground/70">Street ABC , Parish Us, United States.</div>
-        </div>
-      </div>
-      <div className="bg-card border border-border  p-4 mt-4">
-        <div className="font-medium mb-1">Response Time</div>
-        <div className="text-foreground/70 text-sm">
+      <div className="bg-card border border-border  p-4 mt-4 py-6 px-6">
+        <h2 className="text-xl font-bold mb-1">Response Time</h2>
+        <div className="text-foreground/70 text-base">
           We typically respond to all inquiries within 24 hours. For urgent projects, feel free to contact us via email.
         </div>
       </div>
