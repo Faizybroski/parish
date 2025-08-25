@@ -36,9 +36,8 @@ const WalletWithdraw = () => {
   const [accountDetails, setAccountDetails] = useState("");
 
   useEffect(() => {
-  if (!profile?.user_id) return;
+  if (!profile?.user_id) return; // wait until profile loaded
 
-  // Subscribe to withdrawal status changes for the current user
   const channel = supabase
     .channel("wallet-withdraw-status")
     .on(
@@ -49,12 +48,28 @@ const WalletWithdraw = () => {
         table: "wallet_withdraw_requests",
         filter: `creator_id=eq.${profile.user_id}`, // only listen for this user
       },
-      (payload) => {
+      async (payload) => {
         const newStatus = payload.new.status;
+
+        // ✅ Toast works
         toast({
           title: "Withdrawal Update",
           description: `Your withdrawal request is now "${newStatus}".`,
         });
+
+        // ✅ Insert into notifications
+        const { error } = await supabase.from("notifications").insert([
+          {
+            user_id: profile.id,  // <- make sure this matches your Notification schema
+            title: "Withdrawal Update",
+            message: `Your withdrawal request is now "${newStatus}".`,
+            type: "wallet_update",
+            is_read: false,
+            data: { withdraw_id: payload.new.id },
+          },
+        ]);
+
+        if (error) console.error("Failed to insert notification:", error);
       }
     )
     .subscribe();
@@ -62,7 +77,7 @@ const WalletWithdraw = () => {
   return () => {
     supabase.removeChannel(channel);
   };
-}, [profile?.user_id, toast]);
+}, [profile?.user_id, user?.id, toast]);
 
 
   useEffect(() => {

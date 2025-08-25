@@ -78,7 +78,7 @@ const Navigation = () => {
             />
             <h1 className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent whitespace-nowrap"
              style={{ fontSize: "30px", color: "#9dc0b3", fontFamily: "cooper" }}>
-              ParishUs
+              Parish
             </h1>
           </div>
           {!user ? (

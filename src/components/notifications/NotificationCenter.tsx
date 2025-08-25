@@ -3,8 +3,9 @@ import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { useProfile } from "@/hooks/useProfile";
 import { Badge } from '@/components/ui/badge';
-import { Bell, Check, X, Calendar, Users, Heart } from 'lucide-react';
+import { Bell, Check, X, Calendar, Users, Heart ,Wallet} from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import '@/index.css';
 import {
@@ -21,7 +22,7 @@ interface Notification {
   id: string;
   title: string;
   message: string;
-  type: 'rsvp_confirmation' | 'event_reminder' | 'crossed_paths_match' | 'feedback_request' | 'general' | 'rsvp_received';
+  type: 'rsvp_confirmation' | 'event_reminder' | 'crossed_paths_match' | 'feedback_request' | 'general' | 'rsvp_received'| 'wallet_update';
   is_read: boolean;
   created_at: string;
   data?: any;
@@ -32,6 +33,7 @@ const NotificationCenter = () => {
   const [unreadCount, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
+    const { profile } = useProfile();
 
   useEffect(() => {
     if (user) {
@@ -138,6 +140,8 @@ const NotificationCenter = () => {
         return <Heart className="h-4 w-4 text-pink-500" />;
       case 'feedback_request':
         return <Users className="h-4 w-4 text-green-500" />;
+      case 'wallet_update':
+        return <Wallet className="h-4 w-4 text-green-500" />;
       default:
         return <Bell className="h-4 w-4 text-muted-foreground" />;
     }
