@@ -33,7 +33,7 @@ export const ParishUsLanding: React.FC = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Navigation */}
-      <header className="sticky top-0 z-50 backdrop-blur-md bg-[#faf1de] border-b border-border/50 bg-background/80">
+      <header className="sticky top-0 z-50 backdrop-blur-md bg-[#faf1de] border-b border-border/50 ">
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center">
             <div className="cursor-pointer flex items-center space-x-1 shrink-0">
@@ -50,10 +50,10 @@ export const ParishUsLanding: React.FC = () => {
           </div>
           
           <nav className="hidden md:flex items-center gap-8 text-sm font-medium">
-            <a href="#how" className="text-foreground/70 hover:text-primary transition-colors">How it works</a>
-            <a href="#events" className="text-foreground/70 hover:text-primary transition-colors">Events</a>
-            <a href="#faq" className="text-foreground/70 hover:text-primary transition-colors">FAQ</a>
-            <a  onClick={() => navigate('contact-us')} className=" cursor-pointer text-foreground/70 hover:text-primary transition-colors">Contact Us</a>
+            <a href="#how" className="text-black transition-colors">How it works</a>
+            <a href="#events" className="text-black  transition-colors">Events</a>
+            <a href="#faq" className="text-black  transition-colors">FAQ</a>
+            <a  onClick={() => navigate('contact-us')} className="text-black cursor-pointer transition-colors">Contact Us</a>
           </nav>
           
           <div className="flex flex-wrap items-center gap-3 justify-end">
