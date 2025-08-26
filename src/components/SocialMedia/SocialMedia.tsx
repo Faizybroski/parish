@@ -92,7 +92,7 @@ export const SocialLinks = () => {
                 style={{
                   fontSize: "60px",
                   color: "#9dc0b3",
-                  fontFamily: "cooper",
+                  fontFamily: 'Sergio Trendy'
                 }}
               >
                 Parish

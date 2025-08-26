@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Pill } from '@/components/cards/Pill';
 import { EventCard } from '@/components/cards/EventCard';
 import { FAQ } from '@/components/faq/FAQ';
-import heroImage from '@/assets/images/Carousel 1.png';
+import heroImage from '/images/Landing Page 1.png';
 import tapasEventImage from '@/assets/images/Carousel 2.png';
 import coffeeEventImage from '@/assets/images/Carousel 3.png';
 import teaEventImage from '@/assets/images/Carousel 1.png';
@@ -12,6 +12,7 @@ import {
   Calendar, 
   MapPin, 
   Users, 
+  Check,
   Coffee, 
   UtensilsCrossed, 
   Heart,
@@ -20,7 +21,7 @@ import {
   Shield
 } from 'lucide-react';
 import AuthPage from "@/components/auth/AuthPage"
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 export const ParishUsLanding: React.FC = () => {
   const navigate= useNavigate();
@@ -32,7 +33,7 @@ export const ParishUsLanding: React.FC = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Navigation */}
-      <header className="sticky top-0 z-50 backdrop-blur-md border-b border-border/50 bg-background/80">
+      <header className="sticky top-0 z-50 backdrop-blur-md bg-[#faf1de] border-b border-border/50 bg-background/80">
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center">
             <div className="cursor-pointer flex items-center space-x-1 shrink-0">
@@ -42,7 +43,7 @@ export const ParishUsLanding: React.FC = () => {
                 alt="Logo"
               />
               <h1 className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent whitespace-nowrap"
-              style={{ fontSize: "30px", color: "#9dc0b3", fontFamily: "cooper" }}>
+              style={{ fontSize: "30px", color: "#9dc0b3", fontFamily: "Sergio Trendy" }}>
                 Parish
               </h1>
             </div>
@@ -56,18 +57,15 @@ export const ParishUsLanding: React.FC = () => {
           </nav>
           
           <div className="flex flex-wrap items-center gap-3 justify-end">
-            <Button variant="outline" size="default" onClick={() => setShowAuth(true)}>
-              &nbsp;&nbsp;Host a Dinner&nbsp;&nbsp;
-            </Button>
-            <Button variant="default" size="default" onClick={() => setShowAuth(true)}>
-              Reserve My Seat 
+            <Button variant="default" size="default" className='bg-[#f2502f]' onClick={() => setShowAuth(true)}>
+              Sign Up 
             </Button>
           </div>
         </div>
       </header>
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-card/50">
+      <section className="relative overflow-hidden bg-[linear-gradient(to_top_left,_#4b1603_0%,_transparent_25%)] bg-black">
         <div className="max-w-7xl mx-auto px-4 py-20 lg:py-32 relative">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="animate-fade-in">
@@ -77,24 +75,52 @@ export const ParishUsLanding: React.FC = () => {
               </div>
               
               <h1 className="text-5xl md:text-7xl font-extrabold leading-tight text-foreground mb-6">
-                Every week, strangers meet for{' '}
+                Strangers become{' '}
                 <span className="text-primary">
-                  dinner
+                  friends
                 </span>
-                {' '}— and great conversation.
+                {' '}over 
+                <span className="text-primary">
+                  {' '}dinner
+                </span>
+                {' '}or coffee — one great conversation at a time.
               </h1>
+
+                  <div className="mb-6 lg:hidden">
+      <div className="relative rounded-3xl overflow-hidden shadow-2xl ">
+        <img 
+          src={heroImage} 
+          alt="People enjoying dinner together at Parish event"
+          className="w-full h-auto object-contain"
+        />
+        <div className="absolute inset-0" />
+      </div>
+    </div>
               
-              <p className="text-xl text-foreground/80 mb-8 leading-relaxed">
-                Book your seat for a small-table dinner, coffee, or tea. Groups of 5–6 are matched by interests and vibe.
-                If it's a paid event, you'll check out through our secure payment portal. Free events? Just RSVP and show up.
+              <ul className="text-xl text-foreground/80 leading-relaxed">
+                <li className="flex items-center">
+                  <Check className="h-5 w-5 mr-2 text-[#e4c29a]" />
+                  Small, curated groups (5-6)
+                </li>
+                <li className="flex items-center">
+                  <Check className="h-5 w-5 mr-2 text-[#e4c29a]" />
+                  Matched by vibe + interests
+                </li>
+                <li className="flex items-center">
+                  <Check className="h-5 w-5 mr-2 text-[#e4c29a]" />
+                  Dinners, coffee, or tea - every week
+                </li>
+              </ul>
+              <p  className="mt-2 text-sm text-foreground/80 leading-relaxed">
+                Come hungry for food, stay for the conversations.
               </p>
               
-              <div className="flex flex-wrap gap-4 mb-8">
+              <div className="flex flex-wrap mt-5 gap-4 mb-8">
                 <Button variant="default" size="default" onClick={() => setShowAuth(true)}>
-                  Book My Seat
+                  Reserve My Spot
                 </Button>
-                <Button variant="outline" size="default" onClick={() => setShowAuth(true)}>
-                  Host an Event
+                <Button variant="outline" size="default" className="border border-[#e4c29a]" onClick={() => setShowAuth(true)}>
+                  Host a Table
                 </Button>
               </div>
               
@@ -105,14 +131,14 @@ export const ParishUsLanding: React.FC = () => {
               </div>
             </div>
             
-            <div className="relative animate-fade-in">
-              <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-border">
+            <div className="relative animate-fade-in hidden lg:block">
+              <div className="relative rounded-3xl overflow-hidden shadow-2xl ">
                 <img 
                   src={heroImage} 
                   alt="People enjoying dinner together at Parish event"
-                  className="w-full aspect-[4/3] object-cover"
+                  className="w-full h-auto object-contain"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent" />
+                <div className="absolute inset-0 " />
               </div>
             </div>
           </div>
@@ -386,18 +412,40 @@ export const ParishUsLanding: React.FC = () => {
       </section>
 
       {/* Footer */}
-      <footer className="bg-primary text-primary-foreground py-12">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="flex items-center">
-              <ParishLogo />
-            </div>
-            <p className="text-primary-foreground/80 text-center">
-              © {new Date().getFullYear()} Parish
-            </p>
+<footer className="bg-primary text-primary-foreground py-12">
+      <div className="max-w-7xl mx-auto px-4">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+          {/* Logo */}
+          <div className="flex items-center">
+            <ParishLogo />
           </div>
+
+          {/* Links */}
+          <nav className="flex flex-wrap justify-center gap-6 text-sm text-primary-foreground/80">
+            <Link to="/contact-us" className="hover:text-primary-foreground">
+              Contact Us
+            </Link>
+            <Link to="/refund-policy" className="hover:text-primary-foreground">
+              Refund Policy
+            </Link>
+            <Link to="/safety-guidelines" className="hover:text-primary-foreground">
+              Safety Guidelines
+            </Link>
+            <Link to="/terms-conditions" className="hover:text-primary-foreground">
+              Terms & Conditions
+            </Link>
+            <Link to="/privacy-policy" className="hover:text-primary-foreground">
+              Privacy Policy
+            </Link>
+          </nav>
+
+          {/* Copyright */}
+          <p className="text-primary-foreground/80 text-center">
+            © {new Date().getFullYear()} Parish
+          </p>
         </div>
-      </footer>
+      </div>
+    </footer>
     </div>
   );
 };

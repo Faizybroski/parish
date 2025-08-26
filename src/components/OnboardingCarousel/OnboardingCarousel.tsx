@@ -132,7 +132,7 @@ export const OnboardingCarousel = ({ startStep = 0 }) => {
               style={{
                 fontSize: "60px",
                 color: "#9dc0b3",
-                fontFamily: "cooper",
+                fontFamily: 'Sergio Trendy'
               }}
             >
               Parish
@@ -381,7 +381,7 @@ export const OnboardingCarousel = ({ startStep = 0 }) => {
             />
             <h1
               className="text-3xl font-playfair font-extrabold text-primary mb-4"
-              style={{ fontSize: "70px", color: "#9dc0b3", fontFamily: "cooper" }}
+              style={{ fontSize: "70px", color: "#9dc0b3", fontFamily: "Sergio Trendy" }}
             >
               {currentCard.title}
             </h1>

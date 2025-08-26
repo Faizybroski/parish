@@ -79,7 +79,7 @@ export const ContactPage: React.FC = () => {
                 style={{
                   fontSize: "30px",
                   color: "#9dc0b3",
-                  fontFamily: "cooper",
+                  fontFamily: 'Sergio Trendy'
                 }}
                 onClick={() => navigate("/")}
               >

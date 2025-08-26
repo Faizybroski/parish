@@ -61,6 +61,10 @@ import ResetPassword from "./pages/ResetPassword";
 import AuthPage from "@/components/auth/AuthPage";
 import { SocialLinks } from "@/components/SocialMedia/SocialMedia"
 import { ContactPage } from "@/pages/Contact";
+import RefundPolicyPage from "@/pages/RefundPolicy";
+import SafetyGuidelines from "@/pages/SafetyGIuidelines"
+import TermsAndConditions from "@/pages/Terms&Conditions"
+import PrivacyPolicy from "@/pages/PrivacyPolicy.tsx"
 
 const queryClient = new QueryClient();
 
@@ -98,6 +102,22 @@ const App = () => (
                 path="contact-us"
                 element={<ContactPage />}  
               />
+              <Route 
+                path="/refund-policy"
+                element={<RefundPolicyPage />}  
+              />
+              <Route 
+                path="/safety-guidelines"
+                element={<SafetyGuidelines />}  
+              />
+              <Route 
+                path="/terms-conditions"
+                element={<TermsAndConditions />}  
+              />   
+                <Route 
+                path="/privacy-policy"
+                element={<PrivacyPolicy />}  
+              />   
               <Route
                 path="/dashboard"
                 element={

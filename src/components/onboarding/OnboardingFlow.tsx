@@ -153,7 +153,7 @@ const OnboardingFlow = () => {
             <img className='max-w-24' src="/Parishus logo.png" alt="Parish Logo" />
           </div>
           <h1 className="text-3xl font-bold text-[#F7C992]">
-            Welcome to Parish!
+            Welcome to <span style={{fontFamily: 'Sergio Trendy'}}>Parish</span>!
           </h1>
           <p className="text-[#FEFEFE]">
             Let's set up your profile to find the perfect dining experiences

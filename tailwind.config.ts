@@ -18,6 +18,9 @@ export default {
 			}
 		},
 		extend: {
+			fontFamily: {
+      	sergio: ['Sergio Trendy'],
+    	},
 			colors: {
 				placeholderColor: {
 					light: '#e9e9e9',
