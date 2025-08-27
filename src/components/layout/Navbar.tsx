@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 export const Navbar = () => {
   const navigate = useNavigate();
   return (
-    <header className="sticky top-0 z-50 backdrop-blur-md bg-[#faf1de] border-b border-border/50">
+    <header className="sticky top-0 z-50 backdrop-blur-md bg-dark-surface border-b border-border">
       <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
         {/* Logo */}
         <div
@@ -25,7 +25,7 @@ export const Navbar = () => {
         </div>
 
         {/* Menu */}
-        <nav className="hidden md:flex items-center gap-8 text-sm font-medium">
+        {/* <nav className="hidden md:flex items-center gap-8 text-sm font-medium">
           <a href="#how" className="text-black transition-colors">How it works</a>
           <a href="#events" className="text-black transition-colors">Events</a>
           <a href="#faq" className="text-black transition-colors">FAQ</a>
@@ -35,13 +35,13 @@ export const Navbar = () => {
           >
             Contact Us
           </span>
-        </nav>
+        </nav> */}
 
         {/* Button */}
         <Button
           variant="default"
           size="default"
-          className="bg-[#f2502f]"
+          className="bg-[#9dc0b3]"
           onClick={() => navigate("/auth")}
         >
           Sign Up

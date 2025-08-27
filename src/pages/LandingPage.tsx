@@ -33,7 +33,7 @@ export const ParishUsLanding: React.FC = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Navigation */}
-      <header className="sticky top-0 z-50 backdrop-blur-md bg-[#faf1de] border-b border-border/50 ">
+      <header className="sticky top-0 z-50 backdrop-blur-md bg-dark-surface border-b border-border">
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center">
             <div className="cursor-pointer flex items-center space-x-1 shrink-0">
@@ -50,14 +50,14 @@ export const ParishUsLanding: React.FC = () => {
           </div>
           
           <nav className="hidden md:flex items-center gap-8 text-sm font-medium">
-            <a href="#how" className="text-black transition-colors">How it works</a>
-            <a href="#events" className="text-black  transition-colors">Events</a>
-            <a href="#faq" className="text-black  transition-colors">FAQ</a>
-            <a  onClick={() => navigate('contact-us')} className="text-black cursor-pointer transition-colors">Contact Us</a>
+            <a href="#how" className="text-white transition-colors">How it works</a>
+            <a href="#events" className="text-white  transition-colors">Events</a>
+            <a href="#faq" className="text-white  transition-colors">FAQ</a>
+            <a  onClick={() => navigate('contact-us')} className="text-white cursor-pointer transition-colors">Contact Us</a>
           </nav>
           
           <div className="flex flex-wrap items-center gap-3 justify-end">
-            <Button variant="default" size="default" className='bg-[#f2502f]' onClick={() => setShowAuth(true)}>
+            <Button variant="default" size="default" className='bg-[#9dc0b3]' onClick={() => setShowAuth(true)}>
               Sign Up 
             </Button>
           </div>
@@ -412,7 +412,7 @@ export const ParishUsLanding: React.FC = () => {
       </section>
 
       {/* Footer */}
-<footer className="bg-primary text-primary-foreground py-12">
+<footer className="bg-dark-surface border-b border-border py-10">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           {/* Logo */}
@@ -422,25 +422,25 @@ export const ParishUsLanding: React.FC = () => {
 
           {/* Links */}
           <nav className="flex flex-wrap justify-center gap-6 text-sm text-primary-foreground/80">
-            <Link to="/contact-us" className="hover:text-primary-foreground">
+            <Link to="/contact-us" className="text-white">
               Contact Us
             </Link>
-            <Link to="/refund-policy" className="hover:text-primary-foreground">
+            <Link to="/refund-policy" className="text-white">
               Refund Policy
             </Link>
-            <Link to="/safety-guidelines" className="hover:text-primary-foreground">
+            <Link to="/safety-guidelines" className="text-white">
               Safety Guidelines
             </Link>
-            <Link to="/terms-conditions" className="hover:text-primary-foreground">
+            <Link to="/terms-conditions" className="text-white">
               Terms & Conditions
             </Link>
-            <Link to="/privacy-policy" className="hover:text-primary-foreground">
+            <Link to="/privacy-policy" className="text-white">
               Privacy Policy
             </Link>
           </nav>
 
           {/* Copyright */}
-          <p className="text-primary-foreground/80 text-center">
+          <p className="text-white text-center">
             © {new Date().getFullYear()} Parish
           </p>
         </div>

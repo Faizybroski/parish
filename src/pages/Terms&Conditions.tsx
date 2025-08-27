@@ -56,7 +56,7 @@ export default function TermsAndConditions() {
           </aside>
 
           {/* Main Content */}
-          <ScrollArea className="h-[80vh] rounded-2xl border p-6 bg-card shadow-lg">
+          <ScrollArea className="h-[90vh] rounded-2xl border p-6 bg-card shadow-lg">
             <div className="space-y-10">
               <section>
                 <p className="leading-relaxed text-muted-foreground">
@@ -71,7 +71,7 @@ export default function TermsAndConditions() {
               </section>
 
               {sections.map((section) => (
-                <section key={section.id} id={section.id}>
+                <section key={section.id} id={section.id} className=" scroll-mt-28">
                   <h2 className="text-xl font-semibold text-[#e4c29a] mb-3">{section.title}</h2>
                   <Separator className="mb-4" />
                   <p className="text-muted-foreground leading-relaxed  whitespace-pre-line">

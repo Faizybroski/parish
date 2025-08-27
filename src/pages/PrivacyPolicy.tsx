@@ -69,7 +69,7 @@ export default function PrivacyPolicy() {
               </section>
 
               {sections.map((section) => (
-                <section key={section.id} id={section.id}>
+                <section key={section.id} id={section.id} className=" scroll-mt-28">
                   <h2 className="text-xl font-semibold text-[#e4c29a] mb-3">
                     {section.title}
                   </h2>

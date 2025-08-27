@@ -81,9 +81,9 @@ export const SocialLinks = () => {
   return (
     <div className="min-h-screen bg-background flex items-center justify-center">
       <Card className="w-full max-w-md p-6 bg-gradient-card border-border shadow-card animate-fade-in">
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-center mb-6">
           <div className="flex flex-col items-center">
-            <div className="mb-6 ">
+            <div className="mb-6">
               <ParishLogo />
             </div>
             <div>
@@ -99,7 +99,6 @@ export const SocialLinks = () => {
               </h1>
             </div>
           </div>
-          <div className="w-6" />
         </div>
         <h2 className="text-xl font-semibold">Share your socials</h2>
         <p className="text-muted-foreground mb-4">
