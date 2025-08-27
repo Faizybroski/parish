@@ -65,6 +65,7 @@ import RefundPolicyPage from "@/pages/RefundPolicy";
 import SafetyGuidelines from "@/pages/SafetyGIuidelines"
 import TermsAndConditions from "@/pages/Terms&Conditions"
 import PrivacyPolicy from "@/pages/PrivacyPolicy.tsx"
+import Layout from "./components/layout/Layout";
 
 const queryClient = new QueryClient();
 
@@ -98,26 +99,28 @@ const App = () => (
                   </ProtectedRoute>
                 }
               />
-              <Route 
-                path="contact-us"
-                element={<ContactPage />}  
-              />
-              <Route 
-                path="/refund-policy"
-                element={<RefundPolicyPage />}  
-              />
-              <Route 
-                path="/safety-guidelines"
-                element={<SafetyGuidelines />}  
-              />
-              <Route 
-                path="/terms-conditions"
-                element={<TermsAndConditions />}  
-              />   
-                <Route 
-                path="/privacy-policy"
-                element={<PrivacyPolicy />}  
-              />   
+              <Route element={<Layout /> } >
+                  <Route 
+                    path="contact-us"
+                    element={<ContactPage />}  
+                  />
+                  <Route 
+                    path="/refund-policy"
+                    element={<RefundPolicyPage />}  
+                  />
+                  <Route 
+                    path="/safety-guidelines"
+                    element={<SafetyGuidelines />}  
+                  />
+                  <Route 
+                    path="/terms-conditions"
+                    element={<TermsAndConditions />}  
+                  />   
+                    <Route 
+                    path="/privacy-policy"
+                    element={<PrivacyPolicy />}  
+                  />   
+              </Route>
               <Route
                 path="/dashboard"
                 element={
