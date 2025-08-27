@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Pill } from '@/components/cards/Pill';
 import { EventCard } from '@/components/cards/EventCard';
@@ -18,15 +18,100 @@ import {
   Heart,
   Sparkles,
   Globe,
-  Shield
+  Shield,
+  Clock,
+  ChevronLeft,
+  ChevronRight,
+  Star,
+  Share,
+  Share2,
 } from 'lucide-react';
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { format } from "date-fns";
 import AuthPage from "@/components/auth/AuthPage"
 import { useNavigate, Link } from 'react-router-dom';
+import { supabase } from "@/integrations/supabase/client";
 
 export const ParishUsLanding: React.FC = () => {
   const navigate= useNavigate();
   const [showAuth, setShowAuth] = useState(false);
+  const [attendeeCounts, setAttendeeCounts] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [events, setEvents] = useState([]);
 
+  const fetchEvents = async () => {
+  try {
+    // 1. Get admin IDs
+    const { data: adminProfiles, error: profileError } = await supabase
+      .from("profiles")
+      .select("id")
+      .in("role", ["admin"]);
+
+    if (profileError) throw profileError;
+
+    const adminIds = adminProfiles?.map((p) => p.id) || [];
+    if (adminIds.length === 0) return setEvents([]);
+
+    const now = new Date().toISOString();
+
+    // 2. Fetch upcoming events first
+    const { data: upcomingEvents, error: upcomingError } = await supabase
+      .from("events")
+      .select("*")
+      .in("creator_id", adminIds)
+      .eq("status", "active")
+      .gte("date_time", now)
+      .order("date_time", { ascending: true })
+      .limit(3);
+
+    if (upcomingError) throw upcomingError;
+
+    let finalEvents = upcomingEvents || [];
+
+    // 3. If not enough upcoming, fetch recent past events
+    if (finalEvents.length < 3) {
+      const remaining = 3 - finalEvents.length;
+
+      const { data: pastEvents, error: pastError } = await supabase
+        .from("events")
+        .select("*")
+        .in("creator_id", adminIds)
+        .eq("status", "active")
+        .lt("date_time", now)
+        .order("date_time", { ascending: false }) // most recent past first
+        .limit(remaining);
+
+      if (pastError) throw pastError;
+
+      finalEvents = [...finalEvents, ...(pastEvents || [])];
+    }
+
+    setEvents(finalEvents);
+
+    // 4. Fetch attendee counts
+    const counts: Record<string, number> = {};
+    for (const event of finalEvents) {
+      const { count } = await supabase
+        .from("rsvps")
+        .select("*", { count: "exact", head: true })
+        .eq("event_id", event.id)
+        .eq("status", "confirmed");
+      counts[event.id] = count || 0;
+    }
+    setAttendeeCounts(counts);
+
+  } catch (err) {
+    console.error("Fetch Events Error:", err);
+  } finally {
+    setLoading(false);
+  }
+};
+
+  useEffect(() => {
+    fetchEvents()
+  })
+    
   if (showAuth) {
     return <AuthPage />;
   }
@@ -210,7 +295,7 @@ export const ParishUsLanding: React.FC = () => {
           <div className="flex items-end justify-between mb-12">
             <div>
               <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
-                Upcoming events
+                Events
               </h2>
               <p className="text-xl text-foreground/70">
                 Choose your perfect gathering
@@ -221,38 +306,93 @@ export const ParishUsLanding: React.FC = () => {
             </Button>
           </div>
           
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-            <EventCard
-              title="Downtown Tapas Dinner"
-              datetime="Sunday 7:00 PM"
-              location="SoHo, NYC"
-              price={15}
-              type="Paid"
-              attendees={4}
-              maxAttendees={6}
-              image={tapasEventImage}
-            />
-            <EventCard
-              title="Morning Coffee Circle"
-              datetime="Sunday 9:30 AM"
-              location="West Village, NYC"
-              price={0}
-              type="Free"
-              attendees={3}
-              maxAttendees={5}
-              image={coffeeEventImage}
-            />
-            <EventCard
-              title="Weeknight Tea & Talk"
-              datetime="Wednesday 6:30 PM"
-              location="Upper East Side, NYC"
-              price={0}
-              type="Free"
-              attendees={5}
-              maxAttendees={6}
-              image={teaEventImage}
-            />
-          </div>
+         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+  {loading ? (
+    Array.from({ length: 3 }).map((_, i) => (
+      <div
+        key={i}
+        className="h-[420px] w-full sm:w-[20rem] lg:w-[25rem] rounded-xl animate-pulse bg-muted"
+      />
+    ))
+  ) : events.length === 0 ? (
+    <Card className="flex flex-col items-center justify-center h-[420px] border border-dashed border-secondary bg-muted/20 text-center">
+      <div className="text-secondary mb-3">
+        <Calendar className="w-12 h-12" />
+      </div>
+      <h3 className="text-xl font-semibold text-muted-foreground">
+        No Upcoming Events
+      </h3>
+      <p className="text-sm text-muted-foreground mt-2 max-w-[250px]">
+        Stay tuned! New events will be announced soon.
+      </p>
+    </Card>
+  ) : (
+    events.map((event) => (
+      <Card key={event.id} className="relative flex flex-col w-full sm:w-[20rem] lg:w-[25rem] h-[420px] border border-secondary overflow-hidden group hover:shadow-xl transition">
+    {/* Background */}
+    <div
+      className="absolute inset-0 bg-cover bg-center"
+      style={{
+        backgroundImage: event.cover_photo_url
+          ? `url(${event.cover_photo_url})`
+          : `url(/images/default-event.jpg)`,
+      }}
+    />
+    <div className="absolute inset-0 bg-black/70" />
+
+    {/* Card Content */}
+    <CardContent className="relative z-10 flex flex-col flex-grow p-6 text-white">
+      {/* Top Section */}
+      <div className="text-center mt-4">
+        <p className="text-md font-bold uppercase text-secondary tracking-wider">
+          {format(new Date(event.date_time), "eeee, MMMM d • h:mm a")}
+        </p>
+        <h3
+          className="text-3xl font-bold mt-1 truncate"
+          title={event.name}
+        >
+          {event.name}
+        </h3>
+      </div>
+
+      {/* Middle Section */}
+      <div className="flex-grow flex flex-col justify-center space-y-2 mt-1">
+        <div className="text-center rounded-lg p-3 pb-3">
+          <p className="text-md text-secondary font-bold">Location</p>
+          <p
+            className="text-[1.5rem] font-bold mt-1 truncate text-center max-w-[350px]"
+            title={event.location_name}
+          >
+            {event.location_name}
+          </p>
+        </div>
+        <div className="flex flex-col items-center justify-center">
+          <p>
+            <span className="text-[1.8rem] font-bold">
+              {attendeeCounts?.[event.id] ?? 0}
+            </span>
+            <span>/{event.max_attendees}</span>
+          </p>
+          <p className="text-[#B04520] font-bold">attending</p>
+        </div>
+      </div>
+
+      {/* Bottom Buttons */}
+      <div className="flex gap-2 w-full mt-auto">
+
+        <Button
+          onClick={() => navigate(`/auth`)}
+          className="flex-grow px-4 py-4 text-lg font-medium bg-secondary text-black hover:bg-secondary/90 flex items-center gap-2 justify-center"
+        >
+          RSVP
+          <ChevronRight className="w-5 h-5" />
+        </Button>
+      </div>
+    </CardContent>
+  </Card>
+    ))
+  )}
+</div>
           
           <div className="text-center">
             <Button variant="default" size="default" onClick={() => setShowAuth(true)}>
