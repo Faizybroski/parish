@@ -1,26 +1,17 @@
-import React, { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useProfile } from "@/hooks/useProfile";
+import React, { useEffect, useState } from "react";
 // import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { createClient } from '@supabase/supabase-js'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -30,25 +21,34 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  Users,
-  Search,
-  Edit,
-  Trash2,
-  Eye,
-  Mail,
-  Ban,
-  UserX,
-  CheckCircle,
-  AlertTriangle,
-  Filter,
-  UserCheck,
-  Calendar,
-  MapPin,
-  CreditCard,
-} from "lucide-react";
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { toast } from "@/hooks/use-toast";
-import { format } from "date-fns";
 import { sendEventInvite } from "@/lib/sendInvite";
+import { createClient } from '@supabase/supabase-js';
+import { format } from "date-fns";
+import {
+  AlertTriangle,
+  Ban,
+  Calendar,
+  CheckCircle,
+  CreditCard,
+  Edit,
+  Eye,
+  Filter,
+  Mail,
+  MapPin,
+  Search,
+  Trash2,
+  UserCheck,
+  Users,
+  UserX,
+} from "lucide-react";
 
 const supabase = createClient(
   "https://jigznrpgzoyrbqbrpsqx.supabase.co",
@@ -114,11 +114,12 @@ const UserDetailsModal: React.FC<UserDetailsModalProps> = ({
         .from("profiles")
         .update({ approval_status: "approved" })
         .eq("user_id", user.user_id)
-        .select("email");
+        .select("email, first_name");
 
         if (updateError) throw updateError;
 
         const approvedUserEmail = updatedProfiles?.[0]?.email;
+        const approvedUserName = updatedProfiles?.[0]?.first_name;
         if (!approvedUserEmail) throw new Error("User email not found");
 
       // await supabase.from("audit_logs").insert({
@@ -132,7 +133,66 @@ const UserDetailsModal: React.FC<UserDetailsModalProps> = ({
       await sendEventInvite({
         to: approvedUserEmail,
         subject: "🎉 Welcome to Parish – You’re Officially Approved!",
-        text: `Hi there,\nGreat news — your profile has been approved by our team! You’re now part of an exclusive community of food lovers and private dining enthusiasts. 🍷\nWe’re excited to have you join our next intimate dinner experience.\nWarm regards,\nThe Parish Team`,
+        html: `<!DOCTYPE html>
+                  <html>
+                    <head>
+                      <meta charset="UTF-8" />
+                      <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+                      <title>Account Approved</title>
+                    </head>
+                    <body style="margin:0; padding:0; background-color:#f9fafb; font-family:Arial, sans-serif; color:#333;">
+                      <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f9fafb; padding:20px;">
+                        <tr>
+                          <td align="center">
+                            <table width="600" cellpadding="0" cellspacing="0" style="background-color:#ffffff; border-radius:12px; overflow:hidden; box-shadow:0 4px 12px rgba(0,0,0,0.1);">
+                              
+                              <!-- Header -->
+                              <tr>
+                                <td align="center" style="background-color:#16a34a; padding:40px 20px;">
+                                  <h1 style="margin:0; font-size:26px; color:#ffffff;">Account Approved ✅</h1>
+                                </td>
+                              </tr>
+
+                              <!-- Body -->
+                              <tr>
+                                <td style="padding:30px; font-size:16px; line-height:1.6; color:#444;">
+                                  <p>Hi <strong>${approvedUserName}</strong>,</p>
+                                  <p>
+                                    Congratulations! 🎉 Your account has been 
+                                    <span style="color:#16a34a; font-weight:bold;">approved</span> by our team.
+                                  </p>
+
+                                  <p>
+                                    You now have full access to all features and services available in your account.
+                                  </p>
+
+                                  <p style="margin-top:20px; text-align:center;">
+                                    <a href="https://parishus.com/" 
+                                      style="display:inline-block; background-color:#16a34a; color:#ffffff; text-decoration:none; padding:14px 24px; border-radius:8px; font-weight:bold; font-size:16px;">
+                                      Go to Dashboard
+                                    </a>
+                                  </p>
+
+                                  <p style="margin-top:30px; font-size:14px; color:#888;">
+                                    – The Parish Team
+                                  </p>
+                                </td>
+                              </tr>
+
+                              <!-- Footer -->
+                              <tr>
+                                <td align="center" style="background-color:#f3f4f6; padding:20px; font-size:12px; color:#666;">
+                                  <p style="margin:0;">Parish • User Accounts</p>
+                                  <p style="margin:5px 0 0;">If you did not create this account, please contact support immediately.</p>
+                                </td>
+                              </tr>
+
+                            </table>
+                          </td>
+                        </tr>
+                      </table>
+                    </body>
+                  </html>`,
       });
 
       toast({ title: "User approved successfully" });
@@ -149,11 +209,12 @@ const UserDetailsModal: React.FC<UserDetailsModalProps> = ({
         .from("profiles")
         .update({ approval_status: "rejected" })
         .eq("user_id", user.user_id)
-        .select("email");
+        .select("email, first_name");
 
       if (updateError) throw updateError;
 
       const approvedUserEmail = updatedProfiles?.[0]?.email;
+      const approvedUserName = updatedProfiles?.[0]?.first_name;
       if (!approvedUserEmail) throw new Error("User email not found");
 
       // await supabase.from("audit_logs").insert({
@@ -167,7 +228,63 @@ const UserDetailsModal: React.FC<UserDetailsModalProps> = ({
       await sendEventInvite({
         to: approvedUserEmail,
         subject: "Update on Your Parish Application",
-        text: `Hi there,\nThank you for your interest in joining Parish. After reviewing your application, we’re unable to approve your profile at this time.\nWe truly appreciate the time you took to apply, but we don't believe our app is the right fit for you at the moment.\nWarm regards,\nThe Parish Team`,
+        html: `<!DOCTYPE html>
+                  <html>
+                    <head>
+                      <meta charset="UTF-8" />
+                      <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+                      <title>Account Rejected</title>
+                    </head>
+                    <body style="margin:0; padding:0; background-color:#f9fafb; font-family:Arial, sans-serif; color:#333;">
+                      <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f9fafb; padding:20px;">
+                        <tr>
+                          <td align="center">
+                            <table width="600" cellpadding="0" cellspacing="0" style="background-color:#ffffff; border-radius:12px; overflow:hidden; box-shadow:0 4px 12px rgba(0,0,0,0.1);">
+                              
+                              <!-- Header -->
+                              <tr>
+                                <td align="center" style="background-color:#dc2626; padding:40px 20px;">
+                                  <h1 style="margin:0; font-size:26px; color:#ffffff;">Account Rejected ❌</h1>
+                                </td>
+                              </tr>
+
+                              <!-- Body -->
+                              <tr>
+                                <td style="padding:30px; font-size:16px; line-height:1.6; color:#444;">
+                                  <p>Hi <strong>${approvedUserName}</strong>,</p>
+                                  <p>
+                                    Unfortunately, your account application has been 
+                                    <span style="color:#dc2626; font-weight:bold;">rejected</span>.
+                                  </p>
+
+                                  <p>
+                                    This may be due to incomplete information, failing verification, or not meeting our eligibility criteria.
+                                  </p>
+
+                                  <p>
+                                    If you believe this is a mistake, please reach out to our support team for further clarification.
+                                  </p>
+
+                                  <p style="margin-top:30px; font-size:14px; color:#888;">
+                                    – The Parish Team
+                                  </p>
+                                </td>
+                              </tr>
+
+                              <!-- Footer -->
+                              <tr>
+                                <td align="center" style="background-color:#f3f4f6; padding:20px; font-size:12px; color:#666;">
+                                  <p style="margin:0;">Parish • User Accounts</p>
+                                  <p style="margin:5px 0 0;">If you did not apply for this account, you can ignore this email.</p>
+                                </td>
+                              </tr>
+
+                            </table>
+                          </td>
+                        </tr>
+                      </table>
+                    </body>
+                  </html>`,
       });
 
       toast({ title: "User rejected successfully" });

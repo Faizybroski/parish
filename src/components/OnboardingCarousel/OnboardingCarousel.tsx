@@ -1,16 +1,14 @@
-import React, { useState } from "react";
 import { Button } from "@/components/OnboardingCarousel/ui/button";
+import { Card } from "@/components/OnboardingCarousel/ui/card";
+import { Checkbox } from "@/components/OnboardingCarousel/ui/checkbox";
 import { Input } from "@/components/OnboardingCarousel/ui/input";
 import { Label } from "@/components/OnboardingCarousel/ui/label";
-import { Card } from "@/components/OnboardingCarousel/ui/card";
-import { useLocation } from "react-router-dom";
-import { Checkbox } from "@/components/OnboardingCarousel/ui/checkbox";
-import { ChevronLeft, ChevronRight, Eye, EyeOff, Loader2 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/hooks/use-toast";
+import { ChevronLeft, ChevronRight, Eye, EyeOff, Loader2 } from "lucide-react";
+import { useState } from "react";
+import { useLocation } from "react-router-dom";
 import ParishLogo from "../ui/logo";
-import GoogleLogo from "/src/assets/svg/google-logo.svg";
-import AppleLogo from "/src/assets/svg/apple-logo.svg";
 
 const onboardingCards = [
   { id: 0, type: "intro-logo" },
@@ -100,13 +98,13 @@ export const OnboardingCarousel = ({ startStep = 0 }) => {
         setPassword("");
         setFirstName("");
         setLastName("");
-        setLinkedin("");
-        setInstagram("");
+        // setLinkedin("");
+        // setInstagram("");
       }
-    } catch {
+    } catch(err) {
       toast({
         title: "Error",
-        description: "Unexpected error occurred.",
+        description: err.message,
         variant: "destructive",
       });
     } finally {
