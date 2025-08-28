@@ -31,7 +31,7 @@ export const ContactPage: React.FC = () => {
     setLoading(true);
 
     const response = await sendContactMail({
-      to: ["hasanch406@gmail.com"],
+      to: ["support@parishus.com"],
       subject: "User Contacted!",
       html: `
         <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; padding: 20px;">
