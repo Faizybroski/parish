@@ -74,46 +74,132 @@ import {
 } from "recharts";
 
 // Generate stub data for charts
-const generateStubData = () => {
-  const userGrowthData = [
-    { month: "Jan", users: 120 },
-    { month: "Feb", users: 185 },
-    { month: "Mar", users: 240 },
-    { month: "Apr", users: 320 },
-    { month: "May", users: 410 },
-    { month: "Jun", users: 485 },
-  ];
-
-  const eventTrendsData = [
-    { month: "Jan", events: 15 },
-    { month: "Feb", events: 22 },
-    { month: "Mar", events: 28 },
-    { month: "Apr", events: 35 },
-    { month: "May", events: 42 },
-    { month: "Jun", events: 38 },
-  ];
-
-  const revenueData = [
-    { month: "Jan", revenue: 4200 },
-    { month: "Feb", revenue: 5800 },
-    { month: "Mar", revenue: 7200 },
-    { month: "Apr", revenue: 8900 },
-    { month: "May", revenue: 10500 },
-    { month: "Jun", revenue: 9800 },
-  ];
-
-  const diningStylesData = [
-    { name: "Fine Dining", value: 35, color: "#F4A460" },
-    { name: "Casual", value: 45, color: "#8FBC8F" },
-    { name: "Fast Casual", value: 20, color: "#DDA0DD" },
-  ];
-
-  return { userGrowthData, eventTrendsData, revenueData, diningStylesData };
-};
 const supabase = createClient(
   "https://jigznrpgzoyrbqbrpsqx.supabase.co",
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImppZ3pucnBnem95cmJxYnJwc3F4Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MjY5NTEwNiwiZXhwIjoyMDY4MjcxMTA2fQ.d64ewa1SraJ1OdHxU6AAF7cDkuEbY0e0vp7HNCfBYIk"
 );
+
+const generateStubData = async () => {
+  const now = new Date();
+  const monthsWindow = Array.from({ length: 12 })
+    .map((_, i) => {
+      const d = subMonths(now, 11 - i); 
+      return format(d, "MMM yyyy"); 
+    });
+
+  // const { data: userRows, error: userError } = await supabase
+  //   .from("profiles")
+  //   .select("created_at");
+  // if (userError) throw userError;
+
+    const { data: profileRows, error: profileError } = await supabase
+    .from("profiles")
+    .select("created_at, dining_style, id, role");
+  if (profileError) throw profileError;
+
+  const userGrowthMap: Record<string, number> = {};
+  monthsWindow.forEach((m) => (userGrowthMap[m] = 0)); 
+
+  profileRows.forEach(({ created_at }) => {
+    const month = format(new Date(created_at), "MMM yyyy");
+    if (month in userGrowthMap) {
+      userGrowthMap[month] += 1;
+    }
+  });
+
+  const userGrowthData = monthsWindow.map((month) => ({
+    month,
+    users: userGrowthMap[month],
+  }));
+
+  const { data: eventRows, error: eventError } = await supabase
+    .from("events")
+    .select("created_at, event_fee, creator_id, is_paid");
+  if (eventError) throw eventError;
+
+  const eventTrendsMap: Record<string, number> = {};
+  monthsWindow.forEach((m) => (eventTrendsMap[m] = 0));
+
+  eventRows.forEach(({ created_at }) => {
+    const month = format(new Date(created_at), "MMM yyyy");
+    if (month in eventTrendsMap) {
+      eventTrendsMap[month] += 1;
+    }
+  });
+
+  const eventTrendsData = monthsWindow.map((month) => ({
+    month,
+    events: eventTrendsMap[month],
+  }));
+
+  const formatName = (str) =>
+    str
+      .split("_")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+
+  const diningStyles = [
+    "adventurous",
+    "foodie_enthusiast",
+    "local_lover",
+    "comfort_food",
+    "health_conscious",
+    "social_butterfly",
+  ];
+
+  const diningStylesData = diningStyles.map((style) => ({
+    name: formatName(style),
+    value: profileRows.filter((p) => p.dining_style === style).length,
+    color:
+      style === "adventurous" ? "#FF6F61" :
+      style === "foodie_enthusiast" ? "#6A5ACD" :
+      style === "local_lover" ? "#20B2AA" :
+      style === "comfort_food" ? "#FFD700" :
+      style === "health_conscious" ? "#32CD32" :
+      "#FF8C00",
+  }));
+
+  const adminIds = profileRows.filter((p) => p.role === "admin").map((p) => p.id);
+
+  if (adminIds.length === 0) {
+    console.warn("No admins found, revenue will be zero.");
+  }
+
+  const revenueMap: Record<string, number> = {};
+  monthsWindow.forEach((m) => (revenueMap[m] = 0));
+
+  let currentMonthRevenue = 0;
+  let currentYearRevenue = 0;
+
+  const thisMonth = getMonth(now);
+  const thisYear = getYear(now);
+
+  eventRows.forEach(({ created_at, creator_id, is_paid, event_fee }) => {
+    if (is_paid && adminIds.includes(creator_id)) {
+      const eventDate = new Date(created_at);
+      const month = format(eventDate, "MMM yyyy");
+
+      if (month in revenueMap) {
+        revenueMap[month] += event_fee || 0;
+      }
+
+      if (getMonth(eventDate) === thisMonth && getYear(eventDate) === thisYear) {
+        currentMonthRevenue += event_fee || 0;
+      }
+
+      if (getYear(eventDate) === thisYear) {
+        currentYearRevenue += event_fee || 0;
+      }
+    }
+  });
+
+  const revenueData = monthsWindow.map((month) => ({
+    month,
+    revenue: revenueMap[month],
+  }));
+
+  return { userGrowthData, eventTrendsData, revenueData, diningStylesData, currentMonthRevenue, currentYearRevenue };
+};
 
 const AdminDashboard = () => {
   const { user, signOut } = useAuth();
@@ -150,7 +236,11 @@ const AdminDashboard = () => {
     message: "",
   });
 
-  const chartData = generateStubData();
+  const [chartData, setChartData] = useState(null);
+
+  useEffect(() => {
+    generateStubData().then(setChartData).catch(console.error);
+  }, []);
 
   useEffect(() => {
     if (
@@ -728,154 +818,160 @@ const AdminDashboard = () => {
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-foreground mb-1">
-              ${stats.monthlyRevenue.toLocaleString()}
+              ${chartData.currentMonthRevenue.toLocaleString()}
             </div>
             <p className="text-sm text-muted-foreground">
-              Yearly: ${stats.yearlyRevenue.toLocaleString()}
+              Yearly: ${chartData.currentYearRevenue.toLocaleString()}
             </p>
           </CardContent>
         </Card>
       </div>
 
-        {/* Charts Section */}
+         {/* Charts Section */}
       <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-2 gap-6 xl:gap-8">
-  {/* User Growth */}
-  <Card className="shadow-lg border-0 bg-card/80 backdrop-blur-sm">
-    <CardHeader className="pb-4">
-      <CardTitle className="flex items-center space-x-3 text-base md:text-lg">
-        <div className="p-2 bg-primary/10 rounded-lg">
-          <TrendingUp className="h-5 w-5 text-primary" />
-        </div>
-        <span className="font-semibold">User Growth Trends</span>
-      </CardTitle>
-    </CardHeader>
-    <CardContent className="min-w-0">
-      <ChartContainer
-        config={{
-          users: {
-            label: "Users",
-            color: "hsl(var(--chart-1))",
-          },
-        }}
-        className="w-full h-[260px] sm:h-[300px] overflow-hidden"
-      >
-        <LineChart data={chartData.userGrowthData} width={undefined}>
-          <XAxis dataKey="month" />
-          <YAxis />
-          <ChartTooltip content={<ChartTooltipContent />} />
-          <Line
-            type="monotone"
-            dataKey="users"
-            stroke="var(--color-users)"
-            strokeWidth={2}
-          />
-        </LineChart>
-      </ChartContainer>
-    </CardContent>
-  </Card>
+        {/* User Growth */}
+        <Card className="shadow-lg border-0 bg-card/80 backdrop-blur-sm">
+          <CardHeader className="pb-4">
+            <CardTitle className="flex items-center space-x-3 text-base md:text-lg">
+              <div className="p-2 bg-primary/10 rounded-lg">
+                <TrendingUp className="h-5 w-5 text-primary" />
+              </div>
+              <span className="font-semibold">User Growth Trends</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="min-w-0">
+            <ChartContainer
+              config={{
+                users: {
+                  label: "Users",
+                  color: "hsl(var(--chart-1))",
+                },
+              }}
+              className="w-full h-[260px] sm:h-[300px] overflow-hidden"
+            >
+              <LineChart data={chartData.userGrowthData} width={undefined}>
+                <XAxis dataKey="month" />
+                <YAxis />
+                <ChartTooltip content={<ChartTooltipContent />} />
+                <Line
+                  type="monotone"
+                  dataKey="users"
+                  stroke="var(--color-users)"
+                  strokeWidth={2}
+                />
+              </LineChart>
+            </ChartContainer>
+          </CardContent>
+        </Card>
 
-  {/* Event Trends */}
-  <Card className="shadow-lg border-0 bg-card/80 backdrop-blur-sm">
-    <CardHeader className="pb-4">
-      <CardTitle className="flex items-center space-x-3 text-base md:text-lg">
-        <div className="p-2 bg-accent/10 rounded-lg">
-          <BarChart3 className="h-5 w-5 text-accent" />
-        </div>
-        <span className="font-semibold">Event Creation Trends</span>
-      </CardTitle>
-    </CardHeader>
-    <CardContent className="min-w-0">
-      <ChartContainer
-        config={{
-          events: {
-            label: "Events",
-            color: "hsl(var(--chart-2))",
-          },
-        }}
-        className="w-full h-[260px] sm:h-[300px] overflow-hidden"
-      >
-        <BarChart data={chartData.eventTrendsData} width={undefined}>
-          <XAxis dataKey="month" />
-          <YAxis />
-          <ChartTooltip content={<ChartTooltipContent />} />
-          <Bar dataKey="events" fill="var(--color-events)" />
-        </BarChart>
-      </ChartContainer>
-    </CardContent>
-  </Card>
+        {/* Event Trends */}
+        <Card className="shadow-lg border-0 bg-card/80 backdrop-blur-sm">
+          <CardHeader className="pb-4">
+            <CardTitle className="flex items-center space-x-3 text-base md:text-lg">
+              <div className="p-2 bg-accent/10 rounded-lg">
+                <BarChart3 className="h-5 w-5 text-accent" />
+              </div>
+              <span className="font-semibold">Event Creation Trends</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="min-w-0">
+            <ChartContainer
+              config={{
+                events: {
+                  label: "Events",
+                  color: "hsl(var(--chart-2))",
+                },
+              }}
+              className="w-full h-[260px] sm:h-[300px] overflow-hidden"
+            >
+              <BarChart data={chartData.eventTrendsData} width={undefined}>
+                <XAxis dataKey="month" />
+                <YAxis />
+                <ChartTooltip content={<ChartTooltipContent />} />
+                <Bar dataKey="events" fill="var(--color-events)" />
+              </BarChart>
+            </ChartContainer>
+          </CardContent>
+        </Card>
 
-  {/* Revenue Trends */}
-  <Card className="shadow-lg border-0 bg-card/80 backdrop-blur-sm">
-    <CardHeader className="pb-4">
-      <CardTitle className="flex items-center space-x-3 text-base md:text-lg">
-        <div className="p-2 bg-secondary/10 rounded-lg">
-          <DollarSign className="h-5 w-5 text-primary" />
-        </div>
-        <span className="font-semibold">Revenue Trends</span>
-      </CardTitle>
-    </CardHeader>
-    <CardContent className="min-w-0">
-      <ChartContainer
-        config={{
-          revenue: {
-            label: "Revenue",
-            color: "hsl(var(--chart-3))",
-          },
-        }}
-        className="w-full h-[260px] sm:h-[300px] overflow-hidden"
-      >
-        <LineChart data={chartData.revenueData} width={undefined}>
-          <XAxis dataKey="month" />
-          <YAxis />
-          <ChartTooltip content={<ChartTooltipContent />} />
-          <Line
-            type="monotone"
-            dataKey="revenue"
-            stroke="var(--color-revenue)"
-            strokeWidth={2}
-          />
-        </LineChart>
-      </ChartContainer>
-    </CardContent>
-  </Card>
+        {/* Revenue Trends */}
+        <Card className="shadow-lg border-0 bg-card/80 backdrop-blur-sm">
+          <CardHeader className="pb-4">
+            <CardTitle className="flex items-center space-x-3 text-base md:text-lg">
+              <div className="p-2 bg-secondary/10 rounded-lg">
+                <DollarSign className="h-5 w-5 text-primary" />
+              </div>
+              <span className="font-semibold">Revenue Trends</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="min-w-0">
+            <ChartContainer
+              config={{
+                revenue: {
+                  label: "Revenue",
+                  color: "hsl(var(--chart-3))",
+                },
+              }}
+              className="w-full h-[260px] sm:h-[300px] overflow-hidden"
+            >
+              <LineChart data={chartData.revenueData} width={undefined}>
+                <XAxis dataKey="month" />
+                <YAxis />
+                <ChartTooltip content={<ChartTooltipContent />} />
+                <Line
+                  type="monotone"
+                  dataKey="revenue"
+                  stroke="var(--color-revenue)"
+                  strokeWidth={2}
+                />
+              </LineChart>
+            </ChartContainer>
+          </CardContent>
+        </Card>
 
-  {/* Dining Styles */}
-  <Card className="shadow-lg border-0 bg-card/80 backdrop-blur-sm">
-    <CardHeader className="pb-4">
-      <CardTitle className="flex items-center space-x-3 text-base md:text-lg">
-        <div className="p-2 bg-muted/10 rounded-lg">
-          <Star className="h-5 w-5 text-foreground" />
-        </div>
-        <span className="font-semibold">Top Dining Styles</span>
-      </CardTitle>
-    </CardHeader>
-    <CardContent className="min-w-0">
-      <ChartContainer
-        config={{
-          fineDining: { label: "Fine Dining", color: "#F4A460" },
-          casual: { label: "Casual", color: "#8FBC8F" },
-          fastCasual: { label: "Fast Casual", color: "#DDA0DD" },
-        }}
-        className="w-full h-[260px] sm:h-[300px] overflow-hidden"
-      >
-        <PieChart width={undefined}>
-          <Pie
-            data={chartData.diningStylesData}
-            cx="50%"
-            cy="50%"
-            outerRadius={80}
-            dataKey="value"
-          >
-            {chartData.diningStylesData.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={entry.color} />
-            ))}
-          </Pie>
-          <ChartTooltip content={<ChartTooltipContent />} />
-        </PieChart>
-      </ChartContainer>
-    </CardContent>
-  </Card>
-</div>
+        {/* Dining Styles */}
+        <Card className="shadow-lg border-0 bg-card/80 backdrop-blur-sm">
+          <CardHeader className="pb-4">
+            <CardTitle className="flex items-center space-x-3 text-base md:text-lg">
+              <div className="p-2 bg-muted/10 rounded-lg">
+                <Star className="h-5 w-5 text-foreground" />
+              </div>
+              <span className="font-semibold">Top Dining Styles</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="min-w-0">
+            {chartData && chartData.diningStylesData?.length > 0 ? (
+            <ChartContainer   
+              config={{
+                adventurous: { label: "Adventurous", color: "#FF6F61" },
+                foodie: { label: "Foodie Enthusiast", color: "#6A5ACD" },
+                local: { label: "Local Lover", color: "#20B2AA" },
+                comfort: { label: "Comfort Food", color: "#FFD700" },
+                health: { label: "Health Conscious", color: "#32CD32" },
+                social: { label: "Social Butterfly", color: "#FF8C00" },
+              }} 
+              className="w-full h-[260px] sm:h-[300px] overflow-hidden">
+                          <PieChart>
+                <Pie
+                  data={chartData.diningStylesData}
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={80}
+                  dataKey="value"
+                >
+                  {chartData.diningStylesData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+                <ChartTooltip content={<ChartTooltipContent />} />
+              </PieChart>
+            </ChartContainer>
+            ) : (
+              <p className="text-center text-gray-500">Loading chart...</p>
+            )}
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Management Tabs */}
       <Tabs defaultValue="users" className="space-y-4">
