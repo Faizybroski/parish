@@ -7,7 +7,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/hooks/use-toast";
 import { ChevronLeft, ChevronRight, Eye, EyeOff, Loader2 } from "lucide-react";
 import { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import ParishLogo from "../ui/logo";
 
 const onboardingCards = [
@@ -42,6 +42,7 @@ const onboardingCards = [
 ];
 export const OnboardingCarousel = ({ startStep = 0 }) => {
   const location = useLocation();
+  const navigate = useNavigate();
   const passedStep = location.state?.startStep ?? startStep;
   const [currentStep, setCurrentStep] = useState(passedStep);
   const [email, setEmail] = useState("");
@@ -95,11 +96,10 @@ export const OnboardingCarousel = ({ startStep = 0 }) => {
               description: "Check your email for verification.",
             });
         if (!error) setEmail("");
+       navigate('social-media')
         setPassword("");
         setFirstName("");
         setLastName("");
-        // setLinkedin("");
-        // setInstagram("");
       }
     } catch(err) {
       toast({
