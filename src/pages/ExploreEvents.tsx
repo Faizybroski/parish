@@ -44,7 +44,7 @@ interface Event {
     first_name?: string;
     last_name?: string;
     profile_photo_url?: string;
-    role?: "admin"| "user";
+    role?: "admin" | "user";
   };
   rsvps?: {
     id: string;
@@ -144,21 +144,27 @@ const ExploreEvents = () => {
       setLoading(false);
     }
   };
-const shareEvent = async (name: string, description: string, eventId: string) => {
-  try {
-    await navigator.share({
-      title: name,
-      text: description,
-      url: window.location.origin + `/event/${eventId}/details`,
-    });
-  } catch (error) {
-    navigator.clipboard.writeText(window.location.origin + `/event/${eventId}/details`);
-    toast({
-      title: "Link copied!",
-      description: "Event link copied to clipboard",
-    });
-  }
-};
+  const shareEvent = async (
+    name: string,
+    description: string,
+    eventId: string
+  ) => {
+    try {
+      await navigator.share({
+        title: name,
+        text: description,
+        url: window.location.origin + `/event/${eventId}/details`,
+      });
+    } catch (error) {
+      navigator.clipboard.writeText(
+        window.location.origin + `/event/${eventId}/details`
+      );
+      toast({
+        title: "Link copied!",
+        description: "Event link copied to clipboard",
+      });
+    }
+  };
   const handleRSVP = async (eventId: string) => {
     if (!user) {
       toast({
@@ -168,12 +174,12 @@ const shareEvent = async (name: string, description: string, eventId: string) =>
       });
       return;
     }
-  
+
     const event = events.find((e) => e.id === eventId);
     if (!event) return;
-  
+
     const hasRSVP = event?.user_rsvp && event.user_rsvp.length > 0;
-  
+
     if (hasRSVP) {
       toast({
         title: "Remove RSVP?",
@@ -185,22 +191,21 @@ const shareEvent = async (name: string, description: string, eventId: string) =>
               onClick={async () => {
                 try {
                   if (!userProfileId) throw new Error("Profile not found");
-  
+
                   const { error } = await supabase
                     .from("rsvps")
                     .delete()
                     .eq("event_id", eventId)
                     .eq("user_id", userProfileId);
-  
+
                   if (error) throw error;
-  
+
                   toast({
                     title: "RSVP removed",
                     description: "You're no longer attending this event",
                   });
-  
+
                   fetchEvents();
-                  
                 } catch (error: any) {
                   toast({
                     title: "Error",
@@ -226,14 +231,14 @@ const shareEvent = async (name: string, description: string, eventId: string) =>
               onClick={async () => {
                 try {
                   if (!userProfileId) throw new Error("Profile not found");
-  
+
                   const { error } = await supabase.from("rsvps").insert({
                     event_id: eventId,
                     user_id: userProfileId,
                     status: "confirmed",
                   });
                   if (error) throw error;
-  
+
                   const { error: reservationError } = await supabase
                     .from("reservations")
                     .insert({
@@ -243,14 +248,14 @@ const shareEvent = async (name: string, description: string, eventId: string) =>
                       reservation_status: "confirmed",
                     });
                   if (reservationError) throw reservationError;
-  
+
                   const { data: eventData, error: eventError } = await supabase
                     .from("events")
                     .select("location_name")
                     .eq("id", eventId)
                     .single();
                   if (eventError) throw eventError;
-  
+
                   const locationName = eventData?.location_name;
                   const { data: restaurantData, error: restaurantError } =
                     await supabase
@@ -259,9 +264,9 @@ const shareEvent = async (name: string, description: string, eventId: string) =>
                       .eq("name", locationName)
                       .single();
                   if (restaurantError) throw restaurantError;
-  
+
                   const { id, name, longitude, latitude } = restaurantData;
-  
+
                   const { data: visit, error: visitError } = await supabase
                     .from("restaurant_visits")
                     .insert({
@@ -275,24 +280,20 @@ const shareEvent = async (name: string, description: string, eventId: string) =>
                     .select()
                     .single();
                   if (visitError) throw visitError;
-  
+
                   const { data: sameRestaurantVisits } = await supabase
                     .from("restaurant_visits")
                     .select("user_id")
                     .eq("restaurant_id", id)
                     .neq("user_id", userProfileId);
-  
+
                   for (const match of sameRestaurantVisits || []) {
                     const otherUserId = match.user_id;
                     const userAId =
-                      userProfileId < otherUserId
-                        ? userProfileId
-                        : otherUserId;
+                      userProfileId < otherUserId ? userProfileId : otherUserId;
                     const userBId =
-                      userProfileId < otherUserId
-                        ? otherUserId
-                        : user.id;
-  
+                      userProfileId < otherUserId ? otherUserId : user.id;
+
                     const { data: existingCrossedPath } = await supabase
                       .from("crossed_paths_log")
                       .select("*")
@@ -300,7 +301,7 @@ const shareEvent = async (name: string, description: string, eventId: string) =>
                       .eq("user_b_id", userBId)
                       .eq("restaurant_id", id)
                       .single();
-  
+
                     if (existingCrossedPath) {
                       await supabase
                         .from("crossed_paths_log")
@@ -319,14 +320,14 @@ const shareEvent = async (name: string, description: string, eventId: string) =>
                         location_lng: latitude,
                         cross_count: 1,
                       });
-  
+
                       const { data: existingPath } = await supabase
                         .from("crossed_paths")
                         .select("*")
                         .eq("user1_id", userAId)
                         .eq("user2_id", userBId)
                         .single();
-  
+
                       if (!existingPath) {
                         await supabase.from("crossed_paths").insert({
                           user1_id: userAId,
@@ -339,12 +340,12 @@ const shareEvent = async (name: string, description: string, eventId: string) =>
                       }
                     }
                   }
-  
+
                   toast({
                     title: "RSVP confirmed!",
                     description: "You're now attending this event",
                   });
-  
+
                   fetchEvents();
                 } catch (error: any) {
                   toast({
@@ -453,84 +454,107 @@ const shareEvent = async (name: string, description: string, eventId: string) =>
           const isUpcoming = eventDate > new Date();
 
           return (
-            <Card key={event.id} className="flex flex-col h-full bg-[#0A0A0A] border border-secondary rounded-sm overflow-hidden shadow-sm">
+            <Card
+              key={event.id}
+              className="flex flex-col h-full bg-[#0A0A0A] border border-secondary rounded-sm overflow-hidden shadow-sm"
+            >
               {/* Image with Overlay */}
-              <div className="relative h-40 w-full overflow-hidden">
+              <div className="relative w-full flex items-center justify-center bg-black flex-shrink-0 h-48">
                 {/* Image or Fallback */}
                 <img
-                  src={
-                    event.cover_photo_url
-                      ? event.cover_photo_url
-                      : 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAACUCAMAAAD/A6aTAAAATlBMVEXu7u5mZmbx8fFhYWGsrKypqalaWlrQ0NDq6urg4ODl5eWGhoZ2dnaMjIx/f3/09PS9vb3Y2NhwcHBUVFTJycmgoKDDw8OYmJhra2u1tbWVa4OnAAACPklEQVR4nO3a2XKjMBBAUWhhmV3gbZz//9GRwDhsk1ThmXKTuechDzip0o1oC1cSRQAAAAAAAAAAAAAAAAAAAP+YvOTdqx+kTfKCW/ru9fckq89ms3OV69gPn1Eft7qUijKKzeMR+Yx3B/RCxub7O1W1G/9Rxupq95almazWUYq4tzKUbWzDEmPSXJJFyveV4ZkV2Otqdp5l/eUIVF6NSaOY1vMD4n9ZbQnc/cZxjZu+tKeMiK5dZthYvtrbxkyOiikCRUh5Oqmi1aeIdPjzt9UXUa97Wo3pL2NOyQ69HdVMV+z6gzX1vePyV2V7+8NV1xW+g9EyfT+aZuP4/K5SnNGW3aHRDL5oB2eRpY/rDdDjnU3z8Z8zH/70n/ZXVWb4R4VQTJp6SNcdsjc87rODPHTXdqhwsTJYjtcXvlHkuftpTvDz4U/IZ67YcxhNg+SF/71OhumRmfGY7o/mWT6vXlhu/OjVZwhMpqLYT9G8+Hnou7vuGeHxgy3qOjmY+gQySrzuGiKrLvdFGa4+R017Ef/FiuSPypi/9Bu6jR0KMsIj4JtvFIRzsFD96DostqO88qwH8oywqm3thePjnDmZYWdXO3mQ1uGXJZz8bniJHXzir5DWcbadI8WHB/aanm63/OI00ZdbQ63SP30NrgmDKvFWVUrfm6IrxhrV2150pNRlKfvKv5YZxVlfLsXX3RoylhcQcZfRoaujPpsN1PzB+UobQ4vaJZ/9HiTn/HPFgAAAAAAAAAAAAAAAAAA4Of6TUWZCCaip1VLAAAAAElFTkSuQmCC'
-                  }
+                  src={event.cover_photo_url}
                   alt={event.name}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain"
                 />
 
                 {/* Black Overlay */}
-                <div className="absolute inset-0 bg-black/70 z-10" />
-
-                {/* Text Content */}
-                <div className="absolute inset-0 p-4 flex flex-col justify-end z-20">
-                  <h3 className="text-secondary text-xl font-bold line-clamp-1">{event.name}</h3>
-                  {event.description && (
-                    <p className="text-secondary/90 text-sm mt-1 line-clamp-1">{event.description}</p>
-                  )}
-                </div>
+                {/* <div className="absolute inset-0 bg-black/70 z-10" /> */}
               </div>
 
               {/* Footer Section */}
-              <CardContent className="flex flex-col flex-grow space-y-3 p-3">
+              <CardContent className="flex flex-col flex-grow space-y-3 p-4">
+                {/* Text Content */}
+                <div className="inset-0 pl-2 flex flex-col justify-end">
+                  <h3 className="text-secondary text-xl font-bold line-clamp-1">
+                    {event.name}
+                  </h3>
+                  {event.description && (
+                    <p className="text-secondary/90 text-sm mt-1 line-clamp-1">
+                      {event.description}
+                    </p>
+                  )}
+                </div>
+
                 {/* Date & Time */}
-                <div className="text-sm flex items-center pl-2">
+                <div className="text-sm flex items-center pl-2 pt-4 pb-1 border-t-2 border-black-900">
+                  <Calendar className="h-5 w-5 text-secondary/90 mr-3" />
                   <span>
-                    {new Date(event.date_time).toLocaleDateString('en-US', {
-                      month: 'short',
-                      day: 'numeric'
+                    {new Date(event.date_time).toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
                     })}
-                    {' - '}
-                    {new Date(event.date_time).toLocaleTimeString('en-US', {
-                      hour: 'numeric',
-                      minute: '2-digit'
+                    {" - "}
+                    {new Date(event.date_time).toLocaleTimeString("en-US", {
+                      hour: "numeric",
+                      minute: "2-digit",
                     })}
                   </span>
                 </div>
 
                 {/* RSVP Count */}
                 {event.max_attendees && (
-                  <div className="text-sm font-medium py-4 pl-2 border-t-2 border-b-2 border-y-black-900">
-                    {event.rsvp_count || 0}/{event.max_attendees} RSVPed
-                  </div>
+                  <div className="text-sm font-medium py-4 px-2 border-t-2 border-b-2 border-[#1E1E1E] text-white">
+                                      {/* Top content */}
+                                      <div className="flex items-center mb-2">
+                                        <Users className="h-5 w-5 text-secondary/90 mr-3" />
+                                        {event.rsvp_count || 0}/{event.max_attendees} RSVPed
+                                      </div>
+                  
+                                      {/* Progress bar */}
+                                      <div className="w-full h-2 bg-[#1E1E1E] rounded-full overflow-hidden">
+                                        <div
+                                          className="h-full bg-[#8bac97] transition-all duration-300"
+                                          style={{
+                                            width: `${Math.min(
+                                              ((event.rsvp_count || 0) / event.max_attendees) *
+                                                100,
+                                              100
+                                            )}%`,
+                                          }}
+                                        />
+                                      </div>
+                                    </div>
                 )}
-                {typeof event.is_paid !== 'undefined' && (
+                {typeof event.is_paid !== "undefined" && (
                   <div className="text-sm font-medium py-2 text-white">
                     {event.is_paid
                       ? `💵 Paid Event – $${event.event_fee}`
                       : "🆓 Free Event"}
                   </div>
                 )}
-                {(event.profiles.role === 'admin') &&(
-                  event.is_paid
-                  ?
-                  (<span className="px-3 py-1 text-xs font-semibold text-black bg-yellow-400 rounded-full w-32">
-                    🌟 Premium
-                  </span>)
-                  :
-                  ( <span className="px-3 py-1 text-xs font-semibold text-white bg-blue-600 rounded-full w-32">
-                    🏅 Official
-                  </span>)
-                )}
-                <div className='flex items-center'>
-                  <MapPin className="w-6 h-6 text-white" />
-                  {/* Location */}
-                  <div className="text-sm flex flex-col ml-2">
-                    <span className="">{event.location_name || 'Location not specified'}</span>
-                  {/* Address */}
-                  {event.location_address && (
-                    <span className="text-sm text-gray-500 line-clamp-1">
-                      {event.location_address}
+                {event.profiles.role === "admin" &&
+                  (event.is_paid ? (
+                    <span className="px-3 py-1 text-xs font-semibold text-black bg-yellow-400 rounded-full w-32">
+                      🌟 Premium
                     </span>
-                  )}
+                  ) : (
+                    <span className="px-3 py-1 text-xs font-semibold text-white bg-blue-600 rounded-full w-32">
+                      🏅 Official
+                    </span>
+                  ))}
+                <div className="flex items-center">
+                  <MapPin className="w-5 h-5 text-secondary/90 mr-3" />
+                  {/* Location */}
+                  <div className="text-sm flex flex-col">
+                    <span className="">
+                      {event.location_name || "Location not specified"}
+                    </span>
+                    {/* Address */}
+                    {event.location_address && (
+                      <span className="text-sm text-gray-500 line-clamp-1">
+                        {event.location_address}
+                      </span>
+                    )}
                   </div>
                 </div>
 
@@ -573,7 +597,9 @@ const shareEvent = async (name: string, description: string, eventId: string) =>
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => shareEvent(event.name, event.description,event.id)}
+                      onClick={() =>
+                        shareEvent(event.name, event.description, event.id)
+                      }
                     >
                       <Share2 className="h-4 w-4" />
                     </Button>

@@ -82,12 +82,13 @@ const AdminEvents = () => {
     }
   };
 
-  const confirmDeleteEvent = async () => {
-    if (!eventToDelete) return;
+  const handleDeleteEvent = async (eventId: string) => {
+    if (!eventId) return;
+    if (!confirm("Are you sure you want to delete this Event? This action cannot be undone."))return;
     try {
-      const { error } = await supabase.from('events').delete().eq('id', eventToDelete);
+      const { error } = await supabase.from('events').delete().eq('id', eventId);
       if (error) throw error;
-      setEvents(events.filter(event => event.id !== eventToDelete));
+      setEvents(events.filter(event => event.id !== eventId));
       toast({
         title: 'Success',
         description: 'Event deleted successfully'
@@ -117,30 +118,30 @@ const shareEvent = async (name: string, description: string, eventId: string) =>
     });
   }
 };
-  const handleDeleteEvent = (eventId: string) => {
-    setEventToDelete(eventId);
-    toast({
-      title: 'Confirm Delete',
-      description: 'Are you sure you want to delete this event?',
-      action: (
-        <div className="flex space-x-2">
-          <Button variant="destructive" size="sm" onClick={confirmDeleteEvent}>
-            Yes
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => {
-              setEventToDelete(null);
-              toast.dismiss();
-            }}
-          >
-            Cancel
-          </Button>
-        </div>
-      )
-    });
-  };
+  // const handleDeleteEvent = (eventId: string) => {
+  //   setEventToDelete(eventId);
+  //   toast({
+  //     title: 'Confirm Delete',
+  //     description: 'Are you sure you want to delete this event?',
+  //     action: (
+  //       <div className="flex space-x-2">
+  //         <Button variant="destructive" size="sm" onClick={confirmDeleteEvent}>
+  //           Yes
+  //         </Button>
+  //         <Button
+  //           variant="outline"
+  //           size="sm"
+  //           onClick={() => {
+  //             setEventToDelete(null);
+  //             toast.dismiss();
+  //           }}
+  //         >
+  //           Cancel
+  //         </Button>
+  //       </div>
+  //     )
+  //   });
+  // };
 
   const filteredEvents = events.filter(event =>
     event.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -203,16 +204,18 @@ const shareEvent = async (name: string, description: string, eventId: string) =>
                       className="w-full h-full object-cover"
                     />
                     <div className="absolute inset-0 bg-black/70 z-10" />
-                    <div className="absolute inset-0 p-4 flex flex-col justify-end z-20">
-                      <h3 className="text-white text-xl font-bold line-clamp-1">{event.name}</h3>
-                      {event.description && (
-                        <p className="text-white/90 text-sm mt-1 line-clamp-1">{event.description}</p>
-                      )}
-                    </div>
+
                   </div>
 
                   <CardContent className="flex flex-col flex-grow space-y-3 p-4">
-                    <div className="text-sm flex items-center text-white">
+                    <div className=" inset-0 flex flex-col justify-end">
+                      <h3 className="text-white text-xl font-bold line-clamp-1">{event.name}</h3>
+                        {event.description && (
+                        <p className="text-white/90 text-sm mt-1 line-clamp-1">{event.description}</p>
+                      )}
+                    </div>
+
+                    <div className="text-sm flex items-center pt-3 text-white border-t-2 border-[#1E1E1E]">
                       <span>
                         {new Date(event.date_time).toLocaleDateString('en-US', {
                           month: 'short',

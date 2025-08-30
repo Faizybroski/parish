@@ -273,21 +273,27 @@ const Events = () => {
       console.error("Error fetching my events:", error);
     }
   };
-const shareEvent = async (name: string, description: string, eventId: string) => {
-  try {
-    await navigator.share({
-      title: name,
-      text: description,
-       url: window.location.origin + `/event/${eventId}/details`,
-    });
-  } catch (error) {
-    navigator.clipboard.writeText(window.location.origin + `/event/${eventId}/details`);
-    toast({
-      title: "Link copied!",
-      description: "Event link copied to clipboard",
-    });
-  }
-};
+  const shareEvent = async (
+    name: string,
+    description: string,
+    eventId: string
+  ) => {
+    try {
+      await navigator.share({
+        title: name,
+        text: description,
+        url: window.location.origin + `/event/${eventId}/details`,
+      });
+    } catch (error) {
+      navigator.clipboard.writeText(
+        window.location.origin + `/event/${eventId}/details`
+      );
+      toast({
+        title: "Link copied!",
+        description: "Event link copied to clipboard",
+      });
+    }
+  };
   const handleRSVP = async (eventId: string) => {
     if (!user) {
       toast({
@@ -591,124 +597,153 @@ const shareEvent = async (name: string, description: string, eventId: string) =>
           const isUpcoming = eventDate > new Date();
 
           return (
-            <Card key={event.id} className="flex flex-col h-full bg-[#0A0A0A] border border-[#1E1E1E] rounded-sm overflow-hidden shadow-sm">
-      {/* Image with Overlay */}
-      <div className="relative h-40 w-full overflow-hidden">
-        {/* Image or Fallback */}
-        <img
-          src={
-            event.cover_photo_url
-              ? event.cover_photo_url
-              : 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAACUCAMAAAD/A6aTAAAATlBMVEXu7u5mZmbx8fFhYWGsrKypqalaWlrQ0NDq6urg4ODl5eWGhoZ2dnaMjIx/f3/09PS9vb3Y2NhwcHBUVFTJycmgoKDDw8OYmJhra2u1tbWVa4OnAAACPklEQVR4nO3a2XKjMBBAUWhhmV3gbZz//9GRwDhsk1ThmXKTuechDzip0o1oC1cSRQAAAAAAAAAAAAAAAAAAAP+YvOTdqx+kTfKCW/ru9fckq89ms3OV69gPn1Eft7qUijKKzeMR+Yx3B/RCxub7O1W1G/9Rxupq955lamazWUYq4tzKUbWzDEmPSXJJFyveV4ZkV2Otqdp5l/eUIVF6NSaNYlrPD4j/ZbUlcPcbxzVu+tKeMiK6dplhY/lqbxsjOSqmCBQh5emkilafItLhz99WX0S97mk1pr+MOSU79HZUM12x6w/W1PeOy1+V7e0PV11X+A5Gy/T9aJqN4/O7SnFGW3aHRjP4oh2cRZY+rjdAj3c2zcd/znz403/aX1WZ4R8VQjFp6iFdd8je8LjPDvLQXduhwsXKYDleX/hGkefupznBz4c/IZ+5Ys9hNA2SF/73OhmmR2bGY7o/mmf5vHphufGjV58hMJmKYj9F8+Lnoe/uumeExw+2qOvkYOoTyCjxvGuIrLrcF2W4+hw17UX8FyuSPypj/tJv6DZ2KMgIj4Bvv1EQzsFC9aPrsNiO8sqzHsgzwqq2tReOj3PmZIadXe3kQVqHX5Zw8rvhJXbwib9CWcbadI8WHB/Ya3q63fKL00Rfbg21Sv/0NbgmDKrEW1UpfW+KrhhrV2170pFRl6XsK/9aZhRnfbkUX3dryFhcQcRfRoaujPpsNlPzB+UobQ4vaJZ89HuQnPDPFQAAAAAAAAAAAAAAAAAA4Of6TUWZCCaip1VLAAAAAElFTkSuQmCC'
-          }
-          alt={event.name}
-          className="w-full h-full object-cover"
-        />
-
-        {/* Black Overlay */}
-        <div className="absolute inset-0 bg-black/70 z-10" />
-
-        {/* Text Content */}
-        <div className="absolute inset-0 p-4 flex flex-col justify-end z-20">
-          <h3 className="text-white text-xl font-bold line-clamp-1">{event.name}</h3>
-          {event.description && (
-            <p className="text-white/90 text-sm mt-1 line-clamp-1">{event.description}</p>
-          )}
-        </div>
-      </div>
-
-      {/* Footer Section */}
-      <CardContent className="flex flex-col flex-grow space-y-3 p-4">
-        {/* Date & Time */}
-        <div className="text-sm flex items-center text-white">
-          <span>
-            {new Date(event.date_time).toLocaleDateString('en-US', {
-              month: 'short',
-              day: 'numeric'
-            })}
-            {' - '}
-            {new Date(event.date_time).toLocaleTimeString('en-US', {
-              hour: 'numeric',
-              minute: '2-digit'
-            })}
-          </span>
-        </div>
-
-        {/* RSVP Count */}
-        {event.max_attendees && (
-          <div className="text-sm font-medium py-3 pl-0 border-t-2 border-b-2 border-[#1E1E1E] text-white">
-            {event.rsvp_count || 0}/{event.max_attendees} RSVPed
-          </div>
-        )}
-        {typeof event.is_paid !== 'undefined' && (
-          <div className="text-sm font-medium py-2 text-white">
-            {event.is_paid
-              ? `💵 Paid Event – $${event.event_fee}`
-              : "🆓 Free Event"}
-          </div>
-        )}
-        <div className='flex items-center'>
-          <MapPin className="w-4 h-4 text-white" />
-
-          {/* Location */}
-          <div className="text-sm flex flex-col ml-2 text-white">
-            <span className="">{event.location_name || 'Location not specified'}</span>
-            {event.restaurants && (
-              <span className="text-sm text-gray-400 line-clamp-1">
-                {event.restaurants.name} - {event.restaurants.city}
-              </span>
-            )}
-          </div>
-        </div>
-
-        {/* Spacer and Button */}
-        <div className="flex-grow" />
-
-        <div className="flex space-x-2">
-          {/* Details Button */}
-          <Button
-            onClick={() => navigate(`/event/${event.id}/details`)}
-            className="flex-1 bg-white hover:bg-white/90 text-black rounded-sm"
-          >
-            See details
-          </Button>
-
-          {/* Edit Button (only for creators) */}
-          {isCreator && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => navigate(`/event/${event.id}/edit`)}
-              className="text-white border-[#1E1E1E]"
+            <Card
+              key={event.id}
+              className="flex flex-col h-full bg-[#0A0A0A] border border-primary rounded-sm overflow-hidden shadow-sm"
             >
-              <Edit className="h-4 w-4" />
-            </Button>
-          )}
+              {/* Image with Overlay */}
+              <div className="relative w-full flex items-center justify-center bg-black flex-shrink-0 h-48">
+                {/* Image or Fallback */}
+                <img
+                  src={event.cover_photo_url}
+                  alt={event.name}
+                  className="w-full h-full object-contain"
+                />
 
-          {/* Delete Button (only for creators) */}
-          {isCreator && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => deleteEvent && deleteEvent(event.id)}
-              className="text-red-500 hover:text-red-600 border-[#1E1E1E]"
-            >
-              <Trash2 className="h-4 w-4" />
-            </Button>
-          )}
-         {!event.is_paid &&(
-           <Button
-              variant="outline"
-              size="sm"
-              onClick={() => shareEvent(event.name, event.description, event.id)}
-            >
-            <Share2 className="h-4 w-4" />
-            </Button>
-         )} 
-        
+                {/* Black Overlay */}
+                {/* <div className="absolute inset-0 bg-black/70 z-10" /> */}
+              </div>
 
-          {/* RSVP Button (for all events with available spots) */}
-          {/* {spotsLeft > 0 && !isCreator && (
+              {/* Footer Section */}
+              <CardContent className="flex flex-col flex-grow space-y-3 p-4">
+                {/* Text Content */}
+                <div className="inset-0 pl-2 flex flex-col justify-end">
+                  <h3 className="text-primary text-xl font-bold line-clamp-1">
+                    {event.name}
+                  </h3>
+                  {event.description && (
+                    <p className="text-primary/90 text-sm mt-1 line-clamp-1">
+                      {event.description}
+                    </p>
+                  )}
+                </div>
+
+                {/* Date & Time */}
+                <div className="text-sm flex items-center text-white pl-2 pt-4 pb-1 border-t-2 border-[#1E1E1E]">
+                  <Calendar className="h-5 w-5 text-primary/90 mr-3" />
+                  <span>
+                    {new Date(event.date_time).toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                    })}
+                    {" - "}
+                    {new Date(event.date_time).toLocaleTimeString("en-US", {
+                      hour: "numeric",
+                      minute: "2-digit",
+                    })}
+                  </span>
+                </div>
+
+                {/* RSVP Count */}
+                {event.max_attendees && (
+                  // <div className="flex text-sm font-medium py-4 pl-2 border-t-2 border-b-2 border-[#1E1E1E] text-white">
+                  //   <Users className="h-5 w-5 text-muted-foreground mr-3" />
+                  //   {event.rsvp_count || 0}/{event.max_attendees} RSVPed
+                  // </div>
+                  <div className="text-sm font-medium py-4 px-2 border-t-2 border-b-2 border-[#1E1E1E] text-white">
+                    {/* Top content */}
+                    <div className="flex items-center mb-2">
+                      <Users className="h-5 w-5 text-primary/90 mr-3" />
+                      {event.rsvp_count || 0}/{event.max_attendees} RSVPed
+                    </div>
+
+                    {/* Progress bar */}
+                    <div className="w-full h-2 bg-[#1E1E1E] rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-primary transition-all duration-300"
+                        style={{
+                          width: `${Math.min(
+                            ((event.rsvp_count || 0) / event.max_attendees) *
+                              100,
+                            100
+                          )}%`,
+                        }}
+                      />
+                    </div>
+                  </div>
+                )}
+                {typeof event.is_paid !== "undefined" && (
+                  <div className="text-sm font-medium py-2 text-white">
+                    {event.is_paid
+                      ? `💵 Paid Event – $${event.event_fee}`
+                      : "🆓 Free Event"}
+                  </div>
+                )}
+                <div className="flex items-center">
+                  <MapPin className="h-5 w-5 text-primary/90 mr-3" />
+
+                  {/* Location */}
+                  <div className="text-sm flex flex-col text-white">
+                    <span className="">
+                      {event.location_name || "Location not specified"}
+                    </span>
+                    {event.restaurants && (
+                      <span className="text-sm text-gray-400 line-clamp-1">
+                        {event.restaurants.name} - {event.restaurants.city}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Spacer and Button */}
+                <div className="flex-grow" />
+
+                <div className="flex space-x-2">
+                  {/* Details Button */}
+                  <Button
+                    onClick={() => navigate(`/event/${event.id}/details`)}
+                    className="flex-1 bg-primary hover:bg-white/90 text-black rounded-sm"
+                  >
+                    See details
+                  </Button>
+
+                  {/* Edit Button (only for creators) */}
+                  {isCreator && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => navigate(`/event/${event.id}/edit`)}
+                      className="text-white border-[#1E1E1E]"
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                  )}
+
+                  {/* Delete Button (only for creators) */}
+                  {isCreator && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => deleteEvent && deleteEvent(event.id)}
+                      className="text-red-500 hover:text-red-600 border-[#1E1E1E]"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  )}
+                  {!event.is_paid && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() =>
+                        shareEvent(event.name, event.description, event.id)
+                      }
+                    >
+                      <Share2 className="h-4 w-4" />
+                    </Button>
+                  )}
+
+                  {/* RSVP Button (for all events with available spots) */}
+                  {/* {spotsLeft > 0 && !isCreator && (
             <Button
               onClick={() => handleRSVP(event.id)}
               variant={hasRSVP ? "default" : "outline"}
@@ -726,9 +761,9 @@ const shareEvent = async (name: string, description: string, eventId: string) =>
               )}
             </Button>
           )} */}
-        </div>
-      </CardContent>
-    </Card>
+                </div>
+              </CardContent>
+            </Card>
           );
         })}
       </div>

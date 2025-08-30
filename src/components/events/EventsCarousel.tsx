@@ -343,71 +343,85 @@ const EventsCarousel = () => {
                 />
 
                 <div className="flex flex-wrap gap-4 px-2">
-                  <Card className="relative flex flex-col w-full sm:w-[20rem] lg:w-[25rem] h-[420px] border border-secondary overflow-hidden group hover:shadow-xl transition">
+                  <Card className="relative flex bg-[#0A0A0A] flex-col w-full sm:w-[20rem] lg:w-[25rem] h-[420px] border border-secondary overflow-hidden group hover:shadow-xl transition">
                     {/* Background */}
-                    <div
-                      className="absolute inset-0 bg-cover bg-center"
-                      style={{
-                        backgroundImage: event.cover_photo_url
-                          ? `url(${event.cover_photo_url})`
-                          : "linear-gradient(to right, hsl(var(--primary)), hsl(var(--secondary)))",
-                      }}
-                    />
-                    <div className="absolute inset-0 bg-black/70" />
+                    <div className="relative w-full flex items-center justify-center bg-black flex-shrink-0 h-48">
+                      <img
+                        src={event.cover_photo_url}
+                        alt={event.name}
+                        className="max-h-full w-full object-contain"
+                      />
+                    </div>
 
                     {/* Card Content */}
-                    <CardContent className="relative z-10 flex flex-col flex-grow p-6 text-white">
-                      {/* Top Section */}
-                      <div className="text-center mt-4">
-                        <p className="text-md font-bold uppercase text-secondary tracking-wider">
-                          {format(new Date(event.date_time), "eeee, MMMM d")}
-                        </p>
-                        <h3 className="text-3xl font-bold mt-1">
+                    <CardContent className="flex flex-col flex-grow p-4 text-white">
+                      {/* Title */}
+                      <div className="mb-4">
+                        <h3 className="text-2xl text-secondary/90 font-bold truncate">
                           {event.name}
                         </h3>
-                      </div>
-
-                      {/* Middle Section - flex-grow ensures space usage */}
-                      <div className="flex-grow flex flex-col justify-center space-y-2 mt-1">
-                        <div className="text-center rounded-lg p-3 pb-3">
-                          <p className="text-md text-secondary font-bold">
-                            Location
+                        {event.description && (
+                          <p className="text-secondary/90 text-sm mt-1 line-clamp-1 truncate">
+                            {event.description}
                           </p>
+                        )}
+                      </div>
+                      <div className="flex items-center mb-2">
+                        <Calendar className="h-5 w-5 text-secondary/90 mr-3" />
+                        <span>
+                          {new Date(event.date_time).toLocaleDateString(
+                            "en-US",
+                            {
+                              month: "short",
+                              day: "numeric",
+                            }
+                          )}
+                          {" - "}
+                          {new Date(event.date_time).toLocaleTimeString(
+                            "en-US",
+                            {
+                              hour: "numeric",
+                              minute: "2-digit",
+                            }
+                          )}
+                        </span>
+                      </div>
+                      {/* <div className="text-center rounded-lg p-3 pb-3">
+                          <MapPin className="w-5 h-5 text-white" />
                           <p
                             className="text-[1.5rem] font-bold mt-1 truncate text-center max-w-[350px]"
                             title={event.location_name}
                           >
                             {event.location_name}
                           </p>
-                        </div>
-                        <div className="flex flex-col items-center justify-center">
-                          <p>
-                            <span className="text-[1.8rem] font-bold">
-                              {attendeeCount}
+                        </div>  */}
+                      <div className="flex items-center">
+                        <MapPin className="w-5 h-5 text-secondary/90" />
+                        {/* Location */}
+                        <div className="text-sm flex flex-col ml-2">
+                          <span className="truncate">
+                            {event.location_name || "Location not specified"}
+                          </span>
+                          {/* Address */}
+                          {event.location_address && (
+                            <span className="text-sm text-gray-500 line-clamp-1 truncate">
+                              {event.location_address}
                             </span>
-                            <span>/{event.max_attendees}</span>
-                          </p>
-                          <p className="text-[#B04520] font-bold">attending</p>
+                          )}
                         </div>
                       </div>
 
-                      {/* Bottom Buttons - mt-auto pushes them down */}
-                      <div className="flex gap-2 w-full mt-auto">
+                      {/* Push buttons to bottom */}
+                      <div className="flex gap-2 mt-auto">
                         {!event.is_paid && (
-                           <Button
-                            onClick={() => navigate(`/event/${event.id}/details`)}
-                            className="w-12 px-4 py-4 text-lg border border-secondary font-medium bg-transparent text-white hover:bg-secondary/90"
-                          >
+                          <Button className="w-12 px-4 py-3 border border-secondary font-medium bg-transparent text-white hover:bg-secondary/20">
                             <Share2 className="h-4 w-4" />
                           </Button>
                         )}
-                        <Button
-                          onClick={() => navigate(`/rsvp/${event.id}/details`)}
-                          className="flex-grow px-4 py-4 text-lg font-medium bg-secondary text-black hover:bg-secondary/90 flex items-center gap-2 justify-center"
-                        >
+                        <Button className="flex-grow px-4 py-3 text-lg font-medium bg-secondary text-black hover:bg-secondary/90 flex items-center gap-2 justify-center rounded-lg">
                           {rsvpStatus === "yes" ? "Un-RSVP" : "RSVP"}
                           <ChevronRight className="w-5 h-5" />
-                      </Button>
+                        </Button>
                       </div>
                     </CardContent>
                   </Card>
