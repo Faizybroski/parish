@@ -702,7 +702,7 @@ const Events = () => {
                   {/* Details Button */}
                   <Button
                     onClick={() => navigate(`/event/${event.id}/details`)}
-                    className="flex-1 bg-primary hover:bg-white/90 text-black rounded-sm"
+                    className="flex-1 bg-primary hover:bg-primary/90 text-black rounded-sm"
                   >
                     See details
                   </Button>

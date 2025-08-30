@@ -6,7 +6,20 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from '@/hooks/use-toast';
-import { Calendar, MapPin, Edit, Trash2, Plus, Search, Share2 } from 'lucide-react';
+import {
+  Calendar,
+  Clock,
+  MapPin,
+  Users,
+  Search,
+  Plus,
+  Heart,
+  UserCheck,
+  Edit,
+  Trash2,
+  Eye,
+  Share2,
+} from "lucide-react";
 
 interface Event {
   id: string;
@@ -196,26 +209,27 @@ const shareEvent = async (name: string, description: string, eventId: string) =>
             filteredEvents.map(event => {
               const isCreator = profile?.id === event.creator_id;
               return (
-                <Card key={event.id} className="flex flex-col h-full bg-[#0A0A0A] border border-[#1E1E1E] rounded-sm overflow-hidden shadow-sm">
-                  <div className="relative h-40 w-full overflow-hidden">
+                <Card key={event.id} className="flex flex-col h-full bg-[#0A0A0A] border border-primary rounded-sm overflow-hidden shadow-sm">
+                  <div className="relative w-full flex items-center justify-center bg-black flex-shrink-0 h-48">
                     <img
-                      src={event.cover_photo_url || 'https://placehold.co/600x200?text=No+Image'}
+                      src={event.cover_photo_url}
                       alt={event.name}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-contain"
                     />
-                    <div className="absolute inset-0 bg-black/70 z-10" />
+                    {/* <div className="absolute inset-0 bg-black/70 z-10" /> */}
 
                   </div>
 
                   <CardContent className="flex flex-col flex-grow space-y-3 p-4">
                     <div className=" inset-0 flex flex-col justify-end">
-                      <h3 className="text-white text-xl font-bold line-clamp-1">{event.name}</h3>
+                      <h3 className="text-primary text-xl font-bold line-clamp-1">{event.name}</h3>
                         {event.description && (
-                        <p className="text-white/90 text-sm mt-1 line-clamp-1">{event.description}</p>
+                        <p className="text-primary/90 text-sm mt-1 line-clamp-1">{event.description}</p>
                       )}
                     </div>
 
-                    <div className="text-sm flex items-center pt-3 text-white border-t-2 border-[#1E1E1E]">
+                    <div className="text-sm flex items-center pl-2 pt-4 pb-1 text-white border-t-2 border-[#1E1E1E]">
+                      <Calendar className="h-5 w-5 text-primary/90 mr-3" />
                       <span>
                         {new Date(event.date_time).toLocaleDateString('en-US', {
                           month: 'short',
@@ -229,9 +243,27 @@ const shareEvent = async (name: string, description: string, eventId: string) =>
                     </div>
 
                     {event.max_attendees && (
-                      <div className="text-sm font-medium py-3 pl-0 border-t-2 border-b-2 border-[#1E1E1E] text-white">
-                        {event.rsvps?.length || 0}/{event.max_attendees} RSVPed
-                      </div>
+                      <div className="text-sm font-medium py-4 px-2 border-t-2 border-b-2 border-[#1E1E1E] text-white">
+                    {/* Top content */}
+                    <div className="flex items-center mb-2">
+                      <Users className="h-5 w-5 text-primary/90 mr-3" />
+                      {event.rsvps?.length || 0}/{event.max_attendees} RSVPed
+                    </div>
+
+                    {/* Progress bar */}
+                    <div className="w-full h-2 bg-[#1E1E1E] rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-primary transition-all duration-300"
+                        style={{
+                          width: `${Math.min(
+                            ((event.rsvps?.length || 0) / event.max_attendees) *
+                              100,
+                            100
+                          )}%`,
+                        }}
+                      />
+                    </div>
+                  </div>
                     )}
 
                     {typeof event.is_paid !== 'undefined' && (
@@ -241,23 +273,27 @@ const shareEvent = async (name: string, description: string, eventId: string) =>
                     )}
 
                     <div className="flex items-center">
-                      <MapPin className="w-4 h-4 text-white" />
-                      <div className="text-sm flex flex-col ml-2 text-white">
-                        <span>{event.location_name || 'Location not specified'}</span>
-                        {event.restaurants && (
-                          <span className="text-sm text-gray-400 line-clamp-1">
-                            {event.restaurants.name} - {event.restaurants.city}
-                          </span>
-                        )}
-                      </div>
-                    </div>
+                                      <MapPin className="h-5 w-5 text-primary/90 mr-3" />
+                    
+                                      {/* Location */}
+                                      <div className="text-sm flex flex-col text-white">
+                                        <span className="">
+                                          {event.location_name || "Location not specified"}
+                                        </span>
+                                        {event.restaurants && (
+                                          <span className="text-sm text-gray-400 line-clamp-1">
+                                            {event.restaurants.name} - {event.restaurants.city}
+                                          </span>
+                                        )}
+                                      </div>
+                                    </div>
 
                     <div className="flex-grow" />
 
                     <div className="flex space-x-2">
                       <Button
                         onClick={() => navigate(`/admin/event/${event.id}/details`)}
-                        className="flex-1 bg-white hover:bg-white/90 text-black rounded-sm"
+                        className="flex-1 bg-primary hover:bg-primary/90 text-black rounded-sm"
                       >
                         See details
                       </Button>
