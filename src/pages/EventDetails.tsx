@@ -840,7 +840,7 @@ const EventDetails = () => {
             Back to Events
           </Button>
           )}
-        {!isCreator && (
+        {!isCreator && isBeforeDeadline && (
           <Button
             onClick={handleInterest}
             disabled={loading}
