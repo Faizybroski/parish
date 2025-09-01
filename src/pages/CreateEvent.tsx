@@ -204,6 +204,8 @@ const CreateEvent = () => {
         );
       } else if (formData.rsvp_deadline_date) {
         rsvpDeadline = new Date(`${formData.rsvp_deadline_date}T23:59`);
+      } else {
+        rsvpDeadline = eventDateTime;
       }
 
       const { data, error } = await supabase
@@ -221,7 +223,7 @@ const CreateEvent = () => {
           status: "active",
           dining_style: formData.dining_style || null,
           dietary_theme: formData.dietary_theme || null,
-          rsvp_deadline: rsvpDeadline?.toISOString() || null,
+          rsvp_deadline: rsvpDeadline?.toISOString(),
           tags: formData.tags.length > 0 ? formData.tags : null,
           cover_photo_url: formData.cover_photo_url,
           is_mystery_dinner: formData.is_mystery_dinner,
