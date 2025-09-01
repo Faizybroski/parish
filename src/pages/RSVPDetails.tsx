@@ -507,7 +507,7 @@ const RSVPDetails = () => {
               </h2>
             </>
           )}
-          {!isPastEvent && (
+          {!isPastEvent && isBeforeDeadline && (
             <h2 className="text-xl font-semibold">
               RSVP for <span className="text-primary">{event.name}</span> till{" "}
               <span className="text-primary">
@@ -515,6 +515,11 @@ const RSVPDetails = () => {
               </span>
               !
             </h2>
+          )}
+          {!isPastEvent && !isBeforeDeadline && (
+            <h2 className="text-xl font-semibold text-primary">
+                {event.name}
+              </h2>
           )}
         </div>
         <div className="flex justify-center gap-4 text-center text-yellow-200 font-bold text-3xl">
