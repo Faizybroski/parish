@@ -13,6 +13,7 @@ import {
   Clock,
   MapPin,
   Users,
+  Hourglass,
   ArrowLeft,
   Heart,
   UserCheck,
@@ -31,6 +32,7 @@ interface Event {
   date_time: string;
   location_name: string;
   location_address: string;
+  rsvp_deadline: string;
   restaurant_id: string | null;
   max_attendees: number;
   dining_style: string;
@@ -208,7 +210,9 @@ const AdminEventDetails = () => {
       });
     } catch (error) {
       // Fallback to copying URL
-      navigator.clipboard.writeText(window.location.origin + `/event/${event?.id}/details`);
+      navigator.clipboard.writeText(
+        window.location.origin + `/event/${event?.id}/details`
+      );
       toast({
         title: "Link copied!",
         description: "Event link copied to clipboard",
@@ -246,6 +250,7 @@ const AdminEventDetails = () => {
     );
   }
 
+  const now = new Date();
   const eventDate = new Date(event.date_time);
   const isCreator = event.creator_id === userProfileId;
   const rsvps = event.rsvps || [];
@@ -253,6 +258,8 @@ const AdminEventDetails = () => {
   const confirmedRSVPs = rsvps.filter((rsvp) => rsvp.status === "confirmed");
   const spotsLeft = event.max_attendees - confirmedRSVPs.length;
   const isUpcoming = eventDate > new Date();
+  const rsvpDeadline = new Date(event.rsvp_deadline);
+  rsvpDeadline.setDate(rsvpDeadline.getDate());
 
   return (
     <div className="min-h-screen bg-background">
@@ -399,6 +406,23 @@ const AdminEventDetails = () => {
                   </div>
                 </div>
 
+                {event.rsvp_deadline && (
+                  <div className="flex items-center space-x-3">
+                    <Hourglass className="h-5 w-5 text-muted-foreground" />
+                    <div>
+                      <p className="font-medium">
+                        {format(
+                          new Date(event.rsvp_deadline),
+                          "EEEE, MMMM d, yyyy h:mm a"
+                        )}
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        RSVP Deadline
+                      </p>
+                    </div>
+                  </div>
+                )}
+
                 {event.dining_style && (
                   <div>
                     <h4 className="font-medium mb-2">Dining Style</h4>
@@ -419,65 +443,63 @@ const AdminEventDetails = () => {
               </CardContent>
             </Card>
             <Card>
-                <CardHeader>
-                  <CardTitle>Payments History</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {payments?.length > 0 ? (
-                    <div className="mt-8">
-                      <div className="overflow-x-auto rounded-lg border border-muted">
-                        <table className="min-w-full text-sm text-left">
-                          <thead className="bg-muted text-muted-foreground uppercase tracking-wider">
-                            <tr>
-                              <th className="px-4 py-2">Name</th>
-                              <th className="px-4 py-2">Email</th>
-                              <th className="px-4 py-2">Status</th>
-                              <th className="px-4 py-2">Date</th>
+              <CardHeader>
+                <CardTitle>Payments History</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {payments?.length > 0 ? (
+                  <div className="mt-8">
+                    <div className="overflow-x-auto rounded-lg border border-muted">
+                      <table className="min-w-full text-sm text-left">
+                        <thead className="bg-muted text-muted-foreground uppercase tracking-wider">
+                          <tr>
+                            <th className="px-4 py-2">Name</th>
+                            <th className="px-4 py-2">Email</th>
+                            <th className="px-4 py-2">Status</th>
+                            <th className="px-4 py-2">Date</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {payments.map((payment, index) => (
+                            <tr key={index} className="border-t border-muted">
+                              <td className="px-4 py-2">{payment.user_name}</td>
+                              <td className="px-4 py-2">
+                                {payment.user_email}
+                              </td>
+                              <td className="px-4 py-2">
+                                <span
+                                  className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium capitalize ${
+                                    payment.payment_status === "paid"
+                                      ? "bg-green-100 text-green-800"
+                                      : payment.payment_status === "pending"
+                                      ? "bg-yellow-100 text-yellow-800"
+                                      : payment.payment_status === "failed"
+                                      ? "bg-red-100 text-red-800"
+                                      : "bg-gray-100 text-gray-800"
+                                  }`}
+                                >
+                                  {payment.payment_status}
+                                </span>
+                              </td>
+                              <td className="px-4 py-2">
+                                {format(
+                                  new Date(payment.created_at),
+                                  "MMM d, yyyy"
+                                )}
+                              </td>
                             </tr>
-                          </thead>
-                          <tbody>
-                            {payments.map((payment, index) => (
-                              <tr key={index} className="border-t border-muted">
-                                <td className="px-4 py-2">
-                                  {payment.user_name}
-                                </td>
-                                <td className="px-4 py-2">
-                                  {payment.user_email}
-                                </td>
-                                <td className="px-4 py-2">
-                                  <span
-                                    className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium capitalize ${
-                                      payment.payment_status === "paid"
-                                        ? "bg-green-100 text-green-800"
-                                        : payment.payment_status === "pending"
-                                        ? "bg-yellow-100 text-yellow-800"
-                                        : payment.payment_status === "failed"
-                                        ? "bg-red-100 text-red-800"
-                                        : "bg-gray-100 text-gray-800"
-                                    }`}
-                                  >
-                                    {payment.payment_status}
-                                  </span>
-                                </td>
-                                <td className="px-4 py-2">
-                                  {format(
-                                    new Date(payment.created_at),
-                                    "MMM d, yyyy"
-                                  )}
-                                </td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
+                          ))}
+                        </tbody>
+                      </table>
                     </div>
-                  ) : (
-                    <div className="mt-6 text-sm text-muted-foreground italic">
-                      No payments recorded yet.
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
+                  </div>
+                ) : (
+                  <div className="mt-6 text-sm text-muted-foreground italic">
+                    No payments recorded yet.
+                  </div>
+                )}
+              </CardContent>
+            </Card>
 
             {/* Reviews Section */}
             {eventReviews.length > 0 && (
@@ -604,7 +626,7 @@ const AdminEventDetails = () => {
                     People attending
                   </p>
                 </div>
-                {!isCreator && !hasRSVP && (
+                {isCreator && !hasRSVP && (
                   <div className="text-center mt-2">
                     <Badge variant="outline" className="px-3 py-1">
                       You're the host
