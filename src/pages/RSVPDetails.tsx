@@ -30,6 +30,7 @@ interface Event {
   name: string;
   description: string;
   date_time: string;
+  rsvp_deadline: string;
   location_name: string;
   location_address: string;
   restaurant_id: string | null;
@@ -473,8 +474,8 @@ const RSVPDetails = () => {
   const confirmedRSVPs = rsvps.filter((rsvp) => rsvp.status === "confirmed");
   const spotsLeft = event.max_attendees - confirmedRSVPs.length;
   const isUpcoming = eventDate > new Date();
-  const rsvpDeadline = new Date(eventDate);
-  rsvpDeadline.setDate(rsvpDeadline.getDate() - 2);
+  const rsvpDeadline = new Date(event.rsvp_deadline);
+  rsvpDeadline.setDate(rsvpDeadline.getDate());
   return (
     <div className="min-h-screen bg-black text-white flex items-center justify-center px-4">
       <div className="w-full max-w-md bg-[#1c1c1e] p-6 rounded-3xl shadow-lg space-y-6 relative">
@@ -486,7 +487,7 @@ const RSVPDetails = () => {
         </button>
         <div className="text-center mt-6">
           <h2 className="text-xl font-semibold">
-            RSVP for a {event.name} this {format(rsvpDeadline, "eeee")}!
+            RSVP for a {event.name} till {format(rsvpDeadline, "eeee")}!
           </h2>
         </div>
         <div className="flex justify-center gap-4 text-center text-yellow-200 font-bold text-3xl">
