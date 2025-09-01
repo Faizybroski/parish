@@ -487,7 +487,8 @@ const RSVPDetails = () => {
   const rsvpDeadline = new Date(event.rsvp_deadline);
   rsvpDeadline.setDate(rsvpDeadline.getDate());
   const isBeforeDeadline = now <= rsvpDeadline;
-
+  const isPastEvent = eventDate < now;
+  
   return (
     <div className="min-h-screen bg-black text-white flex items-center justify-center px-4">
       <div className="w-full max-w-md bg-[#1c1c1e] p-6 rounded-3xl shadow-lg space-y-6 relative">
@@ -498,9 +499,23 @@ const RSVPDetails = () => {
           <ChevronLeft className="w-6 h-6" />
         </button>
         <div className="text-center mt-6">
-          <h2 className="text-xl font-semibold">
-            RSVP for a {event.name} till {format(rsvpDeadline, "eeee")}!
-          </h2>
+          {isPastEvent && (
+            <>
+              <h3 className="text-xl font-semibold">This event is ended</h3>
+              <h2 className="text-xl font-semibold text-primary">
+                {event.name}
+              </h2>
+            </>
+          )}
+          {!isPastEvent && (
+            <h2 className="text-xl font-semibold">
+              RSVP for <span className="text-primary">{event.name}</span> till{" "}
+              <span className="text-primary">
+                {format(rsvpDeadline, "eeee")}
+              </span>
+              !
+            </h2>
+          )}
         </div>
         <div className="flex justify-center gap-4 text-center text-yellow-200 font-bold text-3xl">
           <div>
@@ -523,16 +538,27 @@ const RSVPDetails = () => {
             <span className="text-sm font-normal text-white">seconds</span>
           </div>
         </div>
-        <p className="text-center text-sm text-gray-300">
-          RSVP Deadline: {format(rsvpDeadline, "eeee hh:mm a")}
-        </p>
-        <div className="bg-[#2a2a2c] p-4 rounded-xl border border-gray-700">
-          <p className="text-center text-sm font-semibold mb-3">
-            Only{" "}
-            <span className="text-yellow-200">
-              {spotsLeft} more spot(s) left
-            </span>
+        {!isPastEvent && (
+          <p className="text-center text-sm text-gray-300">
+            RSVP Deadline: {format(rsvpDeadline, "eeee hh:mm a")}
           </p>
+        )}
+        <div className="bg-[#2a2a2c] p-4 rounded-xl border border-gray-700">
+          {isPastEvent && (
+            <p className="text-center text-sm font-semibold mb-3">
+              <span className="text-yellow-200">
+                {confirmedRSVPs.length} attended this event
+              </span>
+            </p>
+          )}
+          {!isPastEvent && (
+            <p className="text-center text-sm font-semibold mb-3">
+              Only{" "}
+              <span className="text-yellow-200">
+                {spotsLeft} more spot(s) left
+              </span>
+            </p>
+          )}
           <div className="flex justify-center items-center gap-2">
             <div className="flex -space-x-3">
               {confirmedRSVPs.slice(0, 3).map((rsvp, i) => (
