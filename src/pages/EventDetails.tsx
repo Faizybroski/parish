@@ -819,7 +819,8 @@ const EventDetails = () => {
     <div className="min-h-screen bg-background">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-8 flex justify-between items-center">
+          {isCreator && (
           <Button
             variant="ghost"
             onClick={() => navigate("/events")}
@@ -828,16 +829,25 @@ const EventDetails = () => {
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Events
           </Button>
-        </div>
-
+          )}
+          {!isCreator && (
+          <Button
+            variant="ghost"
+            onClick={() => navigate("/explore")}
+            className="mb-4"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Events
+          </Button>
+          )}
         {!isCreator && (
           <Button
             onClick={handleInterest}
             disabled={loading}
             className={
               isInterested
-                ? "bg-sage-green hover:bg-sage-green/90"
-                : "bg-peach-gold hover:bg-peach-gold/90"
+                ? "bg-sage-green hover:bg-sage-green/90 mb-4"
+                : "bg-peach-gold hover:bg-peach-gold/90 mb-4"
             }
           >
             {loading
@@ -847,6 +857,8 @@ const EventDetails = () => {
               : "Show Interest"}
           </Button>
         )}
+        </div>
+
 
         {showRSVPConfirm && (
           <Dialog open={showRSVPConfirm} onOpenChange={setShowRSVPConfirm}>
