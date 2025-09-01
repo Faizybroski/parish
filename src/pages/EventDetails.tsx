@@ -17,6 +17,7 @@ import {
   Heart,
   UserCheck,
   Edit,
+  Hourglass,
   Share2,
   Star,
 } from "lucide-react";
@@ -32,8 +33,8 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { useSubscriptionStatus } from '@/hooks/useSubscriptionStatus';
-import EventAnalyticsDashboard  from "@/components/analytics/EventAnalytics";
+import { useSubscriptionStatus } from "@/hooks/useSubscriptionStatus";
+import EventAnalyticsDashboard from "@/components/analytics/EventAnalytics";
 
 interface Event {
   is_paid: boolean;
@@ -41,6 +42,7 @@ interface Event {
   name: string;
   description: string;
   date_time: string;
+  rsvp_deadline: string;
   location_name: string;
   location_address: string;
   restaurant_id: string | null;
@@ -118,13 +120,15 @@ const EventDetails = () => {
 
   useEffect(() => {
     if (!profile || !profile.id || !eventId || !event?.creator_id) return;
-    if (!event || !event.creator_id) return; 
+    if (!event || !event.creator_id) return;
 
     if (profile.id === event.creator_id) return;
-      supabase.rpc("log_event_view", {
+    supabase
+      .rpc("log_event_view", {
         p_event_id: eventId,
-        p_user_id: profile.id
-      }).then(({ error }) => {
+        p_user_id: profile.id,
+      })
+      .then(({ error }) => {
         if (error) {
           console.error("Error logging view:", error);
         } else {
@@ -133,9 +137,9 @@ const EventDetails = () => {
       });
   }, [profile?.id, profile, eventId, event?.creator_id, event]);
 
-   useEffect(() => {
+  useEffect(() => {
     const checkInterest = async () => {
-       if (!profile || !profile.id || !eventId) return;
+      if (!profile || !profile.id || !eventId) return;
 
       const { data, error } = await supabase
         .from("event_analytics_logs")
@@ -159,24 +163,26 @@ const EventDetails = () => {
       return;
     }
 
-        setLoading(true);
-
+    setLoading(true);
 
     const { error } = await supabase.rpc("toggle_event_interest", {
       p_event_id: eventId,
-      p_user_id: profile.id
+      p_user_id: profile.id,
     });
 
-        setLoading(false);
+    setLoading(false);
 
-        if (error) {
+    if (error) {
       console.error(error);
-      toast({ title: "Error", description: "Failed to update interest.", variant: "destructive" });
+      toast({
+        title: "Error",
+        description: "Failed to update interest.",
+        variant: "destructive",
+      });
     } else {
       setIsInterested((prev) => !prev); // optimistic toggle
     }
   };
-
 
   useEffect(() => {
     const getUserProfile = async () => {
@@ -203,9 +209,9 @@ const EventDetails = () => {
 
     try {
       const { data, error } = await supabase
-      .from("events")
-      .select(
-        `
+        .from("events")
+        .select(
+          `
         *,
         profiles:creator_id (
           first_name,
@@ -240,9 +246,9 @@ const EventDetails = () => {
           )
         )
       `
-      )
-      .eq("id", eventId)
-      .single();
+        )
+        .eq("id", eventId)
+        .single();
       if (error) throw error;
       setEvent(data);
     } catch (error) {
@@ -518,13 +524,14 @@ const EventDetails = () => {
 
   const handleRSVP = async () => {
     if (!user || !userProfileId || !event) {
-     toast({
-          title: "Almost There!",
-          description: "You’ll need to sign in or sign up before you can RSVP and join this event.",
-        });
-       navigate("/", { state: { startStep: 1 } });
-        return;
-      }
+      toast({
+        title: "Almost There!",
+        description:
+          "You’ll need to sign in or sign up before you can RSVP and join this event.",
+      });
+      navigate("/", { state: { startStep: 1 } });
+      return;
+    }
     setShowRSVPConfirm(true);
   };
 
@@ -572,8 +579,10 @@ const EventDetails = () => {
           description: "You're no longer attending this event.",
         });
       } else {
-
-        if (subscriptionStatus === 'free' && (!event.event_fee || event.event_fee == 0)) {
+        if (
+          subscriptionStatus === "free" &&
+          (!event.event_fee || event.event_fee == 0)
+        ) {
           const startOfMonth = new Date();
           startOfMonth.setDate(1);
           startOfMonth.setHours(0, 0, 0, 0);
@@ -598,19 +607,20 @@ const EventDetails = () => {
           if (count >= 2) {
             toast({
               title: "RSVP Limit Reached",
-              description: "Free users can RSVP to only 2 free events per month.",
+              description:
+                "Free users can RSVP to only 2 free events per month.",
               variant: "destructive",
             });
 
             // 🔁 Delay navigation for 1.5 seconds to let the toast show
             setTimeout(() => {
-              navigate('/subscription');
+              navigate("/subscription");
             }, 1500);
 
             return;
           }
         }
-      
+
         const { error: rsvpError } = await supabase.from("rsvps").insert({
           event_id: eventId,
           user_id: userProfileId,
@@ -734,7 +744,6 @@ const EventDetails = () => {
         navigate("/rsvp-success");
         fetchEvent();
       }
-    
     } catch (error) {
       console.error("Error handling RSVP:", error);
       toast({
@@ -754,7 +763,9 @@ const EventDetails = () => {
       });
     } catch (error) {
       // Fallback to copying URL
-      navigator.clipboard.writeText(window.location.origin + `/event/${eventId}/details`);
+      navigator.clipboard.writeText(
+        window.location.origin + `/event/${eventId}/details`
+      );
       toast({
         title: "Link copied!",
         description: "Event link copied to clipboard",
@@ -792,6 +803,7 @@ const EventDetails = () => {
     );
   }
 
+  const now = new Date();
   const eventDate = new Date(event.date_time);
   const isCreator = event.creator_id === userProfileId;
   const rsvps = event.rsvps || [];
@@ -799,6 +811,9 @@ const EventDetails = () => {
   const confirmedRSVPs = rsvps.filter((rsvp) => rsvp.status === "confirmed");
   const spotsLeft = event.max_attendees - confirmedRSVPs.length;
   const isUpcoming = eventDate > new Date();
+  const rsvpDeadline = new Date(event.rsvp_deadline);
+  rsvpDeadline.setDate(rsvpDeadline.getDate());
+  const isBeforeDeadline = now <= rsvpDeadline;
 
   return (
     <div className="min-h-screen bg-background">
@@ -815,15 +830,22 @@ const EventDetails = () => {
           </Button>
         </div>
 
-        
         {!isCreator && (
           <Button
-              onClick={handleInterest}
-              disabled={loading}
-              className={isInterested ? "bg-sage-green hover:bg-sage-green/90" : "bg-peach-gold hover:bg-peach-gold/90"}
-            >
-              {loading ? "Updating..." : isInterested ? "Interested" : "Show Interest"}
-            </Button>
+            onClick={handleInterest}
+            disabled={loading}
+            className={
+              isInterested
+                ? "bg-sage-green hover:bg-sage-green/90"
+                : "bg-peach-gold hover:bg-peach-gold/90"
+            }
+          >
+            {loading
+              ? "Updating..."
+              : isInterested
+              ? "Interested"
+              : "Show Interest"}
+          </Button>
         )}
 
         {showRSVPConfirm && (
@@ -894,10 +916,10 @@ const EventDetails = () => {
                   <div className="flex space-x-2">
                     {!event.is_paid && (
                       <Button variant="outline" size="sm" onClick={shareEvent}>
-                       <Share2 className="h-4 w-4" />
+                        <Share2 className="h-4 w-4" />
                       </Button>
                     )}
-            
+
                     {isCreator && (
                       <Button
                         variant="outline"
@@ -958,7 +980,7 @@ const EventDetails = () => {
                     </div>
                   </div>
                   <div className="flex items-center space-x-3">
-                    <MapPin className="h-10 w-10 text-muted-foreground" />
+                    <MapPin className="h-5 w-5 text-muted-foreground" />
                     <div>
                       <p className="font-medium">{event.location_name}</p>
                       {event.restaurants && (
@@ -990,6 +1012,23 @@ const EventDetails = () => {
                   </div>
                 </div>
 
+                {event.rsvp_deadline && (
+                  <div className="flex items-center space-x-3">
+                    <Hourglass className="h-5 w-5 text-muted-foreground" />
+                    <div>
+                      <p className="font-medium">
+                        {format(
+                          new Date(event.rsvp_deadline),
+                          "EEEE, MMMM d, yyyy h:mm a"
+                        )}
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        RSVP Deadline
+                      </p>
+                    </div>
+                  </div>
+                )}
+
                 {event.dining_style && (
                   <div>
                     <h4 className="font-medium mb-2">Dining Style</h4>
@@ -1010,12 +1049,14 @@ const EventDetails = () => {
               </CardContent>
             </Card>
 
-            {isCreator && <Card>
-              <EventAnalyticsDashboard
-                eventId={event.id}
-                subscriptionStatus={subscriptionStatus}
-              />
-            </Card>}
+            {isCreator && (
+              <Card>
+                <EventAnalyticsDashboard
+                  eventId={event.id}
+                  subscriptionStatus={subscriptionStatus}
+                />
+              </Card>
+            )}
 
             {isCreator && (
               <Card>
@@ -1208,74 +1249,85 @@ const EventDetails = () => {
 
                 {isUpcoming && spotsLeft > 0 && !isCreator && (
                   <>
-                    {!event.event_fee || event.event_fee == 0 ? (
-                      <Button
-                        onClick={handleRSVP}
-                        className={`w-full ${
-                          hasRSVP
-                            ? "bg-sage-green hover:bg-sage-green/90"
-                            : "bg-peach-gold hover:bg-peach-gold/90"
-                        }`}
-                      >
-                        {hasRSVP ? (
-                          <>
-                            <UserCheck className="h-4 w-4 mr-2" />
-                            Going - Cancel RSVP
-                          </>
-                        ) : (
-                          <>
-                            <Heart className="h-4 w-4 mr-2" />
-                            RSVP to Event
-                          </>
-                        )}
-                      </Button>
-                    ) : hasRSVP ? (
-                      <Button
-                        onClick={handleRSVP}
-                        className={`w-full ${
-                          hasRSVP
-                            ? "bg-sage-green hover:bg-sage-green/90"
-                            : "bg-peach-gold hover:bg-peach-gold/90"
-                        }`}
-                      >
-                        <UserCheck className="h-4 w-4 mr-2" />
-                        Going - Cancel RSVP
-                      </Button>
+                    {isBeforeDeadline ? (
+                      !event.event_fee || event.event_fee == 0 ? (
+                        <Button
+                          onClick={handleRSVP}
+                          className={`w-full ${
+                            hasRSVP
+                              ? "bg-sage-green hover:bg-sage-green/90"
+                              : "bg-peach-gold hover:bg-peach-gold/90"
+                          }`}
+                        >
+                          {hasRSVP ? (
+                            <>
+                              <UserCheck className="h-4 w-4 mr-2" />
+                              Going - Cancel RSVP
+                            </>
+                          ) : (
+                            <>
+                              <Heart className="h-4 w-4 mr-2" />
+                              RSVP to Event
+                            </>
+                          )}
+                        </Button>
+                      ) : hasRSVP ? (
+                        <Button
+                          onClick={handleRSVP}
+                          className={`w-full ${
+                            hasRSVP
+                              ? "bg-sage-green hover:bg-sage-green/90"
+                              : "bg-peach-gold hover:bg-peach-gold/90"
+                          }`}
+                        >
+                          <UserCheck className="h-4 w-4 mr-2" />
+                          Going - Cancel RSVP
+                        </Button>
+                      ) : (
+                        <Button
+                          onClick={() => {
+                            if (subscriptionStatus === "free") {
+                              toast({
+                                title: "Premium Required",
+                                description:
+                                  "You need a premium subscription to RSVP for paid events.",
+                                variant: "destructive",
+                              });
+                              setTimeout(() => {
+                                navigate("/subscription");
+                              }, 1200);
+                              return;
+                            }
+                            handlePaidRSVP();
+                          }}
+                          disabled={isPaying}
+                          className="w-full bg-indigo-600 hover:bg-indigo-700 text-white flex items-center justify-center"
+                        >
+                          {isPaying ? (
+                            <>
+                              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                              Processing...
+                            </>
+                          ) : (
+                            <>
+                              <CreditCard className="h-4 w-4 mr-2" />
+                              Pay ${event.event_fee} to RSVP
+                            </>
+                          )}
+                        </Button>
+                      )
                     ) : (
                       <Button
-                        onClick={() => {
-                          if (subscriptionStatus === 'free') {
-                            toast({
-                              title: "Premium Required",
-                              description: "You need a premium subscription to RSVP for paid events.",
-                              variant: "destructive",
-                            });
-                            setTimeout(() => {
-                              navigate('/subscription');
-                            }, 1200);
-                            return;
-                          } 
-                          handlePaidRSVP(); 
-                        }}
-                        disabled={isPaying}
-                        className="w-full bg-indigo-600 hover:bg-indigo-700 text-white flex items-center justify-center"
+                        disabled
+                        className="w-full bg-gray-400 text-white cursor-not-allowed"
                       >
-                        {isPaying ? (
-                          <>
-                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                            Processing...
-                          </>
-                        ) : (
-                          <>
-                            <CreditCard className="h-4 w-4 mr-2" />
-                            Pay ${event.event_fee} to RSVP
-                          </>
-                        )}
+                        <Clock className="h-4 w-4 mr-2" />
+                        RSVP Closed
                       </Button>
                     )}
                   </>
                 )}
-
+                
                 {isCreator && !hasRSVP && (
                   <div className="text-center mt-2">
                     <Badge variant="outline" className="px-3 py-1">
@@ -1395,10 +1447,16 @@ const EventDetails = () => {
                             <span className="text-sm font-medium">
                               {rsvp.profiles?.first_name || "Unknown"}{" "}
                               {rsvp.profiles?.last_name || "User"}
-                              {rsvp.profiles.payments?.[0]?.status === "completed" ? (
-                                 <span className="px-2 py-1 text-xs font-semibold text-black bg-yellow-400 rounded-full ml-2">🌟 Paid</span>
+                              {rsvp.profiles.payments?.[0]?.status ===
+                              "completed" ? (
+                                <span className="px-2 py-1 text-xs font-semibold text-black bg-yellow-400 rounded-full ml-2">
+                                  🌟 Paid
+                                </span>
                               ) : (
-                               <span className="px-2 py-1 text-xs font-semibold text-white bg-[rgb(0,30,83)] rounded-full ml-2"> 🆓 Free</span>
+                                <span className="px-2 py-1 text-xs font-semibold text-white bg-[rgb(0,30,83)] rounded-full ml-2">
+                                  {" "}
+                                  🆓 Free
+                                </span>
                               )}
                             </span>
                             {isCreator && (

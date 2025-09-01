@@ -228,7 +228,10 @@ const RSVPDetails = () => {
                     description: "You're no longer attending this event.",
                   });
                 } else {
-                  if (subscriptionStatus === 'free' && (!event.event_fee || event.event_fee == 0)) {
+                  if (
+                    subscriptionStatus === "free" &&
+                    (!event.event_fee || event.event_fee == 0)
+                  ) {
                     const startOfMonth = new Date();
                     startOfMonth.setDate(1);
                     startOfMonth.setHours(0, 0, 0, 0);
@@ -241,10 +244,14 @@ const RSVPDetails = () => {
                       .gte("created_at", startOfMonth.toISOString());
 
                     if (error) {
-                      console.error("Failed to fetch RSVP count", error.message);
+                      console.error(
+                        "Failed to fetch RSVP count",
+                        error.message
+                      );
                       toast({
                         title: "Error",
-                        description: "Couldn't check your RSVP limit. Try again.",
+                        description:
+                          "Couldn't check your RSVP limit. Try again.",
                         variant: "destructive",
                       });
                       return;
@@ -253,13 +260,14 @@ const RSVPDetails = () => {
                     if (count >= 2) {
                       toast({
                         title: "RSVP Limit Reached",
-                        description: "Free users can RSVP to only 2 free events per month.",
+                        description:
+                          "Free users can RSVP to only 2 free events per month.",
                         variant: "destructive",
                       });
 
                       // 🔁 Delay navigation to subscription page
                       setTimeout(() => {
-                        navigate('/subscription');
+                        navigate("/subscription");
                       }, 1500);
 
                       return;
@@ -467,6 +475,8 @@ const RSVPDetails = () => {
       </div>
     );
   }
+
+  const now = new Date();
   const eventDate = new Date(event.date_time);
   const isCreator = event.creator_id === userProfileId;
   const rsvps = event.rsvps || [];
@@ -476,6 +486,8 @@ const RSVPDetails = () => {
   const isUpcoming = eventDate > new Date();
   const rsvpDeadline = new Date(event.rsvp_deadline);
   rsvpDeadline.setDate(rsvpDeadline.getDate());
+  const isBeforeDeadline = now <= rsvpDeadline;
+
   return (
     <div className="min-h-screen bg-black text-white flex items-center justify-center px-4">
       <div className="w-full max-w-md bg-[#1c1c1e] p-6 rounded-3xl shadow-lg space-y-6 relative">
@@ -556,70 +568,80 @@ const RSVPDetails = () => {
 
         {isUpcoming && spotsLeft > 0 && !isCreator && (
           <>
-            {!event.event_fee || event.event_fee == 0 ? (
-              <Button
-                onClick={handleRSVP}
-                className={`w-full ${
-                  hasRSVP
-                    ? "bg-sage-green hover:bg-sage-green/90"
-                    : "bg-peach-gold hover:bg-peach-gold/90"
-                }`}
-              >
-                {hasRSVP ? (
-                  <>
-                    <UserCheck className="h-4 w-4 mr-2" />
-                    Going - Cancel RSVP
-                  </>
-                ) : (
-                  <>
-                    <Heart className="h-4 w-4 mr-2" />
-                    RSVP to Event
-                  </>
-                )}
-              </Button>
-            ) : hasRSVP ? (
-              <Button
-                onClick={handleRSVP}
-                className={`w-full ${
-                  hasRSVP
-                    ? "bg-sage-green hover:bg-sage-green/90"
-                    : "bg-peach-gold hover:bg-peach-gold/90"
-                }`}
-              >
-                <UserCheck className="h-4 w-4 mr-2" />
-                Going - Cancel RSVP
-              </Button>
+            {isBeforeDeadline ? (
+              !event.event_fee || event.event_fee == 0 ? (
+                <Button
+                  onClick={handleRSVP}
+                  className={`w-full ${
+                    hasRSVP
+                      ? "bg-sage-green hover:bg-sage-green/90"
+                      : "bg-peach-gold hover:bg-peach-gold/90"
+                  }`}
+                >
+                  {hasRSVP ? (
+                    <>
+                      <UserCheck className="h-4 w-4 mr-2" />
+                      Going - Cancel RSVP
+                    </>
+                  ) : (
+                    <>
+                      <Heart className="h-4 w-4 mr-2" />
+                      RSVP to Event
+                    </>
+                  )}
+                </Button>
+              ) : hasRSVP ? (
+                <Button
+                  onClick={handleRSVP}
+                  className={`w-full ${
+                    hasRSVP
+                      ? "bg-sage-green hover:bg-sage-green/90"
+                      : "bg-peach-gold hover:bg-peach-gold/90"
+                  }`}
+                >
+                  <UserCheck className="h-4 w-4 mr-2" />
+                  Going - Cancel RSVP
+                </Button>
+              ) : (
+                <Button
+                  onClick={() => {
+                    if (subscriptionStatus === "free") {
+                      toast({
+                        title: "Premium Required",
+                        description:
+                          "You need a premium subscription to RSVP for paid events.",
+                        variant: "destructive",
+                      });
+                      setTimeout(() => {
+                        navigate("/subscription");
+                      }, 1200);
+                      return;
+                    }
+                    handlePaidRSVP();
+                  }}
+                  disabled={isPaying}
+                  className="w-full bg-indigo-600 hover:bg-indigo-700 text-white flex items-center justify-center"
+                >
+                  {isPaying ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Processing...
+                    </>
+                  ) : (
+                    <>
+                      <CreditCard className="h-4 w-4 mr-2" />
+                      Pay ${event.event_fee} to RSVP
+                    </>
+                  )}
+                </Button>
+              )
             ) : (
               <Button
-                onClick={() => {
-                  if (subscriptionStatus === "free") {
-                    toast({
-                      title: "Premium Required",
-                      description:
-                        "You need a premium subscription to RSVP for paid events.",
-                      variant: "destructive",
-                    });
-                    setTimeout(() => {
-                      navigate("/subscription");
-                    }, 1200);
-                    return;
-                  }
-                  handlePaidRSVP();
-                }}
-                disabled={isPaying}
-                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white flex items-center justify-center"
+                disabled
+                className="w-full bg-gray-400 text-white cursor-not-allowed"
               >
-                {isPaying ? (
-                  <>
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Processing...
-                  </>
-                ) : (
-                  <>
-                    <CreditCard className="h-4 w-4 mr-2" />
-                    Pay ${event.event_fee} to RSVP
-                  </>
-                )}
+                <Clock className="h-4 w-4 mr-2" />
+                RSVP Closed
               </Button>
             )}
           </>
