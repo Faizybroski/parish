@@ -17,6 +17,7 @@ import {
   Heart,
   Star,
   CreditCard,
+  LayoutDashboard,
   MessageSquare,
   UtensilsCrossed,
   Receipt,
@@ -134,6 +135,10 @@ const Navigation = () => {
                     <DropdownMenuItem onClick={() => navigate("/profile")}>
                       <User className="mr-2 h-4 w-4" />
                       Profile
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate("/user/dashboard")}>
+                      <LayoutDashboard  className="mr-2 h-4 w-4" />
+                      Dashboard
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={handleSignOut}>
                       <LogOut className="mr-2 h-4 w-4" />

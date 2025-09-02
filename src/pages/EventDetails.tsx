@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRestaurants } from "@/hooks/useRestaurants";
 import { supabase } from "@/integrations/supabase/client";
@@ -61,6 +61,7 @@ interface Event {
     profile_photo_url: string;
     email: string;
     user_id: string;
+    username: string;
   };
   restaurants?: {
     name: string;
@@ -218,6 +219,7 @@ const EventDetails = () => {
           user_id,
           last_name,
           profile_photo_url,
+          username,
           email
         ),
         restaurants:restaurant_id (
@@ -920,8 +922,8 @@ const EventDetails = () => {
                         </AvatarFallback>
                       </Avatar>
                       <span className="text-sm text-muted-foreground">
-                        Hosted by {event.profiles.first_name}{" "}
-                        {event.profiles.last_name}
+                        Hosted by {" "}
+                        <Link to={`/profile/${event.profiles.username}`}>{event.profiles.first_name}{" "}{event.profiles.last_name}</Link>
                       </span>
                     </div>
                   </div>

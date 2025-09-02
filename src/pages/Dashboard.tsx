@@ -467,7 +467,7 @@ const Dashboard = () => {
                         Invite
                       </Button>
                       <Button
-                        onClick={() => navigate(path.matched_user.username)}
+                        onClick={() => navigate(`/profile/${path.matched_user.username}`)}
                         variant="outline"
                         size="sm"
                       >

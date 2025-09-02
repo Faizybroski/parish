@@ -50,7 +50,7 @@ const UserProfile = () => {
       const { data: profiledata, error: profileErr } = await supabase
         .from("profiles")
         .select(
-          "id, first_name, last_name, job_title, location_city, dining_style, dietary_preferences, gender_identity, profile_photo_url"
+          "id, first_name, last_name, job_title, location_city, dining_style, dietary_preferences, gender_identity, profile_photo_url, role"
         )
         .eq("username", username)
         .single();
@@ -124,21 +124,29 @@ const UserProfile = () => {
                     {profile.first_name} {profile.last_name}
                   </h3>
                   {profile.job_title && (
-                    <p className="text-muted-foreground py-1 ">{profile.job_title}</p>
+                    <p className="text-muted-foreground py-1 ">
+                      {profile.job_title}
+                    </p>
                   )}
                   <p>
-                    {paymentStatus === "completed" ? (
-                      <span className="px-3 py-1 text-xs font-semibold text-black bg-yellow-400 rounded-full">
-                        🌟 Premium
-                      </span>
-                    ) : (
-                      <span className="px-3 py-1 text-xs font-semibold text-white bg-[rgb(0,30,83)] rounded-full">
-                        🆓 Freemium
+                    {profile.role === "user" &&
+                      (paymentStatus === "completed" ? (
+                        <span className="px-3 py-1 text-xs font-semibold text-black bg-yellow-400 rounded-full">
+                          🌟 Premium
+                        </span>
+                      ) : (
+                        <span className="px-3 py-1 text-xs font-semibold text-white bg-[rgb(0,30,83)] rounded-full">
+                          🆓 Freemium
+                        </span>
+                      ))}
+                    {profile.role === "admin" && (
+                      <span className="px-3 py-1 text-primary font-semibold bg-[#9dc0b3] rounded-full">
+                        🌟 Admin
                       </span>
                     )}
                   </p>
                   <p className="text-muted-foreground py-1 ">
-                    {profile.location_city || "Not set"}
+                    {profile?.location_city}
                   </p>
                 </div>
               </div>

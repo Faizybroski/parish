@@ -265,7 +265,7 @@ return (
 
                     <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
                       <Button
-                        onClick={() => navigate(`/${path.matched_user.username}`)}
+                        onClick={() => navigate(`/profile/${path.matched_user.username}`)}
                         variant="outline"
                         size="sm"
                         className="w-full sm:w-auto"

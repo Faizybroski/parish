@@ -132,12 +132,22 @@ const App = () => (
                 }
               />
               <Route
-                path="/:username"
+                path="/profile/:username"
                 element={
                   <ProtectedRoute>
                     <Navigation />
                     <UserProfile />
                   </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/profile"
+                element={
+                  <ProtectedAdminRoute>
+                    <AdminLayout>
+                    <Profile />
+                    </AdminLayout>
+                  </ProtectedAdminRoute>
                 }
               />
               <Route

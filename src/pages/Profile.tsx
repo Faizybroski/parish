@@ -317,15 +317,21 @@ const Profile = () => {
                   )}
                 </div>
                 <p>
-                      {paymentStatus === "completed" ? (
+                      {profile.role === "user" &&
+                      (paymentStatus === "completed" ? (
                         <span className="px-3 py-1 text-xs font-semibold text-black bg-yellow-400 rounded-full">
-                          🌟 Paid
+                          🌟 Premium
                         </span>
                       ) : (
                         <span className="px-3 py-1 text-xs font-semibold text-white bg-[rgb(0,30,83)] rounded-full">
-                          🆓 Free
+                          🆓 Freemium
                         </span>
-                      )}
+                      ))}
+                      {profile.role === "admin" && (
+                      <span className="px-3 py-1 text-primary font-semibold bg-[#9dc0b3] rounded-full">
+                        🌟 Admin
+                      </span>
+                    )}
                     </p>
               </div>
 
@@ -572,7 +578,8 @@ const Profile = () => {
             </CardContent>
           </Card>
 
-          <Card className="shadow-card border-border">
+          {profile.role === "user" && (
+<Card className="shadow-card border-border">
             <CardHeader>
               <CardTitle>Subscription</CardTitle>
             </CardHeader>
@@ -617,6 +624,8 @@ const Profile = () => {
               </div>
             </CardContent>
           </Card>
+          )}
+          
         </div>
       </div>
     </div>

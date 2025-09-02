@@ -21,6 +21,7 @@ import {
   BarChart3,
   Shield,
   Crown,
+  User,
   Bell,
   FileText,
   UtensilsCrossed,
@@ -54,6 +55,7 @@ const AdminSidebar = () => {
       { title: "Analytics", url: "/admin/analytics", icon: BarChart3 },
       { title: "Notifications", url: "/admin/notifications", icon: Bell },
       { title: "Reports", url: "/admin/reports", icon: FileText },
+      { title: "Profile", url: "/admin/profile", icon: User },
       { title: "Admin Management", url: "/admin/admin-management", icon: Shield },
       { title: "Global Settings", url: "/admin/settings", icon: Settings }
     ];
