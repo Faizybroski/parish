@@ -1,15 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import { useAuth } from '@/contexts/AuthContext';
+import { toast } from '@/hooks/use-toast';
 import { useProfile } from '@/hooks/useProfile';
 import { supabase } from '@/integrations/supabase/client';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { MapPin, Calendar, Users, User, Utensils, Heart } from 'lucide-react';
-import { toast } from '@/hooks/use-toast';
-import InviteToPrivateDinnerModal from '@/components/invitations/InviteToPrivateDinnerModal';
+import { Calendar, MapPin, Users } from 'lucide-react';
 import { useNavigate } from "react-router-dom";
 
 interface CrossedPath {
@@ -68,14 +65,14 @@ const CrossedPaths = () => {
   .select(`
     *,
     user1:profiles!crossed_paths_user1_id_fkey(
-      id, user_id, first_name, last_name, username, profile_photo_url, job_title, 
+      id, user_id, email,  username, first_name, last_name, profile_photo_url, job_title, 
       location_city, dining_style, dietary_preferences, gender_identity,
       payments:payments!payments_user_id_fkey (
         id, user_id, status, updated_at
       )
     ),
     user2:profiles!crossed_paths_user2_id_fkey(
-      id, user_id, first_name, last_name, username, profile_photo_url, job_title, 
+      id, user_id,  email, username, first_name, last_name, profile_photo_url, job_title, 
       location_city, dining_style, dietary_preferences, gender_identity,
       payments:payments!payments_user_id_fkey (
         id, user_id, status, updated_at
@@ -158,8 +155,20 @@ const CrossedPaths = () => {
   };
 
   const handleInviteToDinner = (path: CrossedPath) => {
-    setSelectedCrossedPath(path);
-    setShowInviteModal(true);
+    // console.log("Path:===>>", path.matched_user.email, path.matched_user.id,path.matched_user.first_name, path.matched_user.last_name);
+
+    navigate("/explore", {
+    state: {
+      invitedUser: {
+        id: path.matched_user.id,
+        first_name: path.matched_user.first_name,
+        last_name: path.matched_user.last_name,
+        email: path.matched_user.email,
+      },
+    },
+  });
+    // setSelectedCrossedPath(path);
+    // setShowInviteModal(true);
   };
 
   const viewProfile = (user: CrossedPath['matched_user']) => {

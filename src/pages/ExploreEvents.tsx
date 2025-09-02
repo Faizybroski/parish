@@ -1,32 +1,23 @@
-import React, { useState, useEffect } from "react";
-import { useAuth } from "@/contexts/AuthContext";
-import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
+  CardContent
 } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 import {
   Calendar,
-  Clock,
-  MapPin,
-  Users,
-  Search,
-  Plus,
-  Heart,
-  UserCheck,
   Edit,
-  Trash2,
-  Eye,
+  MapPin,
+  Plus,
+  Search,
   Share2,
+  Trash2
 } from "lucide-react";
-import { toast } from "@/hooks/use-toast";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 interface Event {
   id: string;
@@ -66,6 +57,8 @@ const ExploreEvents = () => {
 
   const { user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const invitedUser = location.state?.invitedUser || null;
 
   useEffect(() => {
     const getUserProfile = async () => {
@@ -564,7 +557,9 @@ const ExploreEvents = () => {
                 <div className="flex space-x-2">
                   {/* Details Button */}
                   <Button
-                    onClick={() => navigate(`/event/${event.id}/details`)}
+                    onClick={() => navigate(`/event/${event.id}/details`, {
+                      state: { invitedUser }
+                    })}
                     className="flex-1 bg-secondary hover:bg-secondary/80 text-black border border-secondary rounded-sm"
                   >
                     See details

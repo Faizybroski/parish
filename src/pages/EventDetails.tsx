@@ -1,40 +1,30 @@
-import React, { useState, useEffect } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
-import { useAuth } from "@/contexts/AuthContext";
-import { useRestaurants } from "@/hooks/useRestaurants";
-import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import EventAnalyticsDashboard from "@/components/analytics/EventAnalytics";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { CreditCard, Loader2 } from "lucide-react";
-import {
-  Calendar,
-  Clock,
-  MapPin,
-  Users,
-  ArrowLeft,
-  Heart,
-  UserCheck,
-  Edit,
-  Hourglass,
-  Share2,
-  Star,
-} from "lucide-react";
-import { toast } from "@/hooks/use-toast";
-import { format } from "date-fns";
-import { useProfile } from "@/hooks/useProfile";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Dialog,
-  DialogTrigger,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
   DialogDescription,
-  DialogFooter,
+  DialogHeader,
+  DialogTitle
 } from "@/components/ui/dialog";
-import { useSubscriptionStatus } from "@/hooks/useSubscriptionStatus";
-import EventAnalyticsDashboard from "@/components/analytics/EventAnalytics";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "@/hooks/use-toast";
+import { useProfile } from "@/hooks/useProfile";
+import { useRestaurants } from "@/hooks/useRestaurants";
+import { useSubscriptionStatus } from '@/hooks/useSubscriptionStatus';
+import { supabase } from "@/integrations/supabase/client";
+import { sendEventInvite } from "@/lib/sendInvite";
+import { format } from "date-fns";
+import {
+  ArrowLeft, Calendar,
+  Clock, CreditCard, Edit, Heart, Loader2, MapPin, Share2,
+  Star, UserCheck, Users
+} from "lucide-react";
+import { useEffect, useState } from "react";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 
 interface Event {
   is_paid: boolean;
@@ -85,6 +75,8 @@ interface Event {
 const EventDetails = () => {
   const { eventId } = useParams<{ eventId: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
+  const invitedUser = location.state?.invitedUser || null;
   const [isPaying, setIsPaying] = useState(false);
   const [payments, setPayments] = useState([]);
   const { user } = useAuth();
@@ -540,6 +532,49 @@ const EventDetails = () => {
   const confirmRSVP = async () => {
     setShowRSVPConfirm(false); // Hide Modal
     try {
+
+   
+
+        // --- Send Email via Supabase Edge Function ---
+    if (invitedUser?.email) {
+
+    const inviterName = `${invitedUser?.first_name} ${invitedUser?.last_name}`;
+    const profileSlug = invitedUser.email.split("@")[0];
+    const eventLink = `${window.location.origin}/event/${eventId}/details`;
+    const profileLink = `${window.location.origin}/profile/${profileSlug}`;
+
+       await sendEventInvite({
+              to: invitedUser.email,
+              subject: `${inviterName} invited you to ${event.name}!`,
+              text: `Hi friend, you’ve been invited to a private dinner hosted on Parish!\n\nJoin here: ${eventLink}`,
+              html: `
+                  <div style="font-family: sans-serif; padding: 20px;">
+                    <h2>You’ve been invited to dinner 🎉</h2>
+                    <p><strong>${inviterName}</strong> has invited you to join 
+                    <strong>${event.name}</strong> happening on 
+                    <strong>${new Date(event.date_time).toLocaleString()}</strong>.</p>
+
+                    <p>
+                      👉 <a href="${eventLink}" style="color: #0055ff;">View Event & RSVP</a><br/>
+                      👉 <a href="${profileLink}" style="color: #0055ff;">View ${inviterName}’s Profile</a>
+                    </p>
+
+                    <p>We hope to see you there!</p>
+                  </div>
+                `,
+            });
+    }
+
+    // --- Store Notification in DB ---
+    if (invitedUser?.id) {
+      await supabase.from("notifications").insert({
+        title: "Invited to event",
+        user_id: invitedUser.id,
+        type: "event_invite",
+        message: `${profile?.first_name} invited you to ${event.name}`,
+        is_read: false,
+      });
+    }
       // --- Same Supabase Logic Here --- (No Changes)
       // If hasRSVP => cancel RSVP flow
       // Else => RSVP, Reservations, Crossed Paths etc.
