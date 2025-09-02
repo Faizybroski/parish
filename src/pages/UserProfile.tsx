@@ -34,7 +34,7 @@ const UserProfile = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const [paymentStatus, setPaymentStatus] = useState<string>("free");
-  const [profile, setProfile] = useState<any>(null);
+  const [user_profile, setProfile] = useState<any>(null);
   const { username } = useParams();
 
   React.useEffect(() => {
@@ -86,7 +86,7 @@ const UserProfile = () => {
     }
   };
 
-  if (!profile) {
+  if (!user_profile) {
     return (
       <div className="min-h-screen bg-background">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -112,24 +112,24 @@ const UserProfile = () => {
               <div className="flex items-center space-x-6" id="profileWrapper">
                 <div className="relative">
                   <Avatar className="h-24 w-24">
-                    <AvatarImage src={profile.profile_photo_url || ""} />
+                    <AvatarImage src={user_profile.profile_photo_url || ""} />
                     <AvatarFallback className="bg-peach-gold text-background text-xl">
-                      {profile.first_name?.[0]}
-                      {profile.last_name?.[0]}
+                      {user_profile.first_name?.[0]}
+                      {user_profile.last_name?.[0]}
                     </AvatarFallback>
                   </Avatar>
                 </div>
                 <div>
                   <h3 className="text-xl text-primary font-semibold text-foreground py-1 ">
-                    {profile.first_name} {profile.last_name}
+                    {user_profile.first_name} {user_profile.last_name}
                   </h3>
-                  {profile.job_title && (
+                  {user_profile.job_title && (
                     <p className="text-muted-foreground py-1 ">
-                      {profile.job_title}
+                      {user_profile.job_title}
                     </p>
                   )}
                   <p>
-                    {profile.role === "user" &&
+                    {user_profile.role === "user" &&
                       (paymentStatus === "completed" ? (
                         <span className="px-3 py-1 text-xs font-semibold text-black bg-yellow-400 rounded-full">
                           🌟 Premium
@@ -139,14 +139,14 @@ const UserProfile = () => {
                           🆓 Freemium
                         </span>
                       ))}
-                    {profile.role === "admin" && (
+                    {user_profile.role === "admin" && (
                       <span className="px-3 py-1 text-primary font-semibold bg-[#9dc0b3] rounded-full">
                         🌟 Admin
                       </span>
                     )}
                   </p>
                   <p className="text-muted-foreground py-1 ">
-                    {profile?.location_city}
+                    {user_profile?.location_city}
                   </p>
                 </div>
               </div>
@@ -163,8 +163,8 @@ const UserProfile = () => {
               <div>
                 <Label>Dining Style</Label>
                 <p className="text-foreground text-primary p-2 mt-1">
-                  {profile.dining_style
-                    ? profile.dining_style.replace("_", " ")
+                  {user_profile.dining_style
+                    ? user_profile.dining_style.replace("_", " ")
                     : "Not set"}
                 </p>
               </div>
@@ -172,9 +172,9 @@ const UserProfile = () => {
               <div>
                 <Label>Dietary Preferences</Label>
                 <div className="flex flex-wrap gap-2 mt-1">
-                  {profile.dietary_preferences &&
-                  profile.dietary_preferences.length > 0 ? (
-                    profile.dietary_preferences.map((pref) => (
+                  {user_profile.dietary_preferences &&
+                  user_profile.dietary_preferences.length > 0 ? (
+                    user_profile.dietary_preferences.map((pref) => (
                       <Badge key={pref} variant="secondary">
                         {pref.replace("_", " ")}
                       </Badge>
@@ -188,8 +188,8 @@ const UserProfile = () => {
               <div>
                 <Label>Gender Identity</Label>
                 <p className="text-foreground text-primary p-2 mt-1">
-                  {profile.gender_identity
-                    ? profile.gender_identity.replace("_", " ")
+                  {user_profile.gender_identity
+                    ? user_profile.gender_identity.replace("_", " ")
                     : "Not set"}
                 </p>
               </div>
