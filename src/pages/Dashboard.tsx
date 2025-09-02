@@ -56,6 +56,7 @@ interface CrossedPath {
     user_id: string;
     first_name: string;
     last_name: string;
+    username: string;
     profile_photo_url: string;
     job_title: string;
     location_city: string;
@@ -123,6 +124,7 @@ const Dashboard = () => {
       });
     }
   };
+
   const fetchCrossedPaths = async () => {
     if (!profile) return;
 
@@ -134,11 +136,11 @@ const Dashboard = () => {
           `
           *,
           user1:profiles!crossed_paths_user1_id_fkey(
-            id, user_id, first_name, last_name, profile_photo_url, job_title, 
+            id, user_id, first_name, last_name, username, profile_photo_url, job_title, 
             location_city, dining_style, dietary_preferences, gender_identity
           ),
           user2:profiles!crossed_paths_user2_id_fkey(
-            id, user_id, first_name, last_name, profile_photo_url, job_title, 
+            id, user_id, first_name, last_name, username, profile_photo_url, job_title, 
             location_city, dining_style, dietary_preferences, gender_identity
           )
         `
@@ -227,10 +229,6 @@ const Dashboard = () => {
     setShowInviteModal(true);
   };
 
-  const viewProfile = (user: CrossedPath["matched_user"]) => {
-    setSelectedUserProfile(user);
-    setShowProfileModal(true);
-  };
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -469,7 +467,7 @@ const Dashboard = () => {
                         Invite
                       </Button>
                       <Button
-                        onClick={() => viewProfile(path.matched_user)}
+                        onClick={() => navigate(path.matched_user.username)}
                         variant="outline"
                         size="sm"
                       >

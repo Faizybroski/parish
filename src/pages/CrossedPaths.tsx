@@ -10,6 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { MapPin, Calendar, Users, User, Utensils, Heart } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import InviteToPrivateDinnerModal from '@/components/invitations/InviteToPrivateDinnerModal';
+import { useNavigate } from "react-router-dom";
 
 interface CrossedPath {
   id: string;
@@ -30,6 +31,7 @@ interface CrossedPath {
     user_id: string;
     first_name: string;
     last_name: string;
+    username: string;
     profile_photo_url: string;
     job_title: string;
     location_city: string;
@@ -48,6 +50,7 @@ const CrossedPaths = () => {
   const [selectedCrossedPath, setSelectedCrossedPath] = useState<CrossedPath | null>(null);
   const { user } = useAuth();
   const { profile } = useProfile();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (profile) {
@@ -65,14 +68,14 @@ const CrossedPaths = () => {
   .select(`
     *,
     user1:profiles!crossed_paths_user1_id_fkey(
-      id, user_id, first_name, last_name, profile_photo_url, job_title, 
+      id, user_id, first_name, last_name, username, profile_photo_url, job_title, 
       location_city, dining_style, dietary_preferences, gender_identity,
       payments:payments!payments_user_id_fkey (
         id, user_id, status, updated_at
       )
     ),
     user2:profiles!crossed_paths_user2_id_fkey(
-      id, user_id, first_name, last_name, profile_photo_url, job_title, 
+      id, user_id, first_name, last_name, username, profile_photo_url, job_title, 
       location_city, dining_style, dietary_preferences, gender_identity,
       payments:payments!payments_user_id_fkey (
         id, user_id, status, updated_at
@@ -262,7 +265,7 @@ return (
 
                     <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
                       <Button
-                        onClick={() => viewProfile(path.matched_user)}
+                        onClick={() => navigate(`/${path.matched_user.username}`)}
                         variant="outline"
                         size="sm"
                         className="w-full sm:w-auto"

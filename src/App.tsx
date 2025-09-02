@@ -66,6 +66,7 @@ import SafetyGuidelines from "@/pages/SafetyGIuidelines"
 import TermsAndConditions from "@/pages/Terms&Conditions"
 import PrivacyPolicy from "@/pages/PrivacyPolicy.tsx"
 import Layout from "./components/layout/Layout";
+import UserProfile from "./pages/UserProfile";
 
 const queryClient = new QueryClient();
 
@@ -127,6 +128,15 @@ const App = () => (
                   <ProtectedRoute>
                     <Navigation />
                     <Dashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/:username"
+                element={
+                  <ProtectedRoute>
+                    <Navigation />
+                    <UserProfile />
                   </ProtectedRoute>
                 }
               />
