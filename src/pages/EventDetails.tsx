@@ -8,20 +8,30 @@ import {
   DialogContent,
   DialogDescription,
   DialogHeader,
-  DialogTitle
+  DialogTitle,
 } from "@/components/ui/dialog";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/hooks/use-toast";
 import { useProfile } from "@/hooks/useProfile";
 import { useRestaurants } from "@/hooks/useRestaurants";
-import { useSubscriptionStatus } from '@/hooks/useSubscriptionStatus';
+import { useSubscriptionStatus } from "@/hooks/useSubscriptionStatus";
 import { supabase } from "@/integrations/supabase/client";
 import { sendEventInvite } from "@/lib/sendInvite";
 import { format } from "date-fns";
 import {
-  ArrowLeft, Calendar,
-  Clock, CreditCard, Edit, Heart, Loader2, MapPin, Share2, Hourglass,
-  Star, UserCheck, Users
+  ArrowLeft,
+  Calendar,
+  Clock,
+  CreditCard,
+  Edit,
+  Heart,
+  Loader2,
+  MapPin,
+  Share2,
+  Hourglass,
+  Star,
+  UserCheck,
+  Users,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
@@ -532,49 +542,72 @@ const EventDetails = () => {
   const confirmRSVP = async () => {
     setShowRSVPConfirm(false); // Hide Modal
     try {
+      // --- Send Email via Supabase Edge Function ---
+      if (invitedUser?.email) {
+        const inviterName = `${profile?.first_name} ${profile?.last_name}`;
+        const profileSlug = profile.email.split("@")[0];
+        const eventLink = `${window.location.origin}/event/${eventId}/details`;
+        const profileLink = `${window.location.origin}/profile/${profileSlug}`;
 
-   
+        await sendEventInvite({
+          to: invitedUser.email,
+          subject: `${inviterName} invited you to ${event.name}!`,
+          html: `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 24px; border-radius: 12px; background-color: #f9fafb; color: #333; line-height: 1.6;">
+      
+      <h1 style="color: #111; text-align: center;">🎉 You're Invited!</h1>
+      <p style="text-align: center; font-size: 16px; margin-top: -8px;">
+        <strong>${inviterName}</strong> has invited you to a special dinner on Parish.
+      </p>
+      
+      <div style="background: #fff; border-radius: 10px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); margin-top: 20px;">
+        <h2 style="margin: 0 0 12px; color: #0055ff;">${event.name}</h2>
+        
+        <p><strong>📅 Date & Time:</strong> ${new Date(
+          event.date_time
+        ).toLocaleString()}</p>
+        <p><strong>📍 Location:</strong>${event.location_name} ${
+            event.restaurants
+              ? `<span style="margin: 2px 0; font-size: 14px; color: #d4a373;">
+        ${event.restaurants.name} – ${event.restaurants.city}, ${event.restaurants?.country}
+      </span>`
+              : ""
+          }</p>
+        <p><strong>⏳ RSVP By:</strong> ${new Date(
+          event.rsvp_deadline
+        ).toLocaleDateString()}</p>
+        
+        ${
+          event.description
+            ? `<p style="margin-top: 12px; font-style: italic; color: #555;">"${event.description}"</p>`
+            : ""
+        }
+      </div>
+      
+      <div style="text-align: center; margin-top: 24px;">
+        <a href="${eventLink}" style="display: inline-block; background: #0055ff; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: bold; margin: 8px;">View Event & RSVP</a>
+        <a href="${profileLink}" style="display: inline-block; background: #f3f4f6; color: #111; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: bold; margin: 8px;">View ${inviterName}'s Profile</a>
+      </div>
+      
+      <p style="margin-top: 32px; font-size: 14px; text-align: center; color: #666;">
+        Don’t miss out — spots may be limited!<br/>
+        We can’t wait to see you there 🍽️
+      </p>
+    </div>
+  `,
+        });
+      }
 
-        // --- Send Email via Supabase Edge Function ---
-    if (invitedUser?.email) {
-
-    const inviterName = `${invitedUser?.first_name} ${invitedUser?.last_name}`;
-    const profileSlug = invitedUser.email.split("@")[0];
-    const eventLink = `${window.location.origin}/event/${eventId}/details`;
-    const profileLink = `${window.location.origin}/profile/${profileSlug}`;
-
-       await sendEventInvite({
-              to: invitedUser.email,
-              subject: `${inviterName} invited you to ${event.name}!`,
-              text: `Hi friend, you’ve been invited to a private dinner hosted on Parish!\n\nJoin here: ${eventLink}`,
-              html: `
-                  <div style="font-family: sans-serif; padding: 20px;">
-                    <h2>You’ve been invited to dinner 🎉</h2>
-                    <p><strong>${inviterName}</strong> has invited you to join 
-                    <strong>${event.name}</strong> happening on 
-                    <strong>${new Date(event.date_time).toLocaleString()}</strong>.</p>
-
-                    <p>
-                      👉 <a href="${eventLink}" style="color: #0055ff;">View Event & RSVP</a><br/>
-                      👉 <a href="${profileLink}" style="color: #0055ff;">View ${inviterName}’s Profile</a>
-                    </p>
-
-                    <p>We hope to see you there!</p>
-                  </div>
-                `,
-            });
-    }
-
-    // --- Store Notification in DB ---
-    if (invitedUser?.id) {
-      await supabase.from("notifications").insert({
-        title: "Invited to event",
-        user_id: invitedUser.id,
-        type: "event_invite",
-        message: `${profile?.first_name} invited you to ${event.name}`,
-        is_read: false,
-      });
-    }
+      // --- Store Notification in DB ---
+      if (invitedUser?.id) {
+        await supabase.from("notifications").insert({
+          title: "Invited to event",
+          user_id: invitedUser.id,
+          type: "event_invite",
+          message: `${profile?.first_name} invited you to ${event.name}`,
+          is_read: false,
+        });
+      }
       // --- Same Supabase Logic Here --- (No Changes)
       // If hasRSVP => cancel RSVP flow
       // Else => RSVP, Reservations, Crossed Paths etc.
@@ -858,44 +891,43 @@ const EventDetails = () => {
         {/* Header */}
         <div className="mb-8 flex justify-between items-center">
           {isCreator && (
-          <Button
-            variant="ghost"
-            onClick={() => navigate("/events")}
-            className="mb-4"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Events
-          </Button>
+            <Button
+              variant="ghost"
+              onClick={() => navigate("/events")}
+              className="mb-4"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Events
+            </Button>
           )}
           {!isCreator && (
-          <Button
-            variant="ghost"
-            onClick={() => navigate("/explore")}
-            className="mb-4"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Events
-          </Button>
+            <Button
+              variant="ghost"
+              onClick={() => navigate("/explore")}
+              className="mb-4"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Events
+            </Button>
           )}
-        {!isCreator && isBeforeDeadline && (
-          <Button
-            onClick={handleInterest}
-            disabled={loading}
-            className={
-              isInterested
-                ? "bg-sage-green hover:bg-sage-green/90 mb-4"
-                : "bg-peach-gold hover:bg-peach-gold/90 mb-4"
-            }
-          >
-            {loading
-              ? "Updating..."
-              : isInterested
-              ? "Interested"
-              : "Show Interest"}
-          </Button>
-        )}
+          {!isCreator && isBeforeDeadline && (
+            <Button
+              onClick={handleInterest}
+              disabled={loading}
+              className={
+                isInterested
+                  ? "bg-sage-green hover:bg-sage-green/90 mb-4"
+                  : "bg-peach-gold hover:bg-peach-gold/90 mb-4"
+              }
+            >
+              {loading
+                ? "Updating..."
+                : isInterested
+                ? "Interested"
+                : "Show Interest"}
+            </Button>
+          )}
         </div>
-
 
         {showRSVPConfirm && (
           <Dialog open={showRSVPConfirm} onOpenChange={setShowRSVPConfirm}>
@@ -957,8 +989,10 @@ const EventDetails = () => {
                         </AvatarFallback>
                       </Avatar>
                       <span className="text-sm text-muted-foreground">
-                        Hosted by {" "}
-                        <Link to={`/profile/${event.profiles.username}`}>{event.profiles.first_name}{" "}{event.profiles.last_name}</Link>
+                        Hosted by{" "}
+                        <Link to={`/profile/${event.profiles.username}`}>
+                          {event.profiles.first_name} {event.profiles.last_name}
+                        </Link>
                       </span>
                     </div>
                   </div>
@@ -1376,7 +1410,7 @@ const EventDetails = () => {
                     )}
                   </>
                 )}
-                
+
                 {isCreator && !hasRSVP && (
                   <div className="text-center mt-2">
                     <Badge variant="outline" className="px-3 py-1">
