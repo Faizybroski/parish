@@ -56,6 +56,7 @@ interface CrossedPath {
     user_id: string;
     first_name: string;
     last_name: string;
+    email: string;
     username: string;
     profile_photo_url: string;
     job_title: string;
