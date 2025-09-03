@@ -567,8 +567,8 @@ const EventDetails = () => {
         <p><strong>📅 Date & Time:</strong> ${new Date(
           event.date_time
         ).toLocaleString()}</p>
-        <p><strong>📍 Location:</strong>${event.location_name} <span style="margin: 2px 0; font-size: 14px; color: #d4a373;">
-         – ${event.restaurants?.city}, ${event.restaurants?.country}
+        <p><strong>📍 Location:</strong> ${event.location_name} <span style="margin: 2px 0; font-size: 14px; color: #d4a373;">
+         – ${event.location_address}
       </span></p>
         <p><strong>⏳ RSVP By:</strong> ${new Date(
           event.rsvp_deadline
