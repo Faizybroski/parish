@@ -7,8 +7,8 @@ import { toast } from '@/hooks/use-toast';
 import { useProfile } from '@/hooks/useProfile';
 import { supabase } from '@/integrations/supabase/client';
 import { Calendar, MapPin, Users } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
-
 interface CrossedPath {
   id: string;
   matched_at: string;
@@ -29,6 +29,7 @@ interface CrossedPath {
     first_name: string;
     last_name: string;
     username: string;
+    email: string;
     profile_photo_url: string;
     job_title: string;
     location_city: string;
