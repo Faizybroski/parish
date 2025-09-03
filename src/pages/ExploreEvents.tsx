@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import {
   Calendar,
   Edit,
+  Users,
   MapPin,
   Plus,
   Search,
