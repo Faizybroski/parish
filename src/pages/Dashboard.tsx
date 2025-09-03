@@ -225,8 +225,20 @@ const Dashboard = () => {
   };
 
   const handleInviteToDinner = (path: CrossedPath) => {
-    setSelectedCrossedPath(path);
-    setShowInviteModal(true);
+    // console.log("Path:===>>", path.matched_user.email, path.matched_user.id,path.matched_user.first_name, path.matched_user.last_name);
+
+    navigate("/explore", {
+    state: {
+      invitedUser: {
+        id: path.matched_user.id,
+        first_name: path.matched_user.first_name,
+        last_name: path.matched_user.last_name,
+        email: path.matched_user.email,
+      },
+    },
+  });
+    // setSelectedCrossedPath(path);
+    // setShowInviteModal(true);
   };
 
   return (
