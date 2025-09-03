@@ -552,6 +552,7 @@ const EventDetails = () => {
         await sendEventInvite({
           to: invitedUser.email,
           subject: `${inviterName} invited you to ${event.name}!`,
+          text: `Hi ${invitedUser.first_name}`,
           html: `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 24px; border-radius: 12px; background-color: #f9fafb; color: #333; line-height: 1.6;">
       
@@ -566,13 +567,9 @@ const EventDetails = () => {
         <p><strong>📅 Date & Time:</strong> ${new Date(
           event.date_time
         ).toLocaleString()}</p>
-        <p><strong>📍 Location:</strong>${event.location_name} ${
-            event.restaurants
-              ? `<span style="margin: 2px 0; font-size: 14px; color: #d4a373;">
-        ${event.restaurants.name} – ${event.restaurants.city}, ${event.restaurants?.country}
-      </span>`
-              : ""
-          }</p>
+        <p><strong>📍 Location:</strong>${event.location_name} <span style="margin: 2px 0; font-size: 14px; color: #d4a373;">
+         – ${event.restaurants?.city}, ${event.restaurants?.country}
+      </span></p>
         <p><strong>⏳ RSVP By:</strong> ${new Date(
           event.rsvp_deadline
         ).toLocaleDateString()}</p>
