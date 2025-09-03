@@ -20,7 +20,7 @@ import { sendEventInvite } from "@/lib/sendInvite";
 import { format } from "date-fns";
 import {
   ArrowLeft, Calendar,
-  Clock, CreditCard, Edit, Heart, Loader2, MapPin, Share2,
+  Clock, CreditCard, Edit, Heart, Loader2, MapPin, Share2, Hourglass,
   Star, UserCheck, Users
 } from "lucide-react";
 import { useEffect, useState } from "react";
