@@ -35,10 +35,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
       try {
-        console.log("Auth event:", event);
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
+        console.info("Auth event:", event);
+        console.info("Session:", session);
+        console.info("SessionUser :", session?.user ?? null);
 
         if (event === "SIGNED_IN" && session?.user) {
           const instagram = localStorage.getItem("signup_instagram");
@@ -47,12 +49,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           if (instagram !== null || linkedin !== null) {
             console.log("Upserting profile for:", session.user.email);
 
-            const { error } = await supabase.from("profiles").upsert({
-              user_id: session.user.id,
-              email: session.user.email!,
-              ...(instagram !== null && { instagram_username: instagram }),
-              ...(linkedin !== null && { linkedin_username: linkedin }),
-            });
+            const { error } = await supabase.from("profiles").update({
+              instagram_username: instagram,
+              linkedin_username: linkedin,
+            }).eq('user_id', session.user.id);
 
             if (error) console.error("Upsert error:", error);
 
@@ -82,12 +82,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (instagram !== null || linkedin !== null) {
           console.log("Upserting profile on refresh:", session.user.email);
 
-          const { error } = await supabase.from("profiles").upsert({
-            user_id: session.user.id,
-            email: session.user.email!,
-            ...(instagram !== null && { instagram_username: instagram }),
-            ...(linkedin !== null && { linkedin_username: linkedin }),
-          });
+          const { error } = await supabase.from("profiles").update({
+            instagram_username: instagram ,
+            linkedin_username: linkedin ,
+          }).eq('user_id', session.user.id);
 
           if (error) console.error("Upsert error:", error);
 
