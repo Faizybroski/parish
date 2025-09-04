@@ -372,19 +372,14 @@ export const OnboardingCarousel = ({ startStep = 0 }) => {
                     return;
                   }
 
+                  if (instagram) localStorage.setItem("signup_instagram", instagram);
+                  if (linkedin) localStorage.setItem("signup_linkedin", linkedin);
+
                   const { error } = await signInWithGoogle();
                   if (error) {
                     console.error("Google login error:", error.message);
                   }
                   const { data: { user }, } = await supabase.auth.getUser();
-
-                  if (user) {
-                    await supabase.from("profiles").upsert({
-                      user_id: user.id,
-                      instagram_username: instagram,
-                      linkedin_username: linkedin,
-                    });
-                  }
                 }}
                 className="flex-1 py-3 border hover:bg-secondary/40 text-foreground bg-transparent"
               >
@@ -407,18 +402,13 @@ export const OnboardingCarousel = ({ startStep = 0 }) => {
                     });
                     return;
                   }
+
+                  if (instagram) localStorage.setItem("signup_instagram", instagram);
+                  if (linkedin) localStorage.setItem("signup_linkedin", linkedin);
+
                   const { error } = await signInWithApple();
                   if (error) {
                     console.error("Apple login error:", error.message);
-                  }
-                  const { data: { user }, } = await supabase.auth.getUser();
-
-                  if (user) {
-                    await supabase.from("profiles").upsert({
-                      user_id: user.id,
-                      instagram_username: instagram,
-                      linkedin_username: linkedin,
-                    });
                   }
                 }}
                 className="flex-1 py-3 text-white hover:bg-secondary/40 bg-transparent border"
