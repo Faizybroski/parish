@@ -362,6 +362,7 @@ export const OnboardingCarousel = ({ startStep = 0 }) => {
               <Button
                 onClick={async () => {
                   if (!linkedin && !instagram) {
+                    setIsLogin(false);
                     toast({
                       title: "Social Media Required",
                       description:
@@ -397,6 +398,7 @@ export const OnboardingCarousel = ({ startStep = 0 }) => {
               <Button
                 onClick={async () => {
                   if (!linkedin && !instagram) {
+                    setIsLogin(false);
                     toast({
                       title: "Social Media Required",
                       description:
