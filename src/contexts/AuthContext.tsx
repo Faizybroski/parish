@@ -34,52 +34,71 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+      try {
+        console.log("Auth event:", event);
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
 
         if (event === "SIGNED_IN" && session?.user) {
+          const instagram = localStorage.getItem("signup_instagram");
+          const linkedin = localStorage.getItem("signup_linkedin");
+
+          if (instagram !== null || linkedin !== null) {
+            console.log("Upserting profile for:", session.user.email);
+
+            const { error } = await supabase.from("profiles").upsert({
+              user_id: session.user.id,
+              email: session.user.email!,
+              ...(instagram !== null && { instagram_username: instagram }),
+              ...(linkedin !== null && { linkedin_username: linkedin }),
+            });
+
+            if (error) console.error("Upsert error:", error);
+
+            localStorage.removeItem("signup_instagram");
+            localStorage.removeItem("signup_linkedin");
+          }
+        }
+      } catch (err) {
+        console.error("Auth state error:", err);
+      }
+    }
+    );
+
+    // Check for existing session
+      supabase.auth.getSession().then(async ({ data: { session }, error }) => {
+    try {
+      if (error) console.error("getSession error:", error);
+
+      setSession(session);
+      setUser(session?.user ?? null);
+      setLoading(false);
+
+      if (session?.user) {
         const instagram = localStorage.getItem("signup_instagram");
         const linkedin = localStorage.getItem("signup_linkedin");
 
         if (instagram !== null || linkedin !== null) {
-          await supabase.from("profiles").upsert({
+          console.log("Upserting profile on refresh:", session.user.email);
+
+          const { error } = await supabase.from("profiles").upsert({
             user_id: session.user.id,
             email: session.user.email!,
             ...(instagram !== null && { instagram_username: instagram }),
             ...(linkedin !== null && { linkedin_username: linkedin }),
           });
 
+          if (error) console.error("Upsert error:", error);
+
           localStorage.removeItem("signup_instagram");
           localStorage.removeItem("signup_linkedin");
         }
       }
-      }
-    );
-
-    // Check for existing session
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
-
-      if (session?.user) {
-      const instagram = localStorage.getItem("signup_instagram");
-      const linkedin = localStorage.getItem("signup_linkedin");
-
-      if (instagram !== null || linkedin !== null) {
-        await supabase.from("profiles").upsert({
-          user_id: session.user.id,
-          email: session.user.email!,
-          ...(instagram !== null && { instagram_username: instagram }),
-          ...(linkedin !== null && { linkedin_username: linkedin }),
-        });
-
-        localStorage.removeItem("signup_instagram");
-        localStorage.removeItem("signup_linkedin");
-      }
+    } catch (err) {
+      console.error("getSession error:", err);
     }
-    });
+  });
 
     return () => subscription.unsubscribe();
   }, []);
