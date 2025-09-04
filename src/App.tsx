@@ -87,10 +87,10 @@ const App = () => (
                 path="/auth"
                 element={<AuthPage />}
               />
-              <Route 
+              {/* <Route 
                 path="/social-media"
                 element={<SocialLinks />}
-              />
+              /> */}
               <Route
                 path="/"
                 element={
