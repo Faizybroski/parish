@@ -20,7 +20,8 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const instagram = localStorage.getItem("signup_instagram");
+  const fun = async() => {
+const instagram = localStorage.getItem("signup_instagram");
             const linkedin = localStorage.getItem("signup_linkedin");
   
             if (instagram !== null || linkedin !== null) {
@@ -35,6 +36,14 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   
               localStorage.removeItem("signup_instagram");
               localStorage.removeItem("signup_linkedin");
+  }
+
+  useEffect(() => {
+    fun();
+  },)
+  
+
+  
 
   // ALL HOOKS MUST BE CALLED FIRST - before any conditional logic or early returns
   useEffect(() => {
