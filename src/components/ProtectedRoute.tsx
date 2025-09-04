@@ -8,6 +8,7 @@ import { Loader2 } from 'lucide-react';
 import { AdminLogin } from '@/components/adminLogin/AdminLogin';
 import { ParishUsLanding } from '@/pages/LandingPage';
 import { SocialLinks } from "@/components/SocialMedia/SocialMedia"
+import { supabase } from '@/integrations/supabase/client';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -18,6 +19,22 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const { profile, loading: profileLoading } = useProfile();
   const navigate = useNavigate();
   const location = useLocation();
+
+  const instagram = localStorage.getItem("signup_instagram");
+            const linkedin = localStorage.getItem("signup_linkedin");
+  
+            if (instagram !== null || linkedin !== null) {
+              console.log("Upserting profile for:", user.email);
+  
+              const { error } = await supabase.from("profiles").update({
+                instagram_username: instagram,
+                linkedin_username: linkedin,
+              }).eq('user_id', user.id);
+  
+              if (error) console.error("Upsert error:", error);
+  
+              localStorage.removeItem("signup_instagram");
+              localStorage.removeItem("signup_linkedin");
 
   // ALL HOOKS MUST BE CALLED FIRST - before any conditional logic or early returns
   useEffect(() => {

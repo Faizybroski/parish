@@ -379,7 +379,6 @@ export const OnboardingCarousel = ({ startStep = 0 }) => {
                   if (error) {
                     console.error("Google login error:", error.message);
                   }
-                  const { data: { user }, } = await supabase.auth.getUser();
                 }}
                 className="flex-1 py-3 border hover:bg-secondary/40 text-foreground bg-transparent"
               >

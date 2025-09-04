@@ -42,24 +42,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         console.info("Session:", session);
         console.info("SessionUser :", session?.user ?? null);
 
-        if (event === "SIGNED_IN" && session?.user) {
-          const instagram = localStorage.getItem("signup_instagram");
-          const linkedin = localStorage.getItem("signup_linkedin");
+        // if (event === "SIGNED_IN" && session?.user) {
+        //   const instagram = localStorage.getItem("signup_instagram");
+        //   const linkedin = localStorage.getItem("signup_linkedin");
 
-          if (instagram !== null || linkedin !== null) {
-            console.log("Upserting profile for:", session.user.email);
+        //   if (instagram !== null || linkedin !== null) {
+        //     console.log("Upserting profile for:", session.user.email);
 
-            const { error } = await supabase.from("profiles").update({
-              instagram_username: instagram,
-              linkedin_username: linkedin,
-            }).eq('user_id', session.user.id);
+        //     const { error } = await supabase.from("profiles").update({
+        //       instagram_username: instagram,
+        //       linkedin_username: linkedin,
+        //     }).eq('user_id', session.user.id);
 
-            if (error) console.error("Upsert error:", error);
+        //     if (error) console.error("Upsert error:", error);
 
-            localStorage.removeItem("signup_instagram");
-            localStorage.removeItem("signup_linkedin");
-          }
-        }
+        //     localStorage.removeItem("signup_instagram");
+        //     localStorage.removeItem("signup_linkedin");
+        //   }
+        // }
       } catch (err) {
         console.error("Auth state error:", err);
       }
@@ -75,24 +75,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(session?.user ?? null);
       setLoading(false);
 
-      if (session?.user) {
-        const instagram = localStorage.getItem("signup_instagram");
-        const linkedin = localStorage.getItem("signup_linkedin");
+      // if (session?.user) {
+      //   const instagram = localStorage.getItem("signup_instagram");
+      //   const linkedin = localStorage.getItem("signup_linkedin");
 
-        if (instagram !== null || linkedin !== null) {
-          console.log("Upserting profile on refresh:", session.user.email);
+      //   if (instagram !== null || linkedin !== null) {
+      //     console.log("Upserting profile on refresh:", session.user.email);
 
-          const { error } = await supabase.from("profiles").update({
-            instagram_username: instagram ,
-            linkedin_username: linkedin ,
-          }).eq('user_id', session.user.id);
+      //     const { error } = await supabase.from("profiles").update({
+      //       instagram_username: instagram ,
+      //       linkedin_username: linkedin ,
+      //     }).eq('user_id', session.user.id);
 
-          if (error) console.error("Upsert error:", error);
+      //     if (error) console.error("Upsert error:", error);
 
-          localStorage.removeItem("signup_instagram");
-          localStorage.removeItem("signup_linkedin");
-        }
-      }
+      //     localStorage.removeItem("signup_instagram");
+      //     localStorage.removeItem("signup_linkedin");
+      //   }
+      // }
     } catch (err) {
       console.error("getSession error:", err);
     }
