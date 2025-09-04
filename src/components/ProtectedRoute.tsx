@@ -152,9 +152,9 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     return <ParishUsLanding />;
   }
 
-  if (profile  && profile.role === 'user' && !profile.instagram_username && !profile.linkedin_username) {
-    return navigate('social-media');
-  }
+  // if (profile  && profile.role === 'user' && !profile.instagram_username && !profile.linkedin_username) {
+  //   return navigate('social-media');
+  // }
 
   if (profile && !profile.onboarding_completed && profile.role === 'user') {
     return <OnboardingFlow />;

@@ -8,6 +8,7 @@ import { toast } from "@/hooks/use-toast";
 import { ChevronLeft, ChevronRight, Eye, EyeOff, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 import ParishLogo from "../ui/logo";
 
 const onboardingCards = [
@@ -49,11 +50,17 @@ export const OnboardingCarousel = ({ startStep = 0 }) => {
   const [password, setPassword] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [instagram, setInstagram] = useState("");
+  const [linkedin, setLinkedin] = useState("");
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { signIn, signUp, resetPassword, signInWithGoogle, signInWithApple } = useAuth();
+  const { signIn, signUp, resetPassword, signInWithGoogle, signInWithApple } =
+    useAuth();
+
+  console.info("instagram:=====>>>>", instagram);
+  console.info("linkedin:=====>>>>", linkedin);
 
   const handleNext = () => {
     if (currentStep < onboardingCards.length) setCurrentStep(currentStep + 1);
@@ -68,7 +75,7 @@ export const OnboardingCarousel = ({ startStep = 0 }) => {
     setLoading(true);
     try {
       if (isLogin) {
-        const { error } = await signIn(email, password, 'user');
+        const { error } = await signIn(email, password, "user");
         error
           ? toast({
               title: "Error",
@@ -80,9 +87,20 @@ export const OnboardingCarousel = ({ startStep = 0 }) => {
               description: "Signed in successfully.",
             });
       } else {
+        if (!linkedin && !instagram) {
+          toast({
+            title: "Social Media is Required",
+            description: "Please enter Instagram or LinkedIn.",
+            variant: "destructive",
+          });
+          return;
+        }
+
         const { error } = await signUp(email, password, {
           first_name: firstName,
           last_name: lastName,
+          instagram_username: instagram,
+          linkedin_username: linkedin,
           role: "user",
         });
         error
@@ -96,12 +114,12 @@ export const OnboardingCarousel = ({ startStep = 0 }) => {
               description: "Check your email for verification.",
             });
         if (!error) setEmail("");
-       navigate('social-media')
+        //  navigate('social-media')
         setPassword("");
         setFirstName("");
         setLastName("");
       }
-    } catch(err) {
+    } catch (err) {
       toast({
         title: "Error",
         description: err.message,
@@ -120,23 +138,23 @@ export const OnboardingCarousel = ({ startStep = 0 }) => {
             <Button onClick={handleBack} variant="ghost" size="icon">
               <ChevronLeft className="w-5 h-5" />
             </Button>
-           <div className="flex flex-col items-center">
-          <div className="mb-6 ">
-            <ParishLogo />
-          </div>
-          <div>
-            <h1
-              className="text-2xl font-extrabold font-playfair text-primary"
-              style={{
-                fontSize: "60px",
-                color: "#9dc0b3",
-                fontFamily: 'Sergio Trendy'
-              }}
-            >
-              Parish
-            </h1>
-          </div>
-        </div>
+            <div className="flex flex-col items-center">
+              <div className="mb-6 ">
+                <ParishLogo />
+              </div>
+              <div>
+                <h1
+                  className="text-2xl font-extrabold font-playfair text-primary"
+                  style={{
+                    fontSize: "60px",
+                    color: "#9dc0b3",
+                    fontFamily: "Sergio Trendy",
+                  }}
+                >
+                  Parish
+                </h1>
+              </div>
+            </div>
             <div className="w-6" />
           </div>
 
@@ -225,6 +243,37 @@ export const OnboardingCarousel = ({ startStep = 0 }) => {
             </div>
             {!isLogin && (
               <>
+                <div>
+                  <Label htmlFor="linkedin">LinkedIn Profile</Label>
+                  <Input
+                    id="linkedin"
+                    type="text"
+                    placeholder="Enter your LinkedIn username*"
+                    value={linkedin}
+                    onChange={(e) => setLinkedin(e.target.value)}
+                    className="mt-2"
+                  />
+                </div>
+
+                <div className="flex items-center justify-center">
+                  <div className="flex-grow border-t border-primary"></div>
+                  <span className="text-primary font-semibold px-2">OR</span>
+                  <div className="flex-grow border-t border-primary"></div>
+                </div>
+
+                {/* Instagram */}
+                <div>
+                  <Label htmlFor="instagram">Instagram</Label>
+                  <Input
+                    id="instagram"
+                    type="text"
+                    placeholder="Enter your Instagram username*"
+                    value={instagram}
+                    onChange={(e) => setInstagram(e.target.value)}
+                    className="mt-2"
+                  />
+                </div>
+
                 <div className="flex items-center space-x-2">
                   <Checkbox
                     id="terms"
@@ -244,42 +293,46 @@ export const OnboardingCarousel = ({ startStep = 0 }) => {
               </>
             )}
             {isLogin && (
-            <div className="text-right">
-                  <button
-                    type="button"
-                    onClick={async () => {
-                      if (!email) {
-                        toast({
-                          title: "Enter your email first",
-                          description: "Please enter your email in the field above.",
-                          variant: "destructive",
-                        });
-                        return;
-                      }
-                      const { error } = await resetPassword(email);
-                      if (error) {
-                        toast({
-                          title: "Error",
-                          description: error.message,
-                          variant: "destructive",
-                        });
-                      } else {
-                        toast({
-                          title: "Check your email",
-                          description: "Password reset link sent.",
-                        });
-                      }
-                    }}
-                    className="text-primary text-sm underline"
-                  >
-                    Forgot Password?
-                  </button>
+              <div className="text-right">
+                <button
+                  type="button"
+                  onClick={async () => {
+                    if (!email) {
+                      toast({
+                        title: "Enter your email first",
+                        description:
+                          "Please enter your email in the field above.",
+                        variant: "destructive",
+                      });
+                      return;
+                    }
+                    const { error } = await resetPassword(email);
+                    if (error) {
+                      toast({
+                        title: "Error",
+                        description: error.message,
+                        variant: "destructive",
+                      });
+                    } else {
+                      toast({
+                        title: "Check your email",
+                        description: "Password reset link sent.",
+                      });
+                    }
+                  }}
+                  className="text-primary text-sm underline"
+                >
+                  Forgot Password?
+                </button>
               </div>
-          )}
+            )}
             <Button
               type="submit"
               className="w-full py-3 bg-secondary hover:bg-secondary/70 font-semibold"
-              disabled={(!isLogin && !agreeToTerms) || loading}
+              disabled={
+                (!isLogin && (!agreeToTerms || (!linkedin && !instagram))) ||
+                loading
+              }
             >
               {loading ? (
                 <>
@@ -308,9 +361,28 @@ export const OnboardingCarousel = ({ startStep = 0 }) => {
             <div className="flex gap-3">
               <Button
                 onClick={async () => {
+                  if (!linkedin && !instagram) {
+                    toast({
+                      title: "Social Media Required",
+                      description:
+                        "Please enter LinkedIn or Instagram before continuing.",
+                      variant: "destructive",
+                    });
+                    return;
+                  }
+
                   const { error } = await signInWithGoogle();
                   if (error) {
                     console.error("Google login error:", error.message);
+                  }
+                  const { data: { user }, } = await supabase.auth.getUser();
+
+                  if (user) {
+                    await supabase.from("profiles").upsert({
+                      user_id: user.id,
+                      instagram_username: instagram,
+                      linkedin_username: linkedin,
+                    });
                   }
                 }}
                 className="flex-1 py-3 border hover:bg-secondary/40 text-foreground bg-transparent"
@@ -323,10 +395,28 @@ export const OnboardingCarousel = ({ startStep = 0 }) => {
                 Google
               </Button>
               <Button
-                 onClick={async () => {
+                onClick={async () => {
+                  if (!linkedin && !instagram) {
+                    toast({
+                      title: "Social Media Required",
+                      description:
+                        "Please enter LinkedIn or Instagram before continuing.",
+                      variant: "destructive",
+                    });
+                    return;
+                  }
                   const { error } = await signInWithApple();
                   if (error) {
                     console.error("Apple login error:", error.message);
+                  }
+                  const { data: { user }, } = await supabase.auth.getUser();
+
+                  if (user) {
+                    await supabase.from("profiles").upsert({
+                      user_id: user.id,
+                      instagram_username: instagram,
+                      linkedin_username: linkedin,
+                    });
                   }
                 }}
                 className="flex-1 py-3 text-white hover:bg-secondary/40 bg-transparent border"
@@ -379,7 +469,11 @@ export const OnboardingCarousel = ({ startStep = 0 }) => {
             />
             <h1
               className="text-3xl font-playfair font-extrabold text-primary mb-4"
-              style={{ fontSize: "70px", color: "#9dc0b3", fontFamily: "Sergio Trendy" }}
+              style={{
+                fontSize: "70px",
+                color: "#9dc0b3",
+                fontFamily: "Sergio Trendy",
+              }}
             >
               {currentCard.title}
             </h1>
