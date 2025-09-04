@@ -37,6 +37,7 @@ const instagram = localStorage.getItem("signup_instagram");
               localStorage.removeItem("signup_instagram");
               localStorage.removeItem("signup_linkedin");
   }
+}
 
   useEffect(() => {
     fun();
