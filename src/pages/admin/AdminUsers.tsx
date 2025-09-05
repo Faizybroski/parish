@@ -381,8 +381,17 @@ const UserDetailsModal: React.FC<UserDetailsModalProps> = ({
     }
   };
 
-  const handleSendEmail = async () => {
+  const handleSendEmail = async (email: string) => {
     // This would integrate with your email service
+    try {
+      await sendEventInvite({
+        to: [email],
+        subject: `${emailData.subject}`,
+        text: `${emailData.message}`
+      })
+    } catch {
+      toast({ title: "Error sending mail to user", variant: "destructive" });
+    }
     toast({
       title: "Email functionality will be integrated with your email service",
     });
@@ -783,7 +792,7 @@ const UserDetailsModal: React.FC<UserDetailsModalProps> = ({
               >
                 Cancel
               </Button>
-              <Button onClick={handleSendEmail}>Send Email</Button>
+              <Button onClick={() => handleSendEmail(user.email)}>Send Email</Button>
               {user.approval_status !== "pending" && (
                 <>
                   {user.is_suspended ? (
