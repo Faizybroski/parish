@@ -641,20 +641,89 @@ const AdminDashboard = () => {
     }
   };
 
-  const sendEmail = async (email: string) => {
+  const sendEmail = async () => {
     // This would integrate with your email service
     try {
           await sendEventInvite({
-            to: [email],
+            to: [emailData.to],
             subject: `${emailData.subject}`,
-            text: `${emailData.message}`
+            text: `${emailData.message}`,
+              html: `
+  <!doctype html>
+  <html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>${emailData.subject}</title>
+    <style>
+      /* Basic reset */
+      body,table,td,a{-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%}
+      table,td{mso-table-lspace:0pt;mso-table-rspace:0pt}
+      img{border:0;height:auto;line-height:100%;outline:none;text-decoration:none}
+      a[x-apple-data-detectors]{color:inherit !important;text-decoration:none !important}
+      /* Container */
+      .email-body{width:100%;background-color:#f6f8fb;padding:24px 0}
+      .email-card{max-width:600px;margin:0 auto;background:#ffffff;border-radius:12px;box-shadow:0 6px 18px rgba(22,28,45,0.08);overflow:hidden;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;}
+      .header{padding:28px 32px;background:linear-gradient(90deg,#0ea5a4,#6366f1);color:#fff}
+      .brand{font-weight:700;font-size:20px;letter-spacing:0.2px}
+      .preheader{display:none!important;visibility:hidden;opacity:0;height:0;width:0;font-size:1px;line-height:1px;color:transparent}
+      .content{padding:28px 32px;color:#0f172a;line-height:1.5}
+      .title{font-size:20px;font-weight:600;margin:0 0 8px}
+      .message{font-size:15px;color:#334155;margin:0 0 20px;white-space:pre-wrap}
+      .cta{display:inline-block;padding:12px 18px;border-radius:10px;background:#111827;color:#fff;text-decoration:none;font-weight:600}
+      .meta{font-size:13px;color:#64748b;margin-top:18px}
+      .footer{padding:18px 32px;background:#f1f5f9;color:#64748b;font-size:13px;text-align:center}
+      .small{font-size:12px;color:#9aa4b2}
+      @media (max-width:420px){
+        .email-card{margin:0 12px}
+        .header{padding:20px}
+        .content{padding:20px}
+      }
+    </style>
+  </head>
+  <body>
+    <!-- preheader: short summary for inbox preview -->
+    <div class="preheader">${(emailData.message || '').slice(0,120).replace(/\\n/g,' ')}</div>
+
+    <table role="presentation" class="email-body" cellpadding="0" cellspacing="0" width="100%">
+      <tr>
+        <td align="center">
+          <table role="presentation" class="email-card" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+              <td class="header" align="left">
+                <div class="brand">Parish — Admin Message</div>
+              </td>
+            </tr>
+
+            <tr>
+              <td class="content">
+                <h1 class="title">${emailData.subject}</h1>
+
+                <div class="message">
+                  ${(emailData.message || '').replace(/\\n/g,'<br/>')}
+                </div>
+
+              </td>
+            </tr>
+
+            <tr>
+              <td class="footer">
+                © ${new Date().getFullYear()} Parish <br/>
+                <span class="small">You received this message because you're registered with Parish.</span>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+  </html>
+  `
           })
+          toast({ title: "Email sent successfully" });
         } catch {
           toast({ title: "Error sending mail to user", variant: "destructive" });
         }
-        toast({
-          title: "Email functionality will be integrated with your email service",
-        });
     setShowEmailModal(false);
     setEmailData({ to: "", subject: "", message: "" });
   };
@@ -1831,7 +1900,7 @@ const AdminDashboard = () => {
               >
                 Cancel
               </Button>
-              <Button onClick={() => sendEmail(user.email)}>
+              <Button onClick={() => sendEmail()}>
                 <Mail className="h-4 w-4 mr-2" />
                 Send Email
               </Button>
