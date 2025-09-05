@@ -641,11 +641,20 @@ const AdminDashboard = () => {
     }
   };
 
-  const sendEmail = async () => {
+  const sendEmail = async (email: string) => {
     // This would integrate with your email service
-    toast({
-      title: "Email functionality will be integrated with your email service",
-    });
+    try {
+          await sendEventInvite({
+            to: [email],
+            subject: `${emailData.subject}`,
+            text: `${emailData.message}`
+          })
+        } catch {
+          toast({ title: "Error sending mail to user", variant: "destructive" });
+        }
+        toast({
+          title: "Email functionality will be integrated with your email service",
+        });
     setShowEmailModal(false);
     setEmailData({ to: "", subject: "", message: "" });
   };
@@ -1822,7 +1831,7 @@ const AdminDashboard = () => {
               >
                 Cancel
               </Button>
-              <Button onClick={sendEmail}>
+              <Button onClick={() => sendEmail(user.email)}>
                 <Mail className="h-4 w-4 mr-2" />
                 Send Email
               </Button>

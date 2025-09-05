@@ -444,7 +444,7 @@ const UserDetailsModal: React.FC<UserDetailsModalProps> = ({
                   </div>
                   <div>
                     <p>
-                    <Label className="text-sm font-medium">LinkedIn</Label>
+                    <Label className="text-sm font-medium">LinkedIn: {" "}</Label>
                     {user.linkedin_username ? (
                       <a
                         href={`https://linkedin.com/in/${user.linkedin_username}`}
@@ -460,7 +460,7 @@ const UserDetailsModal: React.FC<UserDetailsModalProps> = ({
                   </p>
 
                   <p>
-                    <Label className="text-sm font-medium">Instagram</Label>
+                    <Label className="text-sm font-medium">Instagram: {" "}</Label>
                     {user.instagram_username ? (
                       <a
                         href={`https://instagram.com/${user.instagram_username}`}
@@ -476,11 +476,11 @@ const UserDetailsModal: React.FC<UserDetailsModalProps> = ({
                   </p>
                   </div>
                   <div>
-                    <Label className="text-sm font-medium">Role</Label>
+                    <Label className="text-sm font-medium">Role {" "}</Label>
                     <Badge variant="outline">{user.role}</Badge>
                   </div>
                   <div>
-                    <Label className="text-sm font-medium">Job Title</Label>
+                    <Label className="text-sm font-medium">Job Title:</Label>
                     <p className="text-sm">
                       {user.job_title || "Not specified"}
                     </p>
