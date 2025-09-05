@@ -18,6 +18,7 @@ import '@/index.css';
 const Profile = () => {
   const [editing, setEditing] = useState(false);
   const [editingPreferences, setEditingPreferences] = useState(false);
+  const [editingSocials, setEditingSocials] = useState(false);
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [formData, setFormData] = useState({
@@ -25,6 +26,10 @@ const Profile = () => {
     last_name: '',
     job_title: '',
     location_city: ''
+  });
+  const [socialLinks, setSocialLinks] = useState({
+    instagram_username: '',
+    linkedin_username: ''
   });
   const [preferenceData, setPreferenceData] = useState({
     dining_style: '' as 'adventurous' | 'foodie_enthusiast' | 'local_lover' | 'comfort_food' | 'health_conscious' | 'social_butterfly' | '',
@@ -46,6 +51,10 @@ const Profile = () => {
         last_name: profile.last_name || '',
         job_title: profile.job_title || '',
         location_city: profile.location_city || ''
+      });
+      setSocialLinks({
+        instagram_username: profile.instagram_username || '',
+        linkedin_username: profile.linkedin_username || ''
       });
       setPreferenceData({
         dining_style: profile.dining_style || '',
@@ -219,6 +228,37 @@ const Profile = () => {
     }
   };
 
+  const handleSaveSocials = async () => {
+    if (!profile) return;
+
+    setLoading(true);
+    
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update(socialLinks)
+        .eq('id', profile.id);
+
+      if (error) throw error;
+
+      await refetch();
+      setEditingSocials(false);
+      
+      toast({
+        title: "Social Links updated!",
+        description: "Your social links has been updated successfully.",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to update social links",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  }
+
   const handleCancelPreferences = () => {
     if (profile) {
       setPreferenceData({
@@ -229,6 +269,16 @@ const Profile = () => {
     }
     setEditingPreferences(false);
   };
+
+  const handleCancelSocials = () => {
+    if (profile) {
+      setSocialLinks({
+        instagram_username: profile.instagram_username || '',
+        linkedin_username: profile.linkedin_username || ''
+      });
+    }
+    setEditingSocials(false);
+  }
 
   if (!profile) {
     return (
@@ -388,6 +438,60 @@ const Profile = () => {
                   )}
                 </div>
               </div>
+            </CardContent>
+          </Card>
+
+          {/* Social Links */}
+          <Card className="shadow-card border-border">
+            <CardHeader>
+              <CardTitle className="flex items-center justify-between">
+                Social Links
+                {!editingSocials ? (
+                  <Button onClick={() => setEditingSocials(true)} variant="outline" size="sm">
+                    <Edit className="h-4 w-4 mr-2" />
+                    Edit
+                  </Button>
+                ) : (
+                  <div className="flex space-x-2">
+                    <Button onClick={handleSaveSocials} disabled={loading} size="sm" className="bg-peach-gold hover:bg-peach-gold/90 text-background">
+                      <Save className="h-4 w-4 mr-2" />
+                      {loading ? 'Saving...' : 'Save'}
+                    </Button>
+                    <Button onClick={handleCancelSocials} variant="outline" size="sm">
+                      <X className="h-4 w-4 mr-2" />
+                      Cancel
+                    </Button>
+                  </div>
+                )}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <Label htmlFor="linkedin">LinkedIn</Label>
+                {editingSocials ? (
+                    <Input
+                      id="linkedin"
+                      value={socialLinks.linkedin_username}
+                      onChange={(e) => setSocialLinks(prev => ({ ...prev, linkedin_username: e.target.value }))}
+                    />
+                  ) : (
+                    <p className="text-foreground p-2 bg-muted rounded-md">{profile.linkedin_username || 'Not set'}</p>
+                  )}
+              </div>
+              
+              <div>
+                <Label htmlFor="instagram">Instagram</Label>
+                {editingSocials ? (
+                    <Input
+                      id="instagram"
+                      value={socialLinks.instagram_username}
+                      onChange={(e) => setSocialLinks(prev => ({ ...prev, instagram_username: e.target.value }))}
+                    />
+                  ) : (
+                    <p className="text-foreground p-2 bg-muted rounded-md">{profile.instagram_username || 'Not set'}</p>
+                  )}
+              </div>
+
             </CardContent>
           </Card>
 
