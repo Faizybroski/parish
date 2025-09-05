@@ -21,23 +21,27 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const location = useLocation();
 
   const fun = async() => {
-const instagram = localStorage.getItem("signup_instagram");
-            const linkedin = localStorage.getItem("signup_linkedin");
+    const instagram = localStorage.getItem("signup_instagram");
+    const linkedin = localStorage.getItem("signup_linkedin");
   
-            if (instagram !== null || linkedin !== null) {
-              console.log("Upserting profile for:", user.email);
-  
-              const { error } = await supabase.from("profiles").update({
-                instagram_username: instagram,
-                linkedin_username: linkedin,
-              }).eq('user_id', user.id);
-  
-              if (error) console.error("Upsert error:", error);
-  
-              localStorage.removeItem("signup_instagram");
-              localStorage.removeItem("signup_linkedin");
+    const updateData: Record<string, any>  = {};
+    if (instagram) updateData.instagram_username = instagram;
+    if (linkedin) updateData.linkedin_username = linkedin;
+
+    if (Object.keys(updateData).length > 0) {
+      console.log("Upserting profile for:", user.email);
+
+      const { error } = await supabase
+        .from("profiles")
+        .update(updateData)
+        .eq("user_id", user.id);
+
+      if (error) console.error("Upsert error:", error);
+
+      localStorage.removeItem("signup_instagram");
+      localStorage.removeItem("signup_linkedin");
+    }
   }
-}
 
   useEffect(() => {
     fun();
