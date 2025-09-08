@@ -21,13 +21,13 @@ const RestaurantForm: React.FC<RestaurantFormProps> = ({
   const { profile, loading: profileLoading } = useProfile();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    name: restaurant?.name || '',
-    country: restaurant?.country || '',
-    state_province: restaurant?.state_province || '',
-    city: restaurant?.city || '',
-    full_address: restaurant?.full_address || '',
-    latitude: restaurant?.latitude || '',
-    longitude: restaurant?.longitude || ''
+    name: restaurant?.name.trim() || '',
+    country: restaurant?.country.trim() || '',
+    state_province: restaurant?.state_province.trim() || '',
+    city: restaurant?.city.trim() || '',
+    full_address: restaurant?.full_address.trim() || '',
+    latitude: restaurant?.latitude.trim() || '',
+    longitude: restaurant?.longitude.trim() || ''
   });
 
   const handleInputChange = (field: string, value: string) => {
@@ -104,7 +104,7 @@ const RestaurantForm: React.FC<RestaurantFormProps> = ({
           <Input
             id="name"
             value={formData.name}
-            onChange={(e) => handleInputChange('name', e.target.value.trim())}
+            onChange={(e) => handleInputChange('name', e.target.value)}
             placeholder="Enter restaurant name"
             required
           />
@@ -115,7 +115,7 @@ const RestaurantForm: React.FC<RestaurantFormProps> = ({
           <Input
             id="country"
             value={formData.country}
-            onChange={(e) => handleInputChange('country', e.target.value.trim())}
+            onChange={(e) => handleInputChange('country', e.target.value)}
             placeholder="Enter country"
             required
           />
@@ -126,7 +126,7 @@ const RestaurantForm: React.FC<RestaurantFormProps> = ({
           <Input
             id="state_province"
             value={formData.state_province}
-            onChange={(e) => handleInputChange('state_province', e.target.value.trim())}
+            onChange={(e) => handleInputChange('state_province', e.target.value)}
             placeholder="Enter state or province"
             required
           />
@@ -137,7 +137,7 @@ const RestaurantForm: React.FC<RestaurantFormProps> = ({
           <Input
             id="city"
             value={formData.city}
-            onChange={(e) => handleInputChange('city', e.target.value.trim())}
+            onChange={(e) => handleInputChange('city', e.target.value)}
             placeholder="Enter city"
             required
           />
@@ -148,7 +148,7 @@ const RestaurantForm: React.FC<RestaurantFormProps> = ({
           <Input
             id="full_address"
             value={formData.full_address}
-            onChange={(e) => handleInputChange('full_address', e.target.value.trim())}
+            onChange={(e) => handleInputChange('full_address', e.target.value)}
             placeholder="Enter complete address"
             required
           />
@@ -161,7 +161,7 @@ const RestaurantForm: React.FC<RestaurantFormProps> = ({
             type="number"
             step="any"
             value={formData.latitude}
-            onChange={(e) => handleInputChange('latitude', e.target.value.trim())}
+            onChange={(e) => handleInputChange('latitude', e.target.value)}
             placeholder="e.g., 40.7128"
           />
         </div>
@@ -173,7 +173,7 @@ const RestaurantForm: React.FC<RestaurantFormProps> = ({
             type="number"
             step="any"
             value={formData.longitude}
-            onChange={(e) => handleInputChange('longitude', e.target.value.trim())}
+            onChange={(e) => handleInputChange('longitude', e.target.value)}
             placeholder="e.g., -74.0060"
           />
         </div>

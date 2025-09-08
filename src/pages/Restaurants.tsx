@@ -75,9 +75,9 @@ const Restaurants = () => {
   }, [refetch]);
 
   const filteredRestaurants = restaurants.filter(restaurant =>
-    restaurant.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    restaurant.city.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    restaurant.country.toLowerCase().includes(searchQuery.toLowerCase())
+    restaurant.name.toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
+    restaurant.city.toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
+    restaurant.country.toLowerCase().includes(searchQuery.toLowerCase().trim())
   );
 
   const handleDelete = async (id: string) => {
@@ -129,7 +129,7 @@ const Restaurants = () => {
             <Input
               placeholder="Search restaurants by name, city, or country..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value.trim())}
+              onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10"
             />
           </div>

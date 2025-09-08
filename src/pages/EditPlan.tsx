@@ -45,10 +45,10 @@ const EditPlan = () => {
         }
 
         setFormData({
-          name: plan.name || "",
-          description: plan.description || "",
-          price: plan.price?.toString() || "",
-          interval: plan.interval || "monthly",
+          name: plan.name.trim() || "",
+          description: plan.description.trim() || "",
+          price: plan.price?.toString().trim() || "",
+          interval: plan.interval.trim() || "monthly",
         });
       } catch (err) {
         toast.error("An unexpected error occurred while loading plan.");

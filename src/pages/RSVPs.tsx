@@ -201,13 +201,12 @@ const RSVPs = () => {
   const filteredRsvps = rsvps.filter((rsvp) => {
     const matchesSearch =
       searchTerm === "" ||
-      rsvp.events.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      rsvp.events.name.toLowerCase().includes(searchTerm.toLowerCase().trim()) ||
       rsvp.events.description
+        .includes(searchTerm.toLowerCase().trim()) ||
+      rsvp.events.location_name.trim()
         ?.toLowerCase()
-        .includes(searchTerm.toLowerCase()) ||
-      rsvp.events.location_name
-        ?.toLowerCase()
-        .includes(searchTerm.toLowerCase());
+        .includes(searchTerm.toLowerCase().trim());
 
     const matchesStatus =
       statusFilter === "all" || rsvp.status === statusFilter;
@@ -323,7 +322,7 @@ const RSVPs = () => {
                       <Input
                         placeholder="Search events..."
                         value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value.trim())}
+                        onChange={(e) => setSearchTerm(e.target.value)}
                         className="pl-10"
                       />
                     </div>

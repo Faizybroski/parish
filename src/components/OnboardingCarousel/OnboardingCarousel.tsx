@@ -75,7 +75,7 @@ export const OnboardingCarousel = ({ startStep = 0 }) => {
     setLoading(true);
     try {
       if (isLogin) {
-        const { error } = await signIn(email, password, "user");
+        const { error } = await signIn(email.trim(), password.trim(), "user");
         error
           ? toast({
               title: "Error",
@@ -97,10 +97,10 @@ export const OnboardingCarousel = ({ startStep = 0 }) => {
         }
 
         const { error } = await signUp(email, password, {
-          first_name: firstName,
-          last_name: lastName,
-          instagram_username: instagram,
-          linkedin_username: linkedin,
+          first_name: firstName.trim(),
+          last_name: lastName.trim(),
+          instagram_username: instagram.trim(),
+          linkedin_username: linkedin.trim(),
           role: "user",
         });
         error
@@ -191,7 +191,7 @@ export const OnboardingCarousel = ({ startStep = 0 }) => {
                     type="text"
                     placeholder="First name"
                     value={firstName}
-                    onChange={(e) => setFirstName(e.target.value.trim())}
+                    onChange={(e) => setFirstName(e.target.value)}
                     required
                   />
                 </div>
@@ -202,7 +202,7 @@ export const OnboardingCarousel = ({ startStep = 0 }) => {
                     type="text"
                     placeholder="Last name"
                     value={lastName}
-                    onChange={(e) => setLastName(e.target.value.trim())}
+                    onChange={(e) => setLastName(e.target.value)}
                     required
                   />
                 </div>
@@ -215,7 +215,7 @@ export const OnboardingCarousel = ({ startStep = 0 }) => {
                 type="email"
                 placeholder="Enter your email*"
                 value={email}
-                onChange={(e) => setEmail(e.target.value.trim())}
+                onChange={(e) => setEmail(e.target.value)}
                 required
               />
             </div>
@@ -226,7 +226,7 @@ export const OnboardingCarousel = ({ startStep = 0 }) => {
                 type={showPassword ? "text" : "password"}
                 placeholder="Enter your password*"
                 value={password}
-                onChange={(e) => setPassword(e.target.value.trim())}
+                onChange={(e) => setPassword(e.target.value)}
                 required
               />
               <button
@@ -250,7 +250,7 @@ export const OnboardingCarousel = ({ startStep = 0 }) => {
                     type="text"
                     placeholder="Enter your LinkedIn username*"
                     value={linkedin}
-                    onChange={(e) => setLinkedin(e.target.value.trim())}
+                    onChange={(e) => setLinkedin(e.target.value)}
                     className="mt-2"
                   />
                 </div>
@@ -269,7 +269,7 @@ export const OnboardingCarousel = ({ startStep = 0 }) => {
                     type="text"
                     placeholder="Enter your Instagram username*"
                     value={instagram}
-                    onChange={(e) => setInstagram(e.target.value.trim())}
+                    onChange={(e) => setInstagram(e.target.value)}
                     className="mt-2"
                   />
                 </div>
@@ -372,8 +372,8 @@ export const OnboardingCarousel = ({ startStep = 0 }) => {
                     return;
                   }
 
-                  if (instagram) localStorage.setItem("signup_instagram", instagram);
-                  if (linkedin) localStorage.setItem("signup_linkedin", linkedin);
+                  if (instagram) localStorage.setItem("signup_instagram", instagram.trim());
+                  if (linkedin) localStorage.setItem("signup_linkedin", linkedin.trim());
 
                   const { error } = await signInWithGoogle();
                   if (error) {
@@ -402,8 +402,8 @@ export const OnboardingCarousel = ({ startStep = 0 }) => {
                     return;
                   }
 
-                  if (instagram) localStorage.setItem("signup_instagram", instagram);
-                  if (linkedin) localStorage.setItem("signup_linkedin", linkedin);
+                  if (instagram) localStorage.setItem("signup_instagram", instagram.trim());
+                  if (linkedin) localStorage.setItem("signup_linkedin", linkedin.trim());
 
                   const { error } = await signInWithApple();
                   if (error) {

@@ -189,7 +189,7 @@ export const LocationStep: React.FC<LocationStepProps> = ({ data, updateData }) 
               id="location"
               placeholder="e.g., New York, NY"
               value={data.location_city || ""}
-              onChange={(e) => updateData("location_city", e.target.value.trim())}
+              onChange={(e) => updateData("location_city", e.target.value)}
               className="pl-10"
             />
           </div>

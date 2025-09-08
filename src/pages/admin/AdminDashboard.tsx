@@ -646,15 +646,15 @@ const AdminDashboard = () => {
     try {
           await sendEventInvite({
             to: [emailData.to],
-            subject: `${emailData.subject}`,
-            text: `${emailData.message}`,
+            subject: `${emailData.subject.trim()}`,
+            text: `${emailData.message.trim()}`,
               html: `
   <!doctype html>
   <html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>${emailData.subject}</title>
+    <title>${emailData.subject.trim()}</title>
     <style>
       /* Basic reset */
       body,table,td,a{-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%}
@@ -683,7 +683,7 @@ const AdminDashboard = () => {
   </head>
   <body>
     <!-- preheader: short summary for inbox preview -->
-    <div class="preheader">${(emailData.message || '').slice(0,120).replace(/\\n/g,' ')}</div>
+    <div class="preheader">${(emailData.message.trim() || '').slice(0,120).replace(/\\n/g,' ')}</div>
 
     <table role="presentation" class="email-body" cellpadding="0" cellspacing="0" width="100%">
       <tr>
@@ -697,10 +697,10 @@ const AdminDashboard = () => {
 
             <tr>
               <td class="content">
-                <h1 class="title">${emailData.subject}</h1>
+                <h1 class="title">${emailData.subject.trim()}</h1>
 
                 <div class="message">
-                  ${(emailData.message || '').replace(/\\n/g,'<br/>')}
+                  ${(emailData.message.trim() || '').replace(/\\n/g,'<br/>')}
                 </div>
 
               </td>
@@ -731,7 +731,7 @@ const AdminDashboard = () => {
   const filteredUsers = users.filter((user) => {
     const matchesSearch = `${user.first_name} ${user.last_name} ${user.email}`
       .toLowerCase()
-      .includes(searchTerm.toLowerCase());
+      .includes(searchTerm.toLowerCase().trim());
     const matchesStatus =
       userStatusFilter === "all" ||
             (userStatusFilter === "active" &&
@@ -752,7 +752,7 @@ const AdminDashboard = () => {
     const pendingFilteredUsers = pendingUsers.filter((user) => {
     const matchesSearch = `${user.first_name} ${user.last_name} ${user.email}`
       .toLowerCase()
-      .includes(pendingUserSearchTerm.toLowerCase());
+      .includes(pendingUserSearchTerm.toLowerCase().trim());
     const matchesStatus =
             (pendingUserStatusFilter === "pending" && user.approval_status === "pending") ||
             (pendingUserStatusFilter === "rejected" && user.approval_status === "rejected");
@@ -762,7 +762,7 @@ const AdminDashboard = () => {
   const filteredEvents = events.filter((event) => {
     const matchesSearch = event.name
       .toLowerCase()
-      .includes(eventSearchTerm.toLowerCase());
+      .includes(eventSearchTerm.toLowerCase().trim());
     const matchesStatus =
       eventStatusFilter === "all" || event.status === eventStatusFilter;
     return matchesSearch && matchesStatus;
@@ -1081,7 +1081,7 @@ const AdminDashboard = () => {
             <Input
               placeholder="Search users..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value.trim())}
+              onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full sm:w-64"
             />
           </div>
@@ -1224,7 +1224,7 @@ const AdminDashboard = () => {
             <Input
               placeholder="Search pending users..."
               value={pendingUserSearchTerm}
-              onChange={(e) => setPendingUserSearchTerm(e.target.value.trim())}
+              onChange={(e) => setPendingUserSearchTerm(e.target.value)}
               className="w-full sm:w-64"
             />
           </div>
@@ -1361,7 +1361,7 @@ const AdminDashboard = () => {
                     <Input
                       placeholder="Search events..."
                       value={eventSearchTerm}
-                      onChange={(e) => setEventSearchTerm(e.target.value.trim())}
+                      onChange={(e) => setEventSearchTerm(e.target.value)}
                       className="w-full sm:w-64"
                     />
                   </div>
@@ -1865,7 +1865,7 @@ const AdminDashboard = () => {
                 id="email-to"
                 value={emailData.to}
                 onChange={(e) =>
-                  setEmailData({ ...emailData, to: e.target.value.trim()})
+                  setEmailData({ ...emailData, to: e.target.value})
                 }
                 placeholder="recipient@example.com"
               />
@@ -1876,7 +1876,7 @@ const AdminDashboard = () => {
                 id="email-subject"
                 value={emailData.subject}
                 onChange={(e) =>
-                  setEmailData({ ...emailData, subject: e.target.value.trim()})
+                  setEmailData({ ...emailData, subject: e.target.value})
                 }
                 placeholder="Email subject"
               />
@@ -1887,7 +1887,7 @@ const AdminDashboard = () => {
                 id="email-message"
                 value={emailData.message}
                 onChange={(e) =>
-                  setEmailData({ ...emailData, message: e.target.value.trim()})
+                  setEmailData({ ...emailData, message: e.target.value})
                 }
                 placeholder="Your message..."
                 rows={5}

@@ -95,11 +95,11 @@ const GooglePlacesEventsForm: React.FC<Props> = ({ formData, onChange }) => {
       });
 
       const restaurantData = {
-        name: place.name || "",
-        country: components.country || "",
-        state_province: components.state || "",
-        city: components.city || "",
-        full_address: place.formatted_address || "",
+        name: place.name.trim() || "",
+        country: components.country.trim() || "",
+        state_province: components.state.trim() || "",
+        city: components.city.trim() || "",
+        full_address: place.formatted_address.trim() || "",
         latitude: parseFloat(lat),
         longitude: parseFloat(lng),
         creator_id: profile.id,
@@ -144,7 +144,7 @@ const GooglePlacesEventsForm: React.FC<Props> = ({ formData, onChange }) => {
             className="pl-10"
             placeholder="e.g., The Garden Cafe"
             value={formData.location_name}
-            onChange={(e) => onChange("location_name", e.target.value.trim())}
+            onChange={(e) => onChange("location_name", e.target.value)}
           />
         </div>
       </div>

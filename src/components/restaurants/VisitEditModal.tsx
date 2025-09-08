@@ -127,7 +127,7 @@ const VisitEditModal: React.FC<VisitEditModalProps> = ({ visit, onVisitUpdated }
                 id="visited_at"
                 type="date"
                 value={visitDate}
-                onChange={(e) => setVisitDate(e.target.value.trim())}
+                onChange={(e) => setVisitDate(e.target.value)}
                 max={new Date().toISOString().split('T')[0]}
                 required
               />

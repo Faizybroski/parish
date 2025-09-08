@@ -32,7 +32,7 @@ const Plans = () => {
   };
 
   const filteredPlans = plans
-    .filter((plan) => plan.name.toLowerCase().includes(searchQuery.toLowerCase()))
+    .filter((plan) => plan.name.toLowerCase().includes(searchQuery.toLowerCase().trim()))
     .filter((plan) =>
       activeTab === "monthly"
         ? plan.interval === "month"
@@ -73,7 +73,7 @@ const Plans = () => {
         <Input
           placeholder="Search plans by name..."
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value.trim())}
+          onChange={(e) => setSearchQuery(e.target.value)}
           className="pl-10"
         />
       </div>

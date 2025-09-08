@@ -165,11 +165,11 @@ const GooglePlacesRestaurantForm: React.FC<GooglePlacesRestaurantFormProps> = ({
           });
 
           const newFormData = {
-            name: place.name || place.formatted_address?.split(",")[0] || "",
-            full_address: place.formatted_address || "",
-            city: city || "",
-            state_province: state_province || "",
-            country: country || "",
+            name: place.name.trim() || place.formatted_address?.split(",")[0] || "",
+            full_address: place.formatted_address.trim() || "",
+            city: city.trim() || "",
+            state_province: state_province.trim() || "",
+            country: country.trim() || "",
             latitude: place.geometry.location.lat(),
             longitude: place.geometry.location.lng(),
           };
@@ -291,7 +291,7 @@ const GooglePlacesRestaurantForm: React.FC<GooglePlacesRestaurantFormProps> = ({
               <Input
                 id="name"
                 value={formData.name}
-                onChange={(e) => handleInputChange("name", e.target.value.trim())}
+                onChange={(e) => handleInputChange("name", e.target.value)}
                 placeholder="Restaurant name"
                 required
                 readOnly
@@ -305,7 +305,7 @@ const GooglePlacesRestaurantForm: React.FC<GooglePlacesRestaurantFormProps> = ({
                 id="full_address"
                 value={formData.full_address}
                 onChange={(e) =>
-                  handleInputChange("full_address", e.target.value.trim())
+                  handleInputChange("full_address", e.target.value)
                 }
                 placeholder="Complete address"
                 required
@@ -319,7 +319,7 @@ const GooglePlacesRestaurantForm: React.FC<GooglePlacesRestaurantFormProps> = ({
               <Input
                 id="city"
                 value={formData.city}
-                onChange={(e) => handleInputChange("city", e.target.value.trim())}
+                onChange={(e) => handleInputChange("city", e.target.value)}
                 placeholder="City"
                 required
                 readOnly
@@ -332,7 +332,7 @@ const GooglePlacesRestaurantForm: React.FC<GooglePlacesRestaurantFormProps> = ({
               <Input
                 id="state"
                 value={formData.state_province}
-                onChange={(e) => handleInputChange("state_province", e.target.value.trim())}
+                onChange={(e) => handleInputChange("state_province", e.target.value)}
                 placeholder="State or Province"
                 required
                 readOnly
@@ -345,7 +345,7 @@ const GooglePlacesRestaurantForm: React.FC<GooglePlacesRestaurantFormProps> = ({
               <Input
                 id="country"
                 value={formData.country}
-                onChange={(e) => handleInputChange("country", e.target.value.trim())}
+                onChange={(e) => handleInputChange("country", e.target.value)}
                 placeholder="Country"
                 required
                 readOnly

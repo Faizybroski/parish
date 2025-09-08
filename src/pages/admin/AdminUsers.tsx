@@ -387,8 +387,8 @@ const UserDetailsModal: React.FC<UserDetailsModalProps> = ({
     try {
       await sendEventInvite({
         to: [email],
-        subject: `${emailData.subject}`,
-        text: `${emailData.message}`,
+        subject: `${emailData.subject.trim()}`,
+        text: `${emailData.message.trim()}`,
           html: `
   <!doctype html>
   <html lang="en">
@@ -424,7 +424,7 @@ const UserDetailsModal: React.FC<UserDetailsModalProps> = ({
   </head>
   <body>
     <!-- preheader: short summary for inbox preview -->
-    <div class="preheader">${(emailData.message || '').slice(0,120).replace(/\\n/g,' ')}</div>
+    <div class="preheader">${(emailData.message.trim() || '').slice(0,120).replace(/\\n/g,' ')}</div>
 
     <table role="presentation" class="email-body" cellpadding="0" cellspacing="0" width="100%">
       <tr>
@@ -438,10 +438,10 @@ const UserDetailsModal: React.FC<UserDetailsModalProps> = ({
 
             <tr>
               <td class="content">
-                <h1 class="title">${emailData.subject}</h1>
+                <h1 class="title">${emailData.subject.trim()}</h1>
 
                 <div class="message">
-                  ${(emailData.message || '').replace(/\\n/g,'<br/>')}
+                  ${(emailData.message.trim() || '').replace(/\\n/g,'<br/>')}
                 </div>
 
               </td>
@@ -837,7 +837,7 @@ const UserDetailsModal: React.FC<UserDetailsModalProps> = ({
                 id="email-subject"
                 value={emailData.subject}
                 onChange={(e) =>
-                  setEmailData((prev) => ({ ...prev, subject: e.target.value.trim()}))
+                  setEmailData((prev) => ({ ...prev, subject: e.target.value}))
                 }
                 placeholder="Enter email subject"
               />
@@ -848,7 +848,7 @@ const UserDetailsModal: React.FC<UserDetailsModalProps> = ({
                 id="email-message"
                 value={emailData.message}
                 onChange={(e) =>
-                  setEmailData((prev) => ({ ...prev, message: e.target.value.trim()}))
+                  setEmailData((prev) => ({ ...prev, message: e.target.value}))
                 }
                 placeholder="Enter your message"
                 rows={4}
@@ -978,7 +978,7 @@ const getUserStatus = (user: User) => {
   const filteredUsers = users.filter((user) => {
     const matchesSearch = `${user.first_name} ${user.last_name} ${user.email}`
       .toLowerCase()
-      .includes(searchTerm.toLowerCase());
+      .includes(searchTerm.toLowerCase().trim());
 
     const matchesStatus =
       statusFilter === "all" ||
@@ -1035,7 +1035,7 @@ const getUserStatus = (user: User) => {
             <Input
               placeholder="Search users by name or email..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value.trim())}
+              onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
             />
           </div>
@@ -1155,7 +1155,7 @@ const getUserStatus = (user: User) => {
           <Input
             value={editUserData.first_name}
             onChange={(e) =>
-              setEditUserData({ ...editUserData, first_name: e.target.value.trim()})
+              setEditUserData({ ...editUserData, first_name: e.target.value})
             }
           />
         </div>
@@ -1165,7 +1165,7 @@ const getUserStatus = (user: User) => {
           <Input
             value={editUserData.last_name}
             onChange={(e) =>
-              setEditUserData({ ...editUserData, last_name: e.target.value.trim()})
+              setEditUserData({ ...editUserData, last_name: e.target.value})
             }
           />
         </div>
@@ -1193,7 +1193,7 @@ const getUserStatus = (user: User) => {
           <Input
             value={editUserData.job_title || ""}
             onChange={(e) =>
-              setEditUserData({ ...editUserData, job_title: e.target.value.trim()})
+              setEditUserData({ ...editUserData, job_title: e.target.value})
             }
           />
         </div>
@@ -1203,7 +1203,7 @@ const getUserStatus = (user: User) => {
           <Input
             value={editUserData.location_city || ""}
             onChange={(e) =>
-              setEditUserData({ ...editUserData, location_city: e.target.value.trim()})
+              setEditUserData({ ...editUserData, location_city: e.target.value})
             }
           />
         </div>
@@ -1213,7 +1213,7 @@ const getUserStatus = (user: User) => {
           onChange={(e) =>
             setEditUserData({
               ...editUserData,
-              instagram_username: e.target.value.trim(),
+              instagram_username: e.target.value,
             })
           }
           placeholder="Instagram Username"
@@ -1224,7 +1224,7 @@ const getUserStatus = (user: User) => {
           onChange={(e) =>
             setEditUserData({
               ...editUserData,
-              linkedin_username: e.target.value.trim(),
+              linkedin_username: e.target.value,
             })
           }
           placeholder="LinkedIn Username"
@@ -1240,13 +1240,13 @@ const getUserStatus = (user: User) => {
               const { error } = await supabase
                 .from("profiles")
                 .update({
-                  first_name: editUserData.first_name,
-                  last_name: editUserData.last_name,
-                  role: editUserData.role,
-                  job_title: editUserData.job_title,
-                  location_city: editUserData.location_city,
-                  instagram_username: editUserData.instagram_username || null,
-                  linkedin_username: editUserData.linkedin_username || null,
+                  first_name: editUserData.first_name.trim(),
+                  last_name: editUserData.last_name.trim(),
+                  role: editUserData.role.trim(),
+                  job_title: editUserData.job_title.trim(),
+                  location_city: editUserData.location_city.trim(),
+                  instagram_username: editUserData.instagram_username.trim() || null,
+                  linkedin_username: editUserData.linkedin_username.trim() || null,
                 })
                 .eq("id", editUserData.id);
 

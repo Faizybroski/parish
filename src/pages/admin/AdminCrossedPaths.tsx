@@ -130,11 +130,11 @@ const AdminCrossedPaths = () => {
     // Search filter
     if (searchTerm) {
       filtered = filtered.filter(path => 
-        path.restaurant_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        path.user_a.first_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        path.user_a.last_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        path.user_b.first_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        path.user_b.last_name?.toLowerCase().includes(searchTerm.toLowerCase())
+        path.restaurant_name?.toLowerCase().includes(searchTerm.toLowerCase().trim()) ||
+        path.user_a.first_name?.toLowerCase().includes(searchTerm.toLowerCase().trim()) ||
+        path.user_a.last_name?.toLowerCase().includes(searchTerm.toLowerCase().trim()) ||
+        path.user_b.first_name?.toLowerCase().includes(searchTerm.toLowerCase().trim()) ||
+        path.user_b.last_name?.toLowerCase().includes(searchTerm.toLowerCase().trim())
       );
     }
 
@@ -265,7 +265,7 @@ return (
                   <Input
                     placeholder="Search users or restaurants..."
                     value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value.trim())}
+                    onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-10"
                   />
                 </div>

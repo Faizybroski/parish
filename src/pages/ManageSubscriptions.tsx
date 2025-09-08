@@ -12,7 +12,7 @@ const ManageSubscriptions = () => {
 
   const filtered = subscriptions.filter((s) => {
     const name = `${s.profiles?.first_name || ""} ${s.profiles?.last_name || ""}`.toLowerCase();
-    return name.includes(search.toLowerCase());
+    return name.includes(search.toLowerCase().trim());
   });
 
   return (
@@ -26,7 +26,7 @@ const ManageSubscriptions = () => {
         <Input
           placeholder="Search by user name..."
           value={search}
-          onChange={(e) => setSearch(e.target.value.trim())}
+          onChange={(e) => setSearch(e.target.value)}
         />
       </div>
 

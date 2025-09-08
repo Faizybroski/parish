@@ -160,8 +160,8 @@ const AdminManagement = () => {
   };
 
   const filteredAdmins = admins.filter(admin =>
-    admin.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    `${admin.first_name} ${admin.last_name}`.toLowerCase().includes(searchTerm.toLowerCase())
+    admin.email.toLowerCase().includes(searchTerm.toLowerCase().trim()) ||
+    `${admin.first_name} ${admin.last_name}`.toLowerCase().includes(searchTerm.toLowerCase().trim())
   );
 
   const getRoleBadgeVariant = (role: string) => {
@@ -324,7 +324,7 @@ const AdminManagement = () => {
         <Input
           placeholder="Search admins by name or email..."
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value.trim())}
+          onChange={(e) => setSearchTerm(e.target.value)}
           className="pl-10"
         />
       </div>

@@ -74,7 +74,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
 
     // Validate billing info
     const requiredFields: (keyof BillingInfo)[] = ['fullName', 'email', 'address', 'city', 'zipCode'];
-    const missingFields = requiredFields.filter(field => !billingInfo[field].trim());
+    const missingFields = requiredFields.filter(field => !billingInfo[field]);
     
     if (missingFields.length > 0) {
       toast({ 
@@ -147,7 +147,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
                 <Input
                   id="fullName"
                   value={billingInfo.fullName}
-                  onChange={(e) => handleInputChange('fullName', e.target.value.trim())}
+                  onChange={(e) => handleInputChange('fullName', e.target.value)}
                   placeholder="Enter your full name"
                 />
               </div>
@@ -158,7 +158,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
                   id="email"
                   type="email"
                   value={billingInfo.email}
-                  onChange={(e) => handleInputChange('email', e.target.value.trim())}
+                  onChange={(e) => handleInputChange('email', e.target.value)}
                   placeholder="Enter your email"
                 />
               </div>
@@ -168,7 +168,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
                 <Input
                   id="address"
                   value={billingInfo.address}
-                  onChange={(e) => handleInputChange('address', e.target.value.trim())}
+                  onChange={(e) => handleInputChange('address', e.target.value)}
                   placeholder="Enter your address"
                 />
               </div>
@@ -179,7 +179,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
                   <Input
                     id="city"
                     value={billingInfo.city}
-                    onChange={(e) => handleInputChange('city', e.target.value.trim())}
+                    onChange={(e) => handleInputChange('city', e.target.value)}
                     placeholder="City"
                   />
                 </div>
@@ -188,7 +188,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
                   <Input
                     id="zipCode"
                     value={billingInfo.zipCode}
-                    onChange={(e) => handleInputChange('zipCode', e.target.value.trim())}
+                    onChange={(e) => handleInputChange('zipCode', e.target.value)}
                     placeholder="Zip code"
                   />
                 </div>
@@ -199,7 +199,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
                 <Input
                   id="country"
                   value={billingInfo.country}
-                  onChange={(e) => handleInputChange('country', e.target.value.trim())}
+                  onChange={(e) => handleInputChange('country', e.target.)}
                   placeholder="Country"
                 />
               </div>

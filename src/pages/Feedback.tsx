@@ -149,9 +149,9 @@ const Feedback = () => {
         const { error } = await supabase
           .from('feedback')
           .update({
-            rating: feedback.rating,
-            comment: feedback.comment,
-            flagged_users: feedback.flagged_users
+            rating: feedback.rating.trim(),
+            comment: feedback.comment.trim(),
+            flagged_users: feedback.flagged_users.trim()
           })
           .eq('id', existingFeedback.id);
 
@@ -262,7 +262,7 @@ const Feedback = () => {
                     </label>
                     <Textarea
                       value={feedback.comment}
-                      onChange={(e) => setFeedback(prev => ({ ...prev, comment: e.target.value.trim()}))}
+                      onChange={(e) => setFeedback(prev => ({ ...prev, comment: e.target.value}))}
                       placeholder="Share your thoughts about the event, food, atmosphere, etc."
                       rows={4}
                     />

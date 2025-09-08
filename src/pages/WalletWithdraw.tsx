@@ -143,11 +143,11 @@ const WalletWithdraw = () => {
         .insert([
           {
             creator_id: profile?.user_id,
-            note: paymentNote,
+            note: paymentNote.trim(),
             total_amount: totalPayments,
             status: "pending",
-            payment_method: paymentMethod,
-            account_details: accountDetails,
+            payment_method: paymentMethod.trim(),
+            account_details: accountDetails.trim(),
           },
         ]);
       if (insertError) throw insertError;
@@ -295,7 +295,7 @@ const WalletWithdraw = () => {
               <Input
                 placeholder={`Enter your ${paymentMethod} username/email`}
                 value={accountDetails}
-                onChange={(e) => setAccountDetails(e.target.value.trim())}
+                onChange={(e) => setAccountDetails(e.target.value)}
                 className="mb-3"
                 disabled={loading}
               />
@@ -305,7 +305,7 @@ const WalletWithdraw = () => {
             <Input
               placeholder="Enter details for admin..."
               value={paymentNote}
-              onChange={(e) => setPaymentNote(e.target.value.trim())}
+              onChange={(e) => setPaymentNote(e.target.value)}
               className="mb-3"
               disabled={loading}
             />

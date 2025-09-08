@@ -550,9 +550,9 @@ const Events = () => {
 
   const filteredEvents = events.filter(
     (event) =>
-      event.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      event.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      event.location_name.toLowerCase().includes(searchTerm.toLowerCase())
+      event.name.toLowerCase().includes(searchTerm.toLowerCase().trim()) ||
+      event.description.toLowerCase().includes(searchTerm.toLowerCase().trim()) ||
+      event.location_name.toLowerCase().includes(searchTerm.toLowerCase().trim())
   );
 
   const EventCards = ({
@@ -807,7 +807,7 @@ const Events = () => {
               <Input
                 placeholder="Search my events..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value.trim())}
+                onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10"
               />
             </div>

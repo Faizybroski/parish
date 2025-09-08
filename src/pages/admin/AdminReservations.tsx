@@ -121,8 +121,8 @@ const AdminReservations = () => {
 
   const filteredReservations = reservations.filter(reservation => {
     const matchesSearch = 
-      reservation.events.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      reservation.user_id.toLowerCase().includes(searchTerm.toLowerCase());
+      reservation.events.name.toLowerCase().includes(searchTerm.toLowerCase().trim()) ||
+      reservation.user_id.toLowerCase().includes(searchTerm.toLowerCase().trim());
     
     const matchesStatus = statusFilter === 'all' || reservation.reservation_status === statusFilter;
     
@@ -236,7 +236,7 @@ const AdminReservations = () => {
                   <Input
                     placeholder="Search by event name or user ID..."
                     value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value.trim())}
+                    onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-9"
                   />
                 </div>

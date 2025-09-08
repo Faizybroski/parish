@@ -367,7 +367,7 @@ const CreateEvent = () => {
                     id="name"
                     placeholder="e.g., Wine Tasting Social"
                     value={formData.name}
-                    onChange={(e) => handleInputChange("name", e.target.value.trim())}
+                    onChange={(e) => handleInputChange("name", e.target.value)}
                     required
                   />
                 </div>
@@ -379,7 +379,7 @@ const CreateEvent = () => {
                     placeholder="Describe your event, what to expect, dress code, etc."
                     value={formData.description}
                     onChange={(e) =>
-                      handleInputChange("description", e.target.value.trim())
+                      handleInputChange("description", e.target.value)
                     }
                     rows={4}
                     required
@@ -397,7 +397,7 @@ const CreateEvent = () => {
                         min={today}
                         value={formData.date}
                         onChange={(e) =>
-                          handleInputChange("date", e.target.value.trim())
+                          handleInputChange("date", e.target.value)
                         }
                         className="pl-10"
                         required
@@ -414,7 +414,7 @@ const CreateEvent = () => {
                         type="time"
                         value={formData.time}
                         onChange={(e) =>
-                          handleInputChange("time", e.target.value.trim())
+                          handleInputChange("time", e.target.value)
                         }
                         className="pl-10"
                         required
@@ -474,7 +474,7 @@ const CreateEvent = () => {
                       onChange={(e) =>
                         handleInputChange(
                           "max_attendees",
-                          parseInt(e.target.value.trim())
+                          parseInt(e.target.value)
                         )
                       }
                       required
@@ -491,7 +491,7 @@ const CreateEvent = () => {
                       min={today}
                       value={formData.rsvp_deadline_date}
                       onChange={(e) =>
-                        handleInputChange("rsvp_deadline_date", e.target.value.trim())
+                        handleInputChange("rsvp_deadline_date", e.target.value)
                       }
                     />
                   </div>
@@ -504,7 +504,7 @@ const CreateEvent = () => {
                     type="time"
                     value={formData.rsvp_deadline_time}
                     onChange={(e) =>
-                      handleInputChange("rsvp_deadline_time", e.target.value.trim())
+                      handleInputChange("rsvp_deadline_time", e.target.value)
                     }
                   />
                 </div>
@@ -593,7 +593,7 @@ const CreateEvent = () => {
                       onChange={(e) =>
                         handleInputChange(
                           "guest_invitation_type",
-                          e.target.value.trim()
+                          e.target.value
                         )
                       }
                       className="w-4 h-4"
@@ -613,7 +613,7 @@ const CreateEvent = () => {
                       onChange={(e) =>
                         handleInputChange(
                           "guest_invitation_type",
-                          e.target.value.trim()
+                          e.target.value
                         )
                       }
                       className="w-4 h-4"
@@ -738,7 +738,7 @@ const CreateEvent = () => {
                         onChange={(e) =>
                           handleInputChange(
                             "event_fee",
-                            parseFloat(e.target.value.trim())
+                            parseFloat(e.target.value)
                           )
                         }
                         className="pl-10"
@@ -762,7 +762,7 @@ const CreateEvent = () => {
                   <Input
                     placeholder="Add a tag (e.g., wine, vegan, casual)"
                     value={newTag}
-                    onChange={(e) => setNewTag(e.target.value.trim())}
+                    onChange={(e) => setNewTag(e.target.value)}
                     onKeyPress={(e) =>
                       e.key === "Enter" && (e.preventDefault(), addTag())
                     }

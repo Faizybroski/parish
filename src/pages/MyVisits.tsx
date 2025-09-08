@@ -78,7 +78,7 @@ const MyVisits = () => {
     // Search filter
     if (searchTerm) {
       filtered = filtered.filter(visit => 
-        visit.restaurant_name.toLowerCase().includes(searchTerm.toLowerCase())
+        visit.restaurant_name.toLowerCase().includes(searchTerm.toLowerCase().trim())
       );
     }
 
@@ -210,7 +210,7 @@ const MyVisits = () => {
                     <Input
                       placeholder="Search restaurants..."
                       value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value.trim())}
+                      onChange={(e) => setSearchTerm(e.target.value)}
                       className="pl-10"
                     />
                   </div>

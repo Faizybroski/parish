@@ -85,8 +85,8 @@ const AdminSettings = () => {
       if (category === "Stripe") {
         // Save Stripe settings to system_settings table
         const updates = [
-          { key: "STRIPE_PUBLIC_KEY", value: settings.stripePublicKey },
-          { key: "STRIPE_SECRET_KEY", value: settings.stripeSecretKey },
+          { key: "STRIPE_PUBLIC_KEY", value: settings.stripePublicKey.trim() },
+          { key: "STRIPE_SECRET_KEY", value: settings.stripeSecretKey.trim() },
         ];
 
         for (const update of updates) {
@@ -163,7 +163,7 @@ const AdminSettings = () => {
                   <Input
                     id="siteName"
                     value={settings.siteName}
-                    onChange={(e) => updateSetting("siteName", e.target.value.trim())}
+                    onChange={(e) => updateSetting("siteName", e.target.value)}
                   />
                 </div>
                 <div className="space-y-2">
@@ -175,7 +175,7 @@ const AdminSettings = () => {
                     onChange={(e) =>
                       updateSetting(
                         "maxEventAttendees",
-                        parseInt(e.target.value.trim())
+                        parseInt(e.target.value)
                       )
                     }
                   />
@@ -188,7 +188,7 @@ const AdminSettings = () => {
                   id="siteDescription"
                   value={settings.siteDescription}
                   onChange={(e) =>
-                    updateSetting("siteDescription", e.target.value.trim())
+                    updateSetting("siteDescription", e.target.value)
                   }
                   rows={3}
                 />
@@ -205,7 +205,7 @@ const AdminSettings = () => {
                   onChange={(e) =>
                     updateSetting(
                       "defaultEventDuration",
-                      parseInt(e.target.value.trim())
+                      parseInt(e.target.value)
                     )
                   }
                 />
@@ -241,7 +241,7 @@ const AdminSettings = () => {
                   placeholder="pk_test_..."
                   value={settings.stripePublicKey || ""}
                   onChange={(e) =>
-                    updateSetting("stripePublicKey", e.target.value.trim())
+                    updateSetting("stripePublicKey", e.target.value)
                   }
                 />
                 <p className="text-sm text-muted-foreground">
@@ -257,7 +257,7 @@ const AdminSettings = () => {
                   placeholder="sk_test_..."
                   value={settings.stripeSecretKey || ""}
                   onChange={(e) =>
-                    updateSetting("stripeSecretKey", e.target.value.trim())
+                    updateSetting("stripeSecretKey", e.target.value)
                   }
                 />
                 <p className="text-sm text-muted-foreground">
@@ -322,7 +322,7 @@ const AdminSettings = () => {
                 <select
                   id="logLevel"
                   value={settings.logLevel}
-                  onChange={(e) => updateSetting("logLevel", e.target.value.trim())}
+                  onChange={(e) => updateSetting("logLevel", e.target.value)}
                   className="w-full p-2 border rounded-md text-black font-bold"
                 >
                   <option value="ERROR">ERROR</option>

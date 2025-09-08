@@ -82,8 +82,8 @@ const AdminRSVPs = () => {
   };
 
   const filteredRSVPs = rsvps.filter(rsvp =>
-    rsvp.event?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    `${rsvp.profile?.first_name} ${rsvp.profile?.last_name}`.toLowerCase().includes(searchTerm.toLowerCase())
+    rsvp.event?.name.toLowerCase().includes(searchTerm.toLowerCase().trim()) ||
+    `${rsvp.profile?.first_name} ${rsvp.profile?.last_name}`.toLowerCase().includes(searchTerm.toLowerCase().trim())
   );
 
   const getStatsByStatus = () => {
@@ -171,7 +171,7 @@ const AdminRSVPs = () => {
         <Input
           placeholder="Search RSVPs by event name or user..."
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value.trim())}
+          onChange={(e) => setSearchTerm(e.target.value)}
           className="pl-10"
         />
       </div>

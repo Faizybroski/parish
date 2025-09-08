@@ -20,7 +20,7 @@ export const AdminLogin = () => {
     e.preventDefault();
     setLoading(true);
     try {
-        const { error } = await signIn(email, password, 'admin');
+        const { error } = await signIn(email.trim(), password.trim(), 'admin');
         error
           ? toast({
               title: "Error",
@@ -64,7 +64,7 @@ export const AdminLogin = () => {
                 type="email"
                 placeholder="Enter your email*"
                 value={email}
-                onChange={(e) => setEmail(e.target.value.trim())}
+                onChange={(e) => setEmail(e.target.value)}
                 required
               />
             </div>
@@ -75,7 +75,7 @@ export const AdminLogin = () => {
                 type={showPassword ? "text" : "password"}
                 placeholder="Enter your password*"
                 value={password}
-                onChange={(e) => setPassword(e.target.value.trim())}
+                onChange={(e) => setPassword(e.target.value)}
                 required
               />
               <button
