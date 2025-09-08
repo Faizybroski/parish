@@ -1081,7 +1081,7 @@ const AdminDashboard = () => {
             <Input
               placeholder="Search users..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e) => setSearchTerm(e.target.value.trim())}
               className="w-full sm:w-64"
             />
           </div>
@@ -1224,7 +1224,7 @@ const AdminDashboard = () => {
             <Input
               placeholder="Search pending users..."
               value={pendingUserSearchTerm}
-              onChange={(e) => setPendingUserSearchTerm(e.target.value)}
+              onChange={(e) => setPendingUserSearchTerm(e.target.value.trim())}
               className="w-full sm:w-64"
             />
           </div>
@@ -1361,7 +1361,7 @@ const AdminDashboard = () => {
                     <Input
                       placeholder="Search events..."
                       value={eventSearchTerm}
-                      onChange={(e) => setEventSearchTerm(e.target.value)}
+                      onChange={(e) => setEventSearchTerm(e.target.value.trim())}
                       className="w-full sm:w-64"
                     />
                   </div>
@@ -1865,7 +1865,7 @@ const AdminDashboard = () => {
                 id="email-to"
                 value={emailData.to}
                 onChange={(e) =>
-                  setEmailData({ ...emailData, to: e.target.value })
+                  setEmailData({ ...emailData, to: e.target.value.trim()})
                 }
                 placeholder="recipient@example.com"
               />
@@ -1876,7 +1876,7 @@ const AdminDashboard = () => {
                 id="email-subject"
                 value={emailData.subject}
                 onChange={(e) =>
-                  setEmailData({ ...emailData, subject: e.target.value })
+                  setEmailData({ ...emailData, subject: e.target.value.trim()})
                 }
                 placeholder="Email subject"
               />
@@ -1887,7 +1887,7 @@ const AdminDashboard = () => {
                 id="email-message"
                 value={emailData.message}
                 onChange={(e) =>
-                  setEmailData({ ...emailData, message: e.target.value })
+                  setEmailData({ ...emailData, message: e.target.value.trim()})
                 }
                 placeholder="Your message..."
                 rows={5}

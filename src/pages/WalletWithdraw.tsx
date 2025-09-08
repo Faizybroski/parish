@@ -247,7 +247,7 @@ const WalletWithdraw = () => {
             <Input
               placeholder="Enter details for admin..."
               value={paymentNote}
-              onChange={(e) => setPaymentNote(e.target.value)}
+              onChange={(e) => setPaymentNote(e.target.value.trim())}
               className="mb-3"
               disabled={loading}
             />
@@ -295,7 +295,7 @@ const WalletWithdraw = () => {
               <Input
                 placeholder={`Enter your ${paymentMethod} username/email`}
                 value={accountDetails}
-                onChange={(e) => setAccountDetails(e.target.value)}
+                onChange={(e) => setAccountDetails(e.target.value.trim())}
                 className="mb-3"
                 disabled={loading}
               />
@@ -305,7 +305,7 @@ const WalletWithdraw = () => {
             <Input
               placeholder="Enter details for admin..."
               value={paymentNote}
-              onChange={(e) => setPaymentNote(e.target.value)}
+              onChange={(e) => setPaymentNote(e.target.value.trim())}
               className="mb-3"
               disabled={loading}
             />

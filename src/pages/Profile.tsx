@@ -392,7 +392,7 @@ const Profile = () => {
                     <Input
                       id="first_name"
                       value={formData.first_name}
-                      onChange={(e) => setFormData(prev => ({ ...prev, first_name: e.target.value }))}
+                      onChange={(e) => setFormData(prev => ({ ...prev, first_name: e.target.value.trim()}))}
                     />
                   ) : (
                     <p className="text-foreground p-2 bg-muted rounded-md">{profile.first_name || 'Not set'}</p>
@@ -405,7 +405,7 @@ const Profile = () => {
                     <Input
                       id="last_name"
                       value={formData.last_name}
-                      onChange={(e) => setFormData(prev => ({ ...prev, last_name: e.target.value }))}
+                      onChange={(e) => setFormData(prev => ({ ...prev, last_name: e.target.value.trim()}))}
                     />
                   ) : (
                     <p className="text-foreground p-2 bg-muted rounded-md">{profile.last_name || 'Not set'}</p>
@@ -418,7 +418,7 @@ const Profile = () => {
                     <Input
                       id="job_title"
                       value={formData.job_title}
-                      onChange={(e) => setFormData(prev => ({ ...prev, job_title: e.target.value }))}
+                      onChange={(e) => setFormData(prev => ({ ...prev, job_title: e.target.value.trim()}))}
                     />
                   ) : (
                     <p className="text-foreground p-2 bg-muted rounded-md">{profile.job_title || 'Not set'}</p>
@@ -431,7 +431,7 @@ const Profile = () => {
                     <Input
                       id="location_city"
                       value={formData.location_city}
-                      onChange={(e) => setFormData(prev => ({ ...prev, location_city: e.target.value }))}
+                      onChange={(e) => setFormData(prev => ({ ...prev, location_city: e.target.value.trim()}))}
                     />
                   ) : (
                     <p className="text-foreground p-2 bg-muted rounded-md">{profile.location_city || 'Not set'}</p>
@@ -472,7 +472,7 @@ const Profile = () => {
                     <Input
                       id="linkedin"
                       value={socialLinks.linkedin_username}
-                      onChange={(e) => setSocialLinks(prev => ({ ...prev, linkedin_username: e.target.value }))}
+                      onChange={(e) => setSocialLinks(prev => ({ ...prev, linkedin_username: e.target.value.trim()}))}
                     />
                   ) : (
                     <p className="text-foreground p-2 bg-muted rounded-md">{profile.linkedin_username || 'Not set'}</p>
@@ -485,7 +485,7 @@ const Profile = () => {
                     <Input
                       id="instagram"
                       value={socialLinks.instagram_username}
-                      onChange={(e) => setSocialLinks(prev => ({ ...prev, instagram_username: e.target.value }))}
+                      onChange={(e) => setSocialLinks(prev => ({ ...prev, instagram_username: e.target.value.trim()}))}
                     />
                   ) : (
                     <p className="text-foreground p-2 bg-muted rounded-md">{profile.instagram_username || 'Not set'}</p>

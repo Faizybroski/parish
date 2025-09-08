@@ -236,7 +236,7 @@ const AdminReservations = () => {
                   <Input
                     placeholder="Search by event name or user ID..."
                     value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
+                    onChange={(e) => setSearchTerm(e.target.value.trim())}
                     className="pl-9"
                   />
                 </div>

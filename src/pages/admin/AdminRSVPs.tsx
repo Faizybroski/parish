@@ -171,7 +171,7 @@ const AdminRSVPs = () => {
         <Input
           placeholder="Search RSVPs by event name or user..."
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={(e) => setSearchTerm(e.target.value.trim())}
           className="pl-10"
         />
       </div>

@@ -144,7 +144,7 @@ const GooglePlacesEventsForm: React.FC<Props> = ({ formData, onChange }) => {
             className="pl-10"
             placeholder="e.g., The Garden Cafe"
             value={formData.location_name}
-            onChange={(e) => onChange("location_name", e.target.value)}
+            onChange={(e) => onChange("location_name", e.target.value.trim())}
           />
         </div>
       </div>

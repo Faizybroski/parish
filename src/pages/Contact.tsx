@@ -23,7 +23,7 @@ export const ContactPage: React.FC = () => {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData({ ...formData, [e.target.name]: e.target.value.trim()});
   };
 
   const handleSubmit = async (e: React.FormEvent) => {

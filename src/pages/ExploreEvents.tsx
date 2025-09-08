@@ -665,7 +665,7 @@ const ExploreEvents = () => {
             <Input
               placeholder="Search events..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e) => setSearchTerm(e.target.value.trim())}
               className="pl-10"
             />
           </div>

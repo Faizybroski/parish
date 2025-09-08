@@ -12,6 +12,8 @@ dist
 dist-ssr
 *.local
 
+.excalidraw
+
 *.zip
 
 # Editor directories and files

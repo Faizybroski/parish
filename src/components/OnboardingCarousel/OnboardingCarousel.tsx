@@ -191,7 +191,7 @@ export const OnboardingCarousel = ({ startStep = 0 }) => {
                     type="text"
                     placeholder="First name"
                     value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
+                    onChange={(e) => setFirstName(e.target.value.trim())}
                     required
                   />
                 </div>
@@ -202,7 +202,7 @@ export const OnboardingCarousel = ({ startStep = 0 }) => {
                     type="text"
                     placeholder="Last name"
                     value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
+                    onChange={(e) => setLastName(e.target.value.trim())}
                     required
                   />
                 </div>
@@ -215,7 +215,7 @@ export const OnboardingCarousel = ({ startStep = 0 }) => {
                 type="email"
                 placeholder="Enter your email*"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => setEmail(e.target.value.trim())}
                 required
               />
             </div>
@@ -226,7 +226,7 @@ export const OnboardingCarousel = ({ startStep = 0 }) => {
                 type={showPassword ? "text" : "password"}
                 placeholder="Enter your password*"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => setPassword(e.target.value.trim())}
                 required
               />
               <button
@@ -250,7 +250,7 @@ export const OnboardingCarousel = ({ startStep = 0 }) => {
                     type="text"
                     placeholder="Enter your LinkedIn username*"
                     value={linkedin}
-                    onChange={(e) => setLinkedin(e.target.value)}
+                    onChange={(e) => setLinkedin(e.target.value.trim())}
                     className="mt-2"
                   />
                 </div>
@@ -269,7 +269,7 @@ export const OnboardingCarousel = ({ startStep = 0 }) => {
                     type="text"
                     placeholder="Enter your Instagram username*"
                     value={instagram}
-                    onChange={(e) => setInstagram(e.target.value)}
+                    onChange={(e) => setInstagram(e.target.value.trim())}
                     className="mt-2"
                   />
                 </div>

@@ -46,7 +46,7 @@ export const JobTitleStep: React.FC<JobTitleStepProps> = ({ data, updateData }) 
             id="job-title"
             placeholder="Enter your job title or profession"
             value={data.job_title || ''}
-            onChange={(e) => updateData('job_title', e.target.value)}
+            onChange={(e) => updateData('job_title', e.target.value.trim())}
             className="mt-2"
           />
         </div>

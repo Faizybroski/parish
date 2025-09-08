@@ -114,7 +114,7 @@ export const SocialLinks = () => {
               type="text"
               placeholder="Enter your LinkedIn username*"
               value={linkedin}
-              onChange={(e) => setLinkedin(e.target.value)}
+              onChange={(e) => setLinkedin(e.target.value.trim())}
               className="mt-2"
             />
           </div>
@@ -133,7 +133,7 @@ export const SocialLinks = () => {
               type="text"
               placeholder="Enter your Instagram username*"
               value={instagram}
-              onChange={(e) => setInstagram(e.target.value)}
+              onChange={(e) => setInstagram(e.target.value.trim())}
               className="mt-2"
             />
           </div>

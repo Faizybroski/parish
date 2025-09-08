@@ -120,7 +120,7 @@ export const EmailInviteModal = ({ open, onClose, onInviteResolved, getInviteEma
               <Input
                 type="email"
                 value={email}
-                onChange={(e) => handleEmailChange(idx, e.target.value)}
+                onChange={(e) => handleEmailChange(idx, e.target.value.trim())}
                 placeholder="Enter guest email"
               />
 {idx === emails.length - 1 && (!isFreeTier || emails.length < MAX_FREE_INVITES) && (

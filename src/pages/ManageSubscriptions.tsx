@@ -26,7 +26,7 @@ const ManageSubscriptions = () => {
         <Input
           placeholder="Search by user name..."
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => setSearch(e.target.value.trim())}
         />
       </div>
 

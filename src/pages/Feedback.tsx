@@ -262,7 +262,7 @@ const Feedback = () => {
                     </label>
                     <Textarea
                       value={feedback.comment}
-                      onChange={(e) => setFeedback(prev => ({ ...prev, comment: e.target.value }))}
+                      onChange={(e) => setFeedback(prev => ({ ...prev, comment: e.target.value.trim()}))}
                       placeholder="Share your thoughts about the event, food, atmosphere, etc."
                       rows={4}
                     />

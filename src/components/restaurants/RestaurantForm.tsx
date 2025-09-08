@@ -104,7 +104,7 @@ const RestaurantForm: React.FC<RestaurantFormProps> = ({
           <Input
             id="name"
             value={formData.name}
-            onChange={(e) => handleInputChange('name', e.target.value)}
+            onChange={(e) => handleInputChange('name', e.target.value.trim())}
             placeholder="Enter restaurant name"
             required
           />
@@ -115,7 +115,7 @@ const RestaurantForm: React.FC<RestaurantFormProps> = ({
           <Input
             id="country"
             value={formData.country}
-            onChange={(e) => handleInputChange('country', e.target.value)}
+            onChange={(e) => handleInputChange('country', e.target.value.trim())}
             placeholder="Enter country"
             required
           />
@@ -126,7 +126,7 @@ const RestaurantForm: React.FC<RestaurantFormProps> = ({
           <Input
             id="state_province"
             value={formData.state_province}
-            onChange={(e) => handleInputChange('state_province', e.target.value)}
+            onChange={(e) => handleInputChange('state_province', e.target.value.trim())}
             placeholder="Enter state or province"
             required
           />
@@ -137,7 +137,7 @@ const RestaurantForm: React.FC<RestaurantFormProps> = ({
           <Input
             id="city"
             value={formData.city}
-            onChange={(e) => handleInputChange('city', e.target.value)}
+            onChange={(e) => handleInputChange('city', e.target.value.trim())}
             placeholder="Enter city"
             required
           />
@@ -148,7 +148,7 @@ const RestaurantForm: React.FC<RestaurantFormProps> = ({
           <Input
             id="full_address"
             value={formData.full_address}
-            onChange={(e) => handleInputChange('full_address', e.target.value)}
+            onChange={(e) => handleInputChange('full_address', e.target.value.trim())}
             placeholder="Enter complete address"
             required
           />
@@ -161,7 +161,7 @@ const RestaurantForm: React.FC<RestaurantFormProps> = ({
             type="number"
             step="any"
             value={formData.latitude}
-            onChange={(e) => handleInputChange('latitude', e.target.value)}
+            onChange={(e) => handleInputChange('latitude', e.target.value.trim())}
             placeholder="e.g., 40.7128"
           />
         </div>
@@ -173,7 +173,7 @@ const RestaurantForm: React.FC<RestaurantFormProps> = ({
             type="number"
             step="any"
             value={formData.longitude}
-            onChange={(e) => handleInputChange('longitude', e.target.value)}
+            onChange={(e) => handleInputChange('longitude', e.target.value.trim())}
             placeholder="e.g., -74.0060"
           />
         </div>

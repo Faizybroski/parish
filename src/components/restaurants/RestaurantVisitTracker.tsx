@@ -88,7 +88,7 @@ const RestaurantVisitTracker: React.FC<RestaurantVisitTrackerProps> = ({ onVisit
               id="visited_at"
               type="date"
               value={visitDate}
-              onChange={(e) => setVisitDate(e.target.value)}
+              onChange={(e) => setVisitDate(e.target.value.trim())}
               max={new Date().toISOString().split('T')[0]} // Can't select future dates
               required
             />

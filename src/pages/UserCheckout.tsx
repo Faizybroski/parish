@@ -142,7 +142,7 @@ function CheckoutForm({
     <input
       type="text"
       value={postalCode}
-      onChange={(e) => setPostalCode(e.target.value)}
+      onChange={(e) => setPostalCode(e.target.value.trim())}
       className="w-full px-3 py-2 rounded-md bg-white text-black"
       required
     />

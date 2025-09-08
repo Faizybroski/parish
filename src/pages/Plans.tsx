@@ -73,7 +73,7 @@ const Plans = () => {
         <Input
           placeholder="Search plans by name..."
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+          onChange={(e) => setSearchQuery(e.target.value.trim())}
           className="pl-10"
         />
       </div>

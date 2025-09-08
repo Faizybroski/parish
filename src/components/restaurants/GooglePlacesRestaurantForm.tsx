@@ -291,7 +291,7 @@ const GooglePlacesRestaurantForm: React.FC<GooglePlacesRestaurantFormProps> = ({
               <Input
                 id="name"
                 value={formData.name}
-                onChange={(e) => handleInputChange("name", e.target.value)}
+                onChange={(e) => handleInputChange("name", e.target.value.trim())}
                 placeholder="Restaurant name"
                 required
                 readOnly
@@ -305,7 +305,7 @@ const GooglePlacesRestaurantForm: React.FC<GooglePlacesRestaurantFormProps> = ({
                 id="full_address"
                 value={formData.full_address}
                 onChange={(e) =>
-                  handleInputChange("full_address", e.target.value)
+                  handleInputChange("full_address", e.target.value.trim())
                 }
                 placeholder="Complete address"
                 required
@@ -319,7 +319,7 @@ const GooglePlacesRestaurantForm: React.FC<GooglePlacesRestaurantFormProps> = ({
               <Input
                 id="city"
                 value={formData.city}
-                onChange={(e) => handleInputChange("city", e.target.value)}
+                onChange={(e) => handleInputChange("city", e.target.value.trim())}
                 placeholder="City"
                 required
                 readOnly
@@ -332,7 +332,7 @@ const GooglePlacesRestaurantForm: React.FC<GooglePlacesRestaurantFormProps> = ({
               <Input
                 id="state"
                 value={formData.state_province}
-                onChange={(e) => handleInputChange("state_province", e.target.value)}
+                onChange={(e) => handleInputChange("state_province", e.target.value.trim())}
                 placeholder="State or Province"
                 required
                 readOnly
@@ -345,7 +345,7 @@ const GooglePlacesRestaurantForm: React.FC<GooglePlacesRestaurantFormProps> = ({
               <Input
                 id="country"
                 value={formData.country}
-                onChange={(e) => handleInputChange("country", e.target.value)}
+                onChange={(e) => handleInputChange("country", e.target.value.trim())}
                 placeholder="Country"
                 required
                 readOnly

@@ -394,7 +394,7 @@ const result = await stripe.confirmCardPayment(clientSecret, {
     <input
       type="text"
       value={postalCode}
-      onChange={(e) => setPostalCode(e.target.value)}
+      onChange={(e) => setPostalCode(e.target.value.trim())}
       className="w-full p-3 rounded-md bg-white text-black"
       required
     />

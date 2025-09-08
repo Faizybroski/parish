@@ -30,6 +30,8 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 
     if (Object.keys(updateData).length > 0) {
       console.log("Upserting profile for:", user.email);
+      const currentPath = location.pathname;
+      console.log("Upserting Profile at:", currentPath);
 
       const { error } = await supabase
         .from("profiles")

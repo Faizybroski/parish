@@ -837,7 +837,7 @@ const UserDetailsModal: React.FC<UserDetailsModalProps> = ({
                 id="email-subject"
                 value={emailData.subject}
                 onChange={(e) =>
-                  setEmailData((prev) => ({ ...prev, subject: e.target.value }))
+                  setEmailData((prev) => ({ ...prev, subject: e.target.value.trim()}))
                 }
                 placeholder="Enter email subject"
               />
@@ -848,7 +848,7 @@ const UserDetailsModal: React.FC<UserDetailsModalProps> = ({
                 id="email-message"
                 value={emailData.message}
                 onChange={(e) =>
-                  setEmailData((prev) => ({ ...prev, message: e.target.value }))
+                  setEmailData((prev) => ({ ...prev, message: e.target.value.trim()}))
                 }
                 placeholder="Enter your message"
                 rows={4}
@@ -1035,7 +1035,7 @@ const getUserStatus = (user: User) => {
             <Input
               placeholder="Search users by name or email..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e) => setSearchTerm(e.target.value.trim())}
               className="pl-10"
             />
           </div>
@@ -1155,7 +1155,7 @@ const getUserStatus = (user: User) => {
           <Input
             value={editUserData.first_name}
             onChange={(e) =>
-              setEditUserData({ ...editUserData, first_name: e.target.value })
+              setEditUserData({ ...editUserData, first_name: e.target.value.trim()})
             }
           />
         </div>
@@ -1165,7 +1165,7 @@ const getUserStatus = (user: User) => {
           <Input
             value={editUserData.last_name}
             onChange={(e) =>
-              setEditUserData({ ...editUserData, last_name: e.target.value })
+              setEditUserData({ ...editUserData, last_name: e.target.value.trim()})
             }
           />
         </div>
@@ -1193,7 +1193,7 @@ const getUserStatus = (user: User) => {
           <Input
             value={editUserData.job_title || ""}
             onChange={(e) =>
-              setEditUserData({ ...editUserData, job_title: e.target.value })
+              setEditUserData({ ...editUserData, job_title: e.target.value.trim()})
             }
           />
         </div>
@@ -1203,7 +1203,7 @@ const getUserStatus = (user: User) => {
           <Input
             value={editUserData.location_city || ""}
             onChange={(e) =>
-              setEditUserData({ ...editUserData, location_city: e.target.value })
+              setEditUserData({ ...editUserData, location_city: e.target.value.trim()})
             }
           />
         </div>
@@ -1213,7 +1213,7 @@ const getUserStatus = (user: User) => {
           onChange={(e) =>
             setEditUserData({
               ...editUserData,
-              instagram_username: e.target.value,
+              instagram_username: e.target.value.trim(),
             })
           }
           placeholder="Instagram Username"
@@ -1224,7 +1224,7 @@ const getUserStatus = (user: User) => {
           onChange={(e) =>
             setEditUserData({
               ...editUserData,
-              linkedin_username: e.target.value,
+              linkedin_username: e.target.value.trim(),
             })
           }
           placeholder="LinkedIn Username"

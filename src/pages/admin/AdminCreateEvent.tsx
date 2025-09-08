@@ -355,7 +355,7 @@ const AdminCreateEvent = () => {
                     id="name"
                     placeholder="e.g., Wine Tasting Social"
                     value={formData.name}
-                    onChange={(e) => handleInputChange("name", e.target.value)}
+                    onChange={(e) => handleInputChange("name", e.target.value.trim())}
                     required
                   />
                 </div>
@@ -367,7 +367,7 @@ const AdminCreateEvent = () => {
                     placeholder="Describe your event, what to expect, dress code, etc."
                     value={formData.description}
                     onChange={(e) =>
-                      handleInputChange("description", e.target.value)
+                      handleInputChange("description", e.target.value.trim())
                     }
                     rows={4}
                     required
@@ -385,7 +385,7 @@ const AdminCreateEvent = () => {
                         min={today}
                         value={formData.date}
                         onChange={(e) =>
-                          handleInputChange("date", e.target.value)
+                          handleInputChange("date", e.target.value.trim())
                         }
                         className="pl-10"
                         required
@@ -402,7 +402,7 @@ const AdminCreateEvent = () => {
                         type="time"
                         value={formData.time}
                         onChange={(e) =>
-                          handleInputChange("time", e.target.value)
+                          handleInputChange("time", e.target.value.trim())
                         }
                         className="pl-10"
                         required
@@ -462,7 +462,7 @@ const AdminCreateEvent = () => {
                       onChange={(e) =>
                         handleInputChange(
                           "max_attendees",
-                          parseInt(e.target.value)
+                          parseInt(e.target.value.trim())
                         )
                       }
                       required
@@ -479,7 +479,7 @@ const AdminCreateEvent = () => {
                       min={today}
                       value={formData.rsvp_deadline_date}
                       onChange={(e) =>
-                        handleInputChange("rsvp_deadline_date", e.target.value)
+                        handleInputChange("rsvp_deadline_date", e.target.value.trim())
                       }
                     />
                   </div>
@@ -492,7 +492,7 @@ const AdminCreateEvent = () => {
                     type="time"
                     value={formData.rsvp_deadline_time}
                     onChange={(e) =>
-                      handleInputChange("rsvp_deadline_time", e.target.value)
+                      handleInputChange("rsvp_deadline_time", e.target.value.trim())
                     }
                   />
                 </div>
@@ -607,7 +607,7 @@ const AdminCreateEvent = () => {
                       onChange={(e) =>
                         handleInputChange(
                           "guest_invitation_type",
-                          e.target.value
+                          e.target.value.trim()
                         )
                       }
                       className="w-4 h-4"
@@ -627,7 +627,7 @@ const AdminCreateEvent = () => {
                       onChange={(e) =>
                         handleInputChange(
                           "guest_invitation_type",
-                          e.target.value
+                          e.target.value.trim()
                         )
                       }
                       className="w-4 h-4"
@@ -746,7 +746,7 @@ const AdminCreateEvent = () => {
                         onChange={(e) =>
                           handleInputChange(
                             "event_fee",
-                            parseFloat(e.target.value)
+                            parseFloat(e.target.value.trim())
                           )
                         }
                         className="pl-10"
@@ -770,7 +770,7 @@ const AdminCreateEvent = () => {
                   <Input
                     placeholder="Add a tag (e.g., wine, vegan, casual)"
                     value={newTag}
-                    onChange={(e) => setNewTag(e.target.value)}
+                    onChange={(e) => setNewTag(e.target.value.trim())}
                     onKeyPress={(e) =>
                       e.key === "Enter" && (e.preventDefault(), addTag())
                     }
