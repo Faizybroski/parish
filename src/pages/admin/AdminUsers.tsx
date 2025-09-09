@@ -1,7 +1,7 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { useProfile } from "@/hooks/useProfile";
 import React, { useEffect, useState } from "react";
-// import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -51,10 +51,6 @@ import {
   UserX,
 } from "lucide-react";
 
-const supabase = createClient(
-  "https://jigznrpgzoyrbqbrpsqx.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImppZ3pucnBnem95cmJxYnJwc3F4Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MjY5NTEwNiwiZXhwIjoyMDY4MjcxMTA2fQ.d64ewa1SraJ1OdHxU6AAF7cDkuEbY0e0vp7HNCfBYIk"
-);
 interface User {
   id: string;
   user_id: string;
@@ -350,16 +346,13 @@ const UserDetailsModal: React.FC<UserDetailsModalProps> = ({
     }
   };
 
-  // const supabase = createClient(
-  //   "https://jigznrpgzoyrbqbrpsqx.supabase.co",
-  //   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImppZ3pucnBnem95cmJxYnJwc3F4Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MjY5NTEwNiwiZXhwIjoyMDY4MjcxMTA2fQ.d64ewa1SraJ1OdHxU6AAF7cDkuEbY0e0vp7HNCfBYIk"
-  // );
-
   const handleDeleteUser = async () => {
     if ( !confirm("Are you sure you want to delete this user? This action cannot be undone." )) return;
 
     try {
-      const { error } = await supabase.auth.admin.deleteUser(user.user_id);
+              const { data, error } = await supabase.rpc("delete_user_account", {
+  target_user: user.user_id
+});
       if (error) {
         console.error("❌ Error deleting user:", error.message);
       } else {

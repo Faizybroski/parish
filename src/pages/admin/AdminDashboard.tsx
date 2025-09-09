@@ -1,6 +1,7 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { useProfile } from "@/hooks/useProfile";
 import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 // import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -73,12 +74,6 @@ import {
   XAxis,
   YAxis
 } from "recharts";
-
-// Generate stub data for charts
-const supabase = createClient(
-  "https://jigznrpgzoyrbqbrpsqx.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImppZ3pucnBnem95cmJxYnJwc3F4Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MjY5NTEwNiwiZXhwIjoyMDY4MjcxMTA2fQ.d64ewa1SraJ1OdHxU6AAF7cDkuEbY0e0vp7HNCfBYIk"
-);
 
 const generateStubData = async () => {
   const now = new Date();
@@ -541,39 +536,13 @@ const AdminDashboard = () => {
     }
   };
 
-  // const deleteUser = async (userId: string) => {
-  //   if (!confirm('Are you sure you want to delete this user? This action cannot be undone.')) return;
-
-  //   if (profile?.role !== 'admin') {
-  //     toast({ title: "Only Super Admins can delete users", variant: "destructive" });
-  //     return;
-  //   }
-
-  //   try {
-  //     const { error } = await supabase.auth.admin.deleteUser(userId);
-  //     if (error) throw error;
-
-  //     // Log audit action
-  //     await supabase.from('audit_logs').insert({
-  //       admin_id: user?.id,
-  //       action: 'delete_user',
-  //       target_type: 'user',
-  //       target_id: userId,
-  //       notes: 'User deleted via admin panel'
-  //     });
-
-  //     toast({ title: "User deleted successfully" });
-  //     fetchDashboardData();
-  //   } catch (error) {
-  //     toast({ title: "Error deleting user", variant: "destructive" });
-  //   }
-  // };
-
     const deleteUser = async (userId: string) => {
       if (!confirm("Are you sure you want to delete this user? This action cannot be undone."))return;
 
       try {
-        const { error } = await supabase.auth.admin.deleteUser(userId);
+        const { data, error } = await supabase.rpc("delete_user_account", {
+  target_user: userId
+});
         if (error) {
           console.error("❌ Error deleting user:", error.message);
         } else {

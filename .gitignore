@@ -14,6 +14,8 @@ dist-ssr
 
 .excalidraw
 
+.env
+
 *.zip
 
 # Editor directories and files
