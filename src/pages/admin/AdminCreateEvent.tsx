@@ -174,6 +174,87 @@ const AdminCreateEvent = () => {
       return;
     }
 
+        if (!formData.name.trim()) {
+          toast({
+            title: "Validation Error",
+            description: "Event name cannot be empty.",
+            variant: "destructive",
+          });
+          return;
+        }
+    
+        if (!formData.description.trim()) {
+          toast({
+            title: "Validation Error",
+            description: "Event description cannot be empty.",
+            variant: "destructive",
+          });
+          return;
+        }
+    
+        if (!formData.date) {
+          toast({
+            title: "Validation Error",
+            description: "Please select an event date.",
+            variant: "destructive",
+          });
+          return;
+        }
+    
+        if (!formData.time) {
+          toast({
+            title: "Validation Error",
+            description: "Please select an event time.",
+            variant: "destructive",
+          });
+          return;
+        }
+    
+        if (!formData.location_name.trim()) {
+          toast({
+            title: "Validation Error",
+            description: "Event location cannot be empty.",
+            variant: "destructive",
+          });
+          return;
+        }
+    
+        if (new Date(`${formData.date}T${formData.time}`) < new Date()) {
+          toast({
+            title: "Validation Error",
+            description: "Event date and time must be in the future.",
+            variant: "destructive",
+          });
+          return;
+        }
+    
+        if (!formData.max_attendees) {
+          toast({
+            title: "Validation Error",
+            description: "Please specify the maximum number of attendees.",
+            variant: "destructive",
+          });
+          return;
+        }
+    
+        if(!formData.guest_invitation_type) {
+          toast({
+            title: "Validation Error",
+            description: "Please select a guest invitation type.",
+            variant: "destructive",
+          });
+          return;
+        }
+    
+        if (formData.is_paid && (!formData.event_fee || Number(formData.event_fee) <= 0)) {
+          toast({
+            title: "Validation Error",
+            description: "Please enter a valid event fee for paid events.",
+            variant: "destructive",
+          });
+          return;
+        }
+
     setLoading(true);
 
     try {
@@ -334,12 +415,14 @@ const AdminCreateEvent = () => {
             onClose={() => setEmailInviteModelOpen(false)}
             onInviteResolved={(guestIds) => setInvitedGuestIds(guestIds)}
             getInviteEmails={(emails) => setInvitedEmails(emails)}
+            subscriptionStatus={"premium"}
           />
 
           <CrossedPathInviteModal
             open={crossedPathInviteModelOpen}
             onClose={() => setCrossedPathInviteModelOpen(false)}
             onInviteResolved={(guestIds) => setInvitedGuestIds(guestIds)}
+            subscriptionStatus={"premium"}
           />
 
           <form onSubmit={handleSubmit} className="space-y-8">
@@ -356,7 +439,6 @@ const AdminCreateEvent = () => {
                     placeholder="e.g., Wine Tasting Social"
                     value={formData.name}
                     onChange={(e) => handleInputChange("name", e.target.value)}
-                    required
                   />
                 </div>
 
@@ -370,7 +452,6 @@ const AdminCreateEvent = () => {
                       handleInputChange("description", e.target.value)
                     }
                     rows={4}
-                    required
                   />
                 </div>
 
@@ -388,7 +469,6 @@ const AdminCreateEvent = () => {
                           handleInputChange("date", e.target.value)
                         }
                         className="pl-10"
-                        required
                       />
                     </div>
                   </div>
@@ -405,7 +485,6 @@ const AdminCreateEvent = () => {
                           handleInputChange("time", e.target.value)
                         }
                         className="pl-10"
-                        required
                       />
                     </div>
                   </div>
@@ -465,7 +544,6 @@ const AdminCreateEvent = () => {
                           parseInt(e.target.value)
                         )
                       }
-                      required
                     />
                   </div>
 
@@ -611,7 +689,6 @@ const AdminCreateEvent = () => {
                         )
                       }
                       className="w-4 h-4"
-                      required
                     />
                     <Label htmlFor="manual">Manually Invite Guests</Label>
                   </div>

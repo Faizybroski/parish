@@ -49,12 +49,12 @@ const Profile = () => {
       setFormData({
         first_name: profile.first_name.trim() || '',
         last_name: profile.last_name.trim() || '',
-        job_title: profile.job_title.trim() || '',
-        location_city: profile.location_city.trim() || ''
+        job_title: profile.job_title?.trim() || '',
+        location_city: profile.location_city?.trim() || ''
       });
       setSocialLinks({
-        instagram_username: profile.instagram_username.trim() || '',
-        linkedin_username: profile.linkedin_username.trim() || ''
+        instagram_username: profile.instagram_username?.trim() || '',
+        linkedin_username: profile.linkedin_username?.trim() || ''
       });
       setPreferenceData({
         dining_style: profile.dining_style || '',
@@ -145,6 +145,31 @@ const Profile = () => {
   const handleSave = async () => {
     if (!profile) return;
 
+    if (!formData.first_name.trim() || !formData.last_name.trim()) {
+      toast({
+        title: "Validation Error",
+        description: "First name and last name cannot be empty.",
+        variant: "destructive"
+      });
+      return;
+    }
+    if (!formData.job_title.trim()) {
+      toast({
+        title: "Validation Error",
+        description: "Job title cannot be empty.",
+        variant: "destructive"
+      });
+      return;
+    }
+    if (!formData.location_city.trim()) {
+      toast({
+        title: "Validation Error",
+        description: "Location cannot be empty.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     setLoading(true);
     
     try {
@@ -188,6 +213,15 @@ const Profile = () => {
   const handleSavePreferences = async () => {
     if (!profile) return;
 
+    if (preferenceData.dietary_preferences.length === 0) {
+      toast({
+        title: "Validation Error",
+        description: "Please select at least one dietary preference.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     setLoading(true);
     
     try {
@@ -230,6 +264,15 @@ const Profile = () => {
 
   const handleSaveSocials = async () => {
     if (!profile) return;
+
+    if (!socialLinks.instagram_username.trim() && !socialLinks.linkedin_username.trim()) {
+      toast({
+        title: "Validation Error",
+        description: "Please provide at least one social link.",
+        variant: "destructive"
+      });
+      return;
+    }
 
     setLoading(true);
     

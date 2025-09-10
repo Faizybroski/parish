@@ -103,12 +103,12 @@ const AdminEditEvent = () => {
         : null;
 
       setFormData({
-        name: data.name || "",
-        description: data.description || "",
+        name: data.name.trim() || "",
+        description: data.description.trim() || "",
         date: eventDate.toISOString().split("T")[0],
         time: eventDate.toTimeString().slice(0, 5),
-        location_name: data.location_name || "",
-        location_address: data.location_address || "",
+        location_name: data.location_name.trim() || "",
+        location_address: data.location_address.trim() || "",
         location_lat: data.location_lat || "",
         location_lng: data.location_lng || "",
         restaurant_id: data.restaurant_id || "",
@@ -225,6 +225,87 @@ const AdminEditEvent = () => {
       toast({
         title: "Image required",
         description: "Please upload an event photo",
+        variant: "destructive",
+      });
+      return;
+    }
+
+        if (!formData.name.trim()) {
+      toast({
+        title: "Validation Error",
+        description: "Event name cannot be empty.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!formData.description.trim()) {
+      toast({
+        title: "Validation Error",
+        description: "Event description cannot be empty.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!formData.date) {
+      toast({
+        title: "Validation Error",
+        description: "Please select an event date.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!formData.time) {
+      toast({
+        title: "Validation Error",
+        description: "Please select an event time.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!formData.location_name.trim()) {
+      toast({
+        title: "Validation Error",
+        description: "Event location cannot be empty.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (new Date(`${formData.date}T${formData.time}`) < new Date()) {
+      toast({
+        title: "Validation Error",
+        description: "Event date and time must be in the future.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!formData.max_attendees) {
+      toast({
+        title: "Validation Error",
+        description: "Please specify the maximum number of attendees.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if(!formData.guest_invitation_type) {
+      toast({
+        title: "Validation Error",
+        description: "Please select a guest invitation type.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (formData.is_paid && (!formData.event_fee || Number(formData.event_fee) <= 0)) {
+      toast({
+        title: "Validation Error",
+        description: "Please enter a valid event fee for paid events.",
         variant: "destructive",
       });
       return;
@@ -392,12 +473,14 @@ const AdminEditEvent = () => {
             onClose={() => setEmailInviteModelOpen(false)}
             onInviteResolved={(guestIds) => setInvitedGuestIds(guestIds)}
             getInviteEmails={(emails) => setInvitedEmails(emails)}
+            subscriptionStatus={"premium"}
           />
 
           <CrossedPathInviteModal
             open={crossedPathInviteModelOpen}
             onClose={() => setCrossedPathInviteModelOpen(false)}
             onInviteResolved={(guestIds) => setInvitedGuestIds(guestIds)}
+            subscriptionStatus={"premium"}
           />
 
           <form onSubmit={handleSubmit} className="space-y-8">
@@ -414,7 +497,6 @@ const AdminEditEvent = () => {
                     placeholder="e.g., Wine Tasting Social"
                     value={formData.name}
                     onChange={(e) => handleInputChange("name", e.target.value.trim())}
-                    required
                   />
                 </div>
 
@@ -428,7 +510,6 @@ const AdminEditEvent = () => {
                       handleInputChange("description", e.target.value.trim())
                     }
                     rows={4}
-                    required
                   />
                 </div>
 
@@ -446,7 +527,6 @@ const AdminEditEvent = () => {
                           handleInputChange("date", e.target.value.trim())
                         }
                         className="pl-10"
-                        required
                       />
                     </div>
                   </div>
@@ -463,7 +543,6 @@ const AdminEditEvent = () => {
                           handleInputChange("time", e.target.value.trim())
                         }
                         className="pl-10"
-                        required
                       />
                     </div>
                   </div>
@@ -643,7 +722,6 @@ const AdminEditEvent = () => {
                         )
                       }
                       className="w-4 h-4"
-                      required
                     />
                     <Label htmlFor="manual">Manually Invite Guests</Label>
                   </div>

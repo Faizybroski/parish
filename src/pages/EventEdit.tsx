@@ -114,9 +114,9 @@ const EventEdit = () => {
         location_lng: data.location_lng || "",
         restaurant_id: data.restaurant_id || "",
         max_attendees: data.max_attendees || 10,
-        dining_style: data.dining_style.trim() || "",
-        dietary_theme: data.dietary_theme.trim() || "",
-        guest_invitation_type: data.guest_invitation_type.trim(),
+        dining_style: data.dining_style || "",
+        dietary_theme: data.dietary_theme || "",
+        guest_invitation_type: data.guest_invitation_type,
         is_paid: data.is_paid,
         event_fee: data.event_fee,
         rsvp_deadline_date: rsvpDeadline
@@ -230,6 +230,88 @@ const EventEdit = () => {
       });
       return;
     }
+
+    if (!formData.name.trim()) {
+          toast({
+            title: "Validation Error",
+            description: "Event name cannot be empty.",
+            variant: "destructive",
+          });
+          return;
+        }
+    
+        if (!formData.description.trim()) {
+          toast({
+            title: "Validation Error",
+            description: "Event description cannot be empty.",
+            variant: "destructive",
+          });
+          return;
+        }
+    
+        if (!formData.date) {
+          toast({
+            title: "Validation Error",
+            description: "Please select an event date.",
+            variant: "destructive",
+          });
+          return;
+        }
+    
+        if (!formData.time) {
+          toast({
+            title: "Validation Error",
+            description: "Please select an event time.",
+            variant: "destructive",
+          });
+          return;
+        }
+    
+        if (!formData.location_name.trim()) {
+          toast({
+            title: "Validation Error",
+            description: "Event location cannot be empty.",
+            variant: "destructive",
+          });
+          return;
+        }
+    
+        if (new Date(`${formData.date}T${formData.time}`) < new Date()) {
+          toast({
+            title: "Validation Error",
+            description: "Event date and time must be in the future.",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        
+        if (!formData.max_attendees) {
+          toast({
+            title: "Validation Error",
+            description: "Please specify the maximum number of attendees.",
+            variant: "destructive",
+          });
+          return;
+        }
+        
+        if(!formData.guest_invitation_type) {
+          toast({
+            title: "Validation Error",
+            description: "Please select a guest invitation type.",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        if (formData.is_paid && (!formData.event_fee || Number(formData.event_fee) <= 0)) {
+          toast({
+            title: "Validation Error",
+            description: "Please enter a valid event fee for paid events.",
+            variant: "destructive",
+          });
+          return;
+        }
 
     setLoading(true);
 
@@ -408,7 +490,6 @@ const EventEdit = () => {
                     placeholder="e.g., Wine Tasting Social"
                     value={formData.name}
                     onChange={(e) => handleInputChange("name", e.target.value)}
-                    required
                   />
                 </div>
 
@@ -422,7 +503,6 @@ const EventEdit = () => {
                       handleInputChange("description", e.target.value)
                     }
                     rows={4}
-                    required
                   />
                 </div>
 
@@ -440,7 +520,6 @@ const EventEdit = () => {
                           handleInputChange("date", e.target.value)
                         }
                         className="pl-10"
-                        required
                       />
                     </div>
                   </div>
@@ -457,7 +536,6 @@ const EventEdit = () => {
                           handleInputChange("time", e.target.value)
                         }
                         className="pl-10"
-                        required
                       />
                     </div>
                   </div>
@@ -517,7 +595,6 @@ const EventEdit = () => {
                           parseInt(e.target.value)
                         )
                       }
-                      required
                     />
                   </div>
 
@@ -637,7 +714,6 @@ const EventEdit = () => {
                         )
                       }
                       className="w-4 h-4"
-                      required
                     />
                     <Label htmlFor="manual">Manually Invite Guests</Label>
                   </div>
@@ -746,11 +822,6 @@ const EventEdit = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                 {subscriptionStatus === 'free' && (
-                    <div className="text-sm text-orange-600 mb-2 font-medium">
-                      You must upgrade to premium to create paid events.
-                    </div>
-                  )}
                 <div className="flex items-center space-x-2">
                   <Checkbox
                     id="is_paid"
@@ -758,7 +829,6 @@ const EventEdit = () => {
                     onCheckedChange={(checked) =>
                       handleInputChange("is_paid", checked)
                     }
-                    disabled={subscriptionStatus === 'free'}
                   />
                   <Label htmlFor="is_paid">This is a paid event</Label>
                 </div>

@@ -7,7 +7,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/hooks/use-toast";
 import { ChevronLeft, ChevronRight, Eye, EyeOff, Loader2 } from "lucide-react";
 import { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import ParishLogo from "../ui/logo";
 
@@ -75,6 +75,26 @@ export const OnboardingCarousel = ({ startStep = 0 }) => {
     setLoading(true);
     try {
       if (isLogin) {
+        if (!email.trim()) {
+          toast({
+            title: "Missing Email",
+            description: "Please enter your email address.",
+            variant: "destructive",
+          });
+          setLoading(false);
+          return;
+        }
+
+        if (!password.trim()) {
+          toast({
+            title: "Missing Password",
+            description: "Please enter your password.",
+            variant: "destructive",
+          });
+          setLoading(false);
+          return;
+        }
+
         const { error } = await signIn(email.trim(), password.trim(), "user");
         error
           ? toast({
@@ -87,7 +107,91 @@ export const OnboardingCarousel = ({ startStep = 0 }) => {
               description: "Signed in successfully.",
             });
       } else {
-        if (!linkedin && !instagram) {
+        if (!firstName.trim()) {
+          toast({
+            title: "Missing First Name",
+            description: "Please enter your first name.",
+            variant: "destructive",
+          });
+          setLoading(false);
+          return;
+        }
+        if (!lastName.trim()) {
+          toast({
+            title: "Missing Last Name",
+            description: "Please enter your last name.",
+            variant: "destructive",
+          });
+          setLoading(false);
+          return;
+        }
+        if (!email.trim()) {
+          toast({
+            title: "Missing Email",
+            description: "Please enter your email address.",
+            variant: "destructive",
+          });
+          setLoading(false);
+          return;
+        }
+          if (!password.trim()) {
+          toast({
+            title: "Missing Password",
+            description: "Please enter your password.",
+            variant: "destructive",
+          });
+          setLoading(false);
+          return;
+        }
+        if (firstName.trim().length < 2) {
+          toast({
+            title: "Invalid First Name",
+            description: "First name must be at least 2 characters long.",
+            variant: "destructive",
+          });
+          setLoading(false);
+          return;
+        }
+        if (lastName.trim().length < 2) {
+          toast({
+            title: "Invalid Last Name",
+            description: "Last name must be at least 2 characters long.",
+            variant: "destructive",
+          });
+          setLoading(false);
+          return;
+        }
+        if (email.trim()) {
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (!emailRegex.test(email.trim())) {
+            toast({
+              title: "Invalid Email",
+              description: "Please enter a valid email address.",
+              variant: "destructive",
+            });
+            setLoading(false);
+            return;
+          }
+        }
+        if (password.length < 6) {
+          toast({
+            title: "Weak Password",
+            description: "Password must be at least 6 characters long.",
+            variant: "destructive",
+          });
+          setLoading(false);
+          return;
+        }
+        if (!agreeToTerms) {
+          toast({
+            title: "Terms & Conditions",
+            description: "You must agree to the Terms & Conditions.",
+            variant: "destructive",
+          });
+          setLoading(false);
+          return;
+        }
+        if (!linkedin.trim() && !instagram.trim()) {
           toast({
             title: "Social Media is Required",
             description: "Please enter Instagram or LinkedIn.",
@@ -192,7 +296,6 @@ export const OnboardingCarousel = ({ startStep = 0 }) => {
                     placeholder="First name"
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
-                    required
                   />
                 </div>
                 <div className="space-y-1">
@@ -203,7 +306,6 @@ export const OnboardingCarousel = ({ startStep = 0 }) => {
                     placeholder="Last name"
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
-                    required
                   />
                 </div>
               </div>
@@ -216,7 +318,6 @@ export const OnboardingCarousel = ({ startStep = 0 }) => {
                 placeholder="Enter your email*"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                required
               />
             </div>
             <div className="space-y-1 relative">
@@ -227,7 +328,6 @@ export const OnboardingCarousel = ({ startStep = 0 }) => {
                 placeholder="Enter your password*"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                required
               />
               <button
                 type="button"
@@ -285,9 +385,9 @@ export const OnboardingCarousel = ({ startStep = 0 }) => {
                   />
                   <Label htmlFor="terms">
                     I agree to the{" "}
-                    <a href="#" className="text-primary underline">
+                    <Link to="/terms-conditions" className="text-primary underline">
                       Terms & Conditions
-                    </a>
+                    </Link>
                   </Label>
                 </div>
               </>
@@ -371,6 +471,15 @@ export const OnboardingCarousel = ({ startStep = 0 }) => {
                     });
                     return;
                   }
+                  if (!agreeToTerms) {
+                    setIsLogin(false);
+                    toast({
+                      title: "Terms & Conditions",
+                      description: "You must agree to the Terms & Conditions.",
+                      variant: "destructive",
+                    });
+                    return;
+                  }
 
                   if (instagram) localStorage.setItem("signup_instagram", instagram.trim());
                   if (linkedin) localStorage.setItem("signup_linkedin", linkedin.trim());
@@ -397,6 +506,16 @@ export const OnboardingCarousel = ({ startStep = 0 }) => {
                       title: "Social Media Required",
                       description:
                         "Please enter LinkedIn or Instagram before continuing.",
+                      variant: "destructive",
+                    });
+                    return;
+                  }
+
+                  if (!agreeToTerms) {
+                    setIsLogin(false);
+                    toast({
+                      title: "Terms & Conditions",
+                      description: "You must agree to the Terms & Conditions.",
                       variant: "destructive",
                     });
                     return;

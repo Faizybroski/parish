@@ -1230,6 +1230,42 @@ const getUserStatus = (user: User) => {
           <Button
             onClick={async () => {
               if (!editUserData) return;
+              if (!editUserData.first_name.trim() || !editUserData.last_name.trim()) {
+                toast({ title: "First and Last name are required", variant: "destructive" });
+                return;
+              }
+              if (!["user", "admin"].includes(editUserData.role)) {
+                toast({ title: "Invalid role selected", variant: "destructive" });
+                return;
+              }
+              if (editUserData.job_title && editUserData.job_title.length > 100) {
+                toast({ title: "Job title is too long", variant: "destructive" });
+                return;
+              }
+              if (!editUserData.job_title.trim()) {
+                toast({ title: "Job title is required", variant: "destructive" });
+                return;
+              }
+              if (!editUserData.location_city.trim()) {
+                toast({ title: "City is required", variant: "destructive" });
+                return;
+              }
+              if (editUserData.location_city && editUserData.location_city.length > 100) {
+                toast({ title: "City name is too long", variant: "destructive" });
+                return;
+              }
+              if (editUserData.instagram_username && editUserData.instagram_username.length > 30) {
+                toast({ title: "Instagram username is too long", variant: "destructive" });
+                return;
+              }
+              if (editUserData.linkedin_username && editUserData.linkedin_username.length > 30) {
+                toast({ title: "LinkedIn username is too long", variant: "destructive" });
+                return;
+              }
+              if (!editUserData.instagram_username.trim() && !editUserData.linkedin_username.trim()) {
+                toast({ title: "At least one social link is required", variant: "destructive" });
+                return;
+              }
               const { error } = await supabase
                 .from("profiles")
                 .update({
