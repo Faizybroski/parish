@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import EventAnalyticsDashboard from "@/components/analytics/EventAnalytics";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRestaurants } from "@/hooks/useRestaurants";
@@ -278,11 +279,11 @@ const AdminEventDetails = () => {
 
         {/* Event Cover Image */}
         {event.cover_photo_url && (
-          <div className="relative h-64 mb-8 rounded-lg overflow-hidden">
+          <div className="relative w-full flex items-center justify-center bg-black h-64 mb-8 rounded-lg overflow-hidden">
             <img
               src={event.cover_photo_url}
               alt={event.name}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-contain"
             />
           </div>
         )}
@@ -442,6 +443,14 @@ const AdminEventDetails = () => {
                 )}
               </CardContent>
             </Card>
+
+            <Card>
+              <EventAnalyticsDashboard
+                eventId={event.id}
+                subscriptionStatus={"premium"}
+              />
+            </Card>
+
             <Card>
               <CardHeader>
                 <CardTitle>Payments History</CardTitle>
